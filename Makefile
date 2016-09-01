@@ -7,7 +7,7 @@ CFLAGS = -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializers -Wshadow 
 all: belladonna.app
 
 belladonna.app: belladonna.cpp
-	$(CC) belladonna.cpp $(CFLAGS) -o belladonna.app -linkview -g -gdwarf-3
+	$(CC) belladonna.cpp $(CFLAGS) -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3 -g -gdwarf-3
 
 clean:
 	rm -f belladonna.app

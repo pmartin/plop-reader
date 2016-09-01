@@ -1,5 +1,9 @@
 #include "inkview.h"
 
+#include "curl/curl.h"
+#include "json-c/json.h"
+#include "sqlite3.h"
+
 
 static ifont *font;
 static const int kFontSize = 16;

@@ -1,5 +1,7 @@
 belladonna.app
 
+/files/config.json
+
 # Eclipse files
 /.settings/
 /.cproject

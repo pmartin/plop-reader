@@ -3,6 +3,16 @@ This will be a Wallabag application for Pocketbook Touch Lux ereaders. For now, 
 early stage and still *work in progress*: it is definitely not ready for use!
 
 
+# Usage
+
+As long as the application doesn't have a screen to input some configuration informations,
+you have to write those in a JSON file, pushed to the ereader via USB to:
+```
+/mnt/ext1/system/tmp/belladonna.json
+```
+
+A template for this file is provided in `files/config-dist.json`
+
 
 # Developping
 

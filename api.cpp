@@ -26,7 +26,7 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 	char buffer[2048];
 	log_message("Chargement des articles...");
 
-	char url[2048];
+	char enries_url[2048];
 
 	CURL *curl;
 	CURLcode res;
@@ -41,14 +41,14 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 		char *encoded_sort = curl_easy_escape(curl, "updated", 0);
 		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
-		snprintf(url, sizeof(url), "%sapi/entries.json?access_token=%s&archive=%d&sort=%s&order=%s&page=%d&perPage=%d",
-				config->url, encoded_access_token, 0, encoded_sort, encoded_order, 1, 3);
+		snprintf(enries_url, sizeof(enries_url), "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
+				config->url, encoded_access_token, encoded_sort, encoded_order, 1, 5);
 
 		curl_free(encoded_access_token);
 		curl_free(encoded_sort);
 		curl_free(encoded_order);
 
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_URL, enries_url);
 
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
@@ -69,14 +69,30 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 			goto end;
 		}
 		else {
+			json_object *obj = json_tokener_parse(json_string);
 
-			log_message(json_string);
+			snprintf(buffer, sizeof(buffer), "Page %d / %d - posts %d / %d",
+				json_object_get_int(json_object_object_get(obj, "page")),
+				json_object_get_int(json_object_object_get(obj, "pages")),
+				json_object_get_int(json_object_object_get(obj, "limit")),
+				json_object_get_int(json_object_object_get(obj, "total"))
+			);
+			log_message(buffer);
 
-			// TODO parcourir les articles renvoyés et les stocker en DB
+			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
+			for (int i=0 ; i<items->length ; i++) {
+				json_object *item = (json_object *)array_list_get_idx(items, i);
 
+				int id = json_object_get_int(json_object_object_get(item, "id"));
+				int is_archived = json_object_get_int(json_object_object_get(item, "is_archived"));
+				int is_starred = json_object_get_int(json_object_object_get(item, "is_starred"));
+				const char *title = json_object_get_string(json_object_object_get(item, "title"));
+				const char *url = json_object_get_string(json_object_object_get(item, "url"));
 
+				snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
+				log_message(buffer);
+			}
 		}
-
 
 		free(json_string);
 

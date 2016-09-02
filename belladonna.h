@@ -12,6 +12,7 @@ extern ifont *font;
 extern const int kFontSize;
 
 
+
 // config
 typedef struct b_config_s
 {
@@ -22,6 +23,21 @@ typedef struct b_config_s
 	char *login, *password;
 } b_config_s;
 
+// oauth
+typedef struct b_oauth_token_s
+{
+	char *access_token;
+	char *refresh_token;
+	int expires_at;
+} b_oauth_token_s;
+
+
+
+// api
+extern void load_recent_articles(b_config_s *conf, b_oauth_token_s *token);
+
+
+// config
 extern b_config_s *config;
 
 extern void load_config();
@@ -34,13 +50,6 @@ extern void log_message(const char *msg);
 
 
 // oauth
-typedef struct b_oauth_token_s
-{
-	char *access_token;
-	char *refresh_token;
-	int expires_at;
-} b_oauth_token_s;
-
 extern b_oauth_token_s *oauth_token;
 
 extern void create_token();

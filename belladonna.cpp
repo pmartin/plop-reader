@@ -34,6 +34,8 @@ static int main_handler(int event_type, int param_one, int param_two)
 			load_config();
 			create_token();
 
+			load_recent_articles(config, oauth_token);
+
 			/*
 			if (step == 0) {
 

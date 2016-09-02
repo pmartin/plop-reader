@@ -44,6 +44,16 @@ extern void load_config();
 extern void unload_config();
 
 
+// database
+extern void database_drop();
+extern void database_open();
+extern void database_close();
+
+extern void database_write_entry(int remote_id, int is_archived, int is_starred, const char *title, const char *url, const char *content);
+
+void database_display_entries();
+
+
 // log
 extern void log_reset();
 extern void log_message(const char *msg);

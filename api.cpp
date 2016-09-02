@@ -88,9 +88,12 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 				int is_starred = json_object_get_int(json_object_object_get(item, "is_starred"));
 				const char *title = json_object_get_string(json_object_object_get(item, "title"));
 				const char *url = json_object_get_string(json_object_object_get(item, "url"));
+				const char *content = json_object_get_string(json_object_object_get(item, "content"));
 
-				snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
-				log_message(buffer);
+				//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
+				//log_message(buffer);
+
+				database_write_entry(id, is_archived, is_starred, title, url, content);
 			}
 		}
 

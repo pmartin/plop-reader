@@ -31,10 +31,15 @@ static int main_handler(int event_type, int param_one, int param_two)
 			return 1;
 		}
 		else if (param_one == KEY_NEXT) {
+			database_drop();
+			database_open();
+
 			load_config();
 			create_token();
 
 			load_recent_articles(config, oauth_token);
+
+			database_display_entries();
 
 			/*
 			if (step == 0) {
@@ -56,6 +61,8 @@ static int main_handler(int event_type, int param_one, int param_two)
 		if (oauth_token) {
 			destroy_token(oauth_token);
 		}
+
+		database_close();
 
 		CloseFont(font);
 		break;

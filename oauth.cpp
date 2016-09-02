@@ -3,6 +3,8 @@
 static int json_string_get_token_len = 0;
 static char *json_string_get_token = NULL;
 
+b_oauth_token_s *oauth_token;
+
 
 static size_t header_callback(char *ptr, size_t size, size_t nitems, void *userdata)
 {
@@ -38,6 +40,7 @@ void create_token()
 	CURLcode res;
 
 	char buffer[2048];
+	log_message("Requesting OAuth token...");
 
 	json_string_get_token_len = 0;
 	json_string_get_token = (char *)calloc(1, 1);
@@ -104,7 +107,7 @@ void create_token()
 			goto end;
 		}
 		else {
-			log_message("OAuth token data:");
+			//log_message("OAuth token data:");
 
 			json_object *token = json_tokener_parse(json_string_get_token);
 
@@ -112,18 +115,28 @@ void create_token()
 			int expires_in = json_object_get_int(json_object_object_get(token, "expires_in"));
 			const char *refresh_token = json_object_get_string(json_object_object_get(token, "refresh_token"));
 
-			snprintf(buffer, sizeof(buffer), "  > access = %s", access_token);
-			log_message(buffer);
+			oauth_token = (b_oauth_token_s *)malloc(sizeof(b_oauth_token_s));
 
-			snprintf(buffer, sizeof(buffer), "  > expires in = %d", expires_in);
-			log_message(buffer);
+			oauth_token->access_token = (char *)malloc(strlen(access_token) + 1);
+			strcpy(oauth_token->access_token, access_token);
 
-			snprintf(buffer, sizeof(buffer), "  > refresh = %s", refresh_token);
-			log_message(buffer);
+			oauth_token->refresh_token = (char *)malloc(strlen(refresh_token) + 1);
+			strcpy(oauth_token->refresh_token, refresh_token);
+
+			time_t now = time(NULL);
+			oauth_token->expires_at = now + expires_in;
 
 			free(json_string_get_token);
 
-			// TODO we have an oauth token => store it somewhere, and use the API \o/
+
+			//snprintf(buffer, sizeof(buffer), "  > access = %s", oauth_token->access_token);
+			//log_message(buffer);
+
+			//snprintf(buffer, sizeof(buffer), "  > expires at = %d", oauth_token->expires_at);
+			//log_message(buffer);
+
+			//snprintf(buffer, sizeof(buffer), "  > refresh = %s", oauth_token->refresh_token);
+			//log_message(buffer);
 		}
 
 		end:
@@ -132,4 +145,13 @@ void create_token()
 
 	curl_global_cleanup();
 }
+
+
+void destroy_token(b_oauth_token_s *token)
+{
+	free(token->access_token);
+	free(token->refresh_token);
+	free(token);
+}
+
 

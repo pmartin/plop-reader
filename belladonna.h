@@ -34,7 +34,17 @@ extern void log_message(const char *msg);
 
 
 // oauth
+typedef struct b_oauth_token_s
+{
+	char *access_token;
+	char *refresh_token;
+	int expires_at;
+} b_oauth_token_s;
+
+extern b_oauth_token_s *oauth_token;
+
 extern void create_token();
+extern void destroy_token(b_oauth_token_s *token);
 
 
 

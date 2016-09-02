@@ -18,6 +18,9 @@ static int main_handler(int event_type, int param_one, int param_two)
 		log_reset();
 		ClearScreen();
 		FullUpdate();
+
+		oauth_token = NULL;
+
 		break;
 	case EVT_SHOW:
 
@@ -47,6 +50,11 @@ static int main_handler(int event_type, int param_one, int param_two)
 		break;
 	case EVT_EXIT:
 		unload_config();
+
+		if (oauth_token) {
+			destroy_token(oauth_token);
+		}
+
 		CloseFont(font);
 		break;
 	default:

@@ -37,7 +37,7 @@ b_config_s *config;
 
 static void load_config()
 {
-	char buffer[2048];
+	//char buffer[2048];
 	const char *filepath = "/mnt/ext1/system/tmp/belladonna.json";
 
 	config = (b_config_s *)malloc(sizeof(b_config_s));
@@ -83,9 +83,9 @@ static void load_config()
 	strcpy(config->password, password);
 
 
-	log_message("JSON config:");
-	snprintf(buffer, sizeof(buffer), "URL = %s", config->url);
-	log_message(buffer);
+	//log_message("JSON config:");
+	//snprintf(buffer, sizeof(buffer), "URL = %s", config->url);
+	//log_message(buffer);
 }
 
 
@@ -106,37 +106,33 @@ static void unload_config()
 }
 
 
+static int json_string_get_token_len = 0;
+static char *json_string_get_token = NULL;
 
 static size_t header_callback(char *ptr, size_t size, size_t nitems, void *userdata)
 {
-	char buffer[1024];
+	//char buffer[1024];
 
 	int data_size = size * nitems;
-	snprintf(buffer, sizeof(buffer), "  Header : %d bytes : %.128s", data_size, ptr);
-	log_message(buffer);
+	//snprintf(buffer, sizeof(buffer), "  Header : %d bytes : %.128s", data_size, ptr);
+	//log_message(buffer);
 
 	return data_size;
 }
 
 static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	// Warning: the received data it not NUL-terminated
-	char buffer[1024];
+	size_t data_size = size * nmemb;
 
-	int data_size = size * nmemb;
-	snprintf(buffer, sizeof(buffer), "  Data %d bytes : %.128s", data_size, ptr);
-
-	for (int i=0 ; i<strlen(buffer) ; i++) {
-		if (buffer[i] == '\n') {
-			buffer[i] = '`';
-		}
+	json_string_get_token = (char *)realloc(json_string_get_token, json_string_get_token_len + data_size + 1);
+	if (json_string_get_token == NULL) {
+		// TODO not good ^^
 	}
 
-	log_message(buffer);
+	memcpy(json_string_get_token + json_string_get_token_len, ptr, data_size);
+	json_string_get_token_len += data_size;
+	json_string_get_token[json_string_get_token_len] = '\0';
 
-
-
-	// Even if we didn't display everything, we signal the system we used all received data
 	return data_size;
 }
 
@@ -148,9 +144,12 @@ static void create_token()
 
 	char buffer[2048];
 
+	json_string_get_token_len = 0;
+	json_string_get_token = (char *)calloc(1, 1);
+
 	char url[2048];
 	snprintf(url, sizeof(url), "%soauth/v2/token", config->url);
-	log_message(url);
+	//log_message(url);
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
@@ -161,11 +160,11 @@ static void create_token()
 		char *encoded_login = curl_easy_escape(curl, config->login, 0);
 		char *encoded_password = curl_easy_escape(curl, config->password, 0);
 
-		snprintf(buffer, sizeof(buffer), "username=%s&password=%s", encoded_login, encoded_password);
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "username=%s&password=%s", encoded_login, encoded_password);
+		//log_message(buffer);
 
-		snprintf(buffer, sizeof(buffer), "client_id=%s&client_secret=%s", encoded_client_id, encoded_secret_key);
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "client_id=%s&client_secret=%s", encoded_client_id, encoded_secret_key);
+		//log_message(buffer);
 
 		snprintf(postdata, sizeof(postdata), "grant_type=password&client_id=%s&client_secret=%s&username=%s&password=%s",
 				encoded_client_id, encoded_secret_key, encoded_login, encoded_password);
@@ -175,15 +174,15 @@ static void create_token()
 		curl_free(encoded_login);
 		curl_free(encoded_password);
 
-		log_message(postdata);
+		//log_message(postdata);
 
-		snprintf(buffer, sizeof(buffer), "length post = %d", strlen(postdata));
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "length post = %d", strlen(postdata));
+		//log_message(buffer);
 
 
-		char auth[512];
-		snprintf(auth, sizeof(auth), "%s:%s", config->http_login, config->http_password);
-		log_message(auth);
+		//char auth[512];
+		//snprintf(auth, sizeof(auth), "%s:%s", config->http_login, config->http_password);
+		//log_message(auth);
 
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 
@@ -208,6 +207,28 @@ static void create_token()
 			log_message(buffer);
 
 			goto end;
+		}
+		else {
+			log_message("OAuth token data:");
+
+			json_object *token = json_tokener_parse(json_string_get_token);
+
+			const char *access_token = json_object_get_string(json_object_object_get(token, "access_token"));
+			int expires_in = json_object_get_int(json_object_object_get(token, "expires_in"));
+			const char *refresh_token = json_object_get_string(json_object_object_get(token, "refresh_token"));
+
+			snprintf(buffer, sizeof(buffer), "  > access = %s", access_token);
+			log_message(buffer);
+
+			snprintf(buffer, sizeof(buffer), "  > expires in = %d", expires_in);
+			log_message(buffer);
+
+			snprintf(buffer, sizeof(buffer), "  > refresh = %s", refresh_token);
+			log_message(buffer);
+
+			free(json_string_get_token);
+
+			// TODO we have an oauth token => store it somewhere, and use the API \o/
 		}
 
 		end:
@@ -242,7 +263,6 @@ static int main_handler(int event_type, int param_one, int param_two)
 		}
 		else if (param_one == KEY_NEXT) {
 			load_config();
-
 			create_token();
 
 			/*

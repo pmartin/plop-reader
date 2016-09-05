@@ -33,5 +33,5 @@ belladonna.app: entities/entry.o api.o belladonna.o config.o database.o log.o oa
 
 
 clean:
-	rm -f *.o
+	rm -f *.o entities/*.o
 	rm -f belladonna.app

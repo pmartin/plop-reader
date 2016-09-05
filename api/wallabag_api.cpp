@@ -1,7 +1,7 @@
 #include "wallabag_api.h"
 
 
-void WallabagApi::setConfig(b_config_s *conf)
+void WallabagApi::setConfig(WallabagConfig conf)
 {
 	this->config = conf;
 }
@@ -53,16 +53,16 @@ void WallabagApi::createOAuthToken()
 	this->json_string_get_token = (char *)calloc(1, 1);
 
 	char url[2048];
-	snprintf(url, sizeof(url), "%soauth/v2/token", config->url);
+	snprintf(url, sizeof(url), "%soauth/v2/token", config.url.c_str());
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
 	if (curl) {
 		char postdata[2048];
-		char *encoded_client_id = curl_easy_escape(curl, this->config->client_id, 0);
-		char *encoded_secret_key = curl_easy_escape(curl, this->config->secret_key, 0);
-		char *encoded_login = curl_easy_escape(curl, this->config->login, 0);
-		char *encoded_password = curl_easy_escape(curl, this->config->password, 0);
+		char *encoded_client_id = curl_easy_escape(curl, this->config.client_id.c_str(), 0);
+		char *encoded_secret_key = curl_easy_escape(curl, this->config.secret_key.c_str(), 0);
+		char *encoded_login = curl_easy_escape(curl, this->config.login.c_str(), 0);
+		char *encoded_password = curl_easy_escape(curl, this->config.password.c_str(), 0);
 
 		snprintf(postdata, sizeof(postdata), "grant_type=password&client_id=%s&client_secret=%s&username=%s&password=%s",
 				encoded_client_id, encoded_secret_key, encoded_login, encoded_password);
@@ -83,8 +83,8 @@ void WallabagApi::createOAuthToken()
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
 
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config->http_login);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config->http_password);
+		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
 
 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, WallabagApi::_createAOauthTokenHeaderCallback);
 		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
@@ -161,7 +161,7 @@ void WallabagApi::loadRecentArticles()
 		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
 		snprintf(enries_url, sizeof(enries_url), "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
-				config->url, encoded_access_token, encoded_sort, encoded_order, 1, 15);
+				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 15);
 
 		curl_free(encoded_access_token);
 		curl_free(encoded_sort);
@@ -175,8 +175,8 @@ void WallabagApi::loadRecentArticles()
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
 
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config->http_login);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config->http_password);
+		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_loadRecentArticlesWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);

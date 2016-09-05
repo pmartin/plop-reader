@@ -3,6 +3,7 @@
 
 #include "../belladonna.h"
 
+#include "wallabag_config.h"
 #include "wallabag_oauth_token.h"
 
 
@@ -10,7 +11,7 @@ class WallabagApi
 {
 
 public:
-	void setConfig(b_config_s *conf);
+	void setConfig(WallabagConfig conf);
 
 	void createOAuthToken();
 
@@ -26,7 +27,7 @@ public:
 	static size_t _loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 private:
-	b_config_s *config;
+	WallabagConfig config;
 
 	WallabagOAuthToken oauthToken;
 

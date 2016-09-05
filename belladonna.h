@@ -12,32 +12,14 @@ extern ifont *font;
 extern const int kFontSize;
 
 
-
-// config
-typedef struct b_config_s
-{
-	char *url;
-	char *http_login, *http_password;
-	char *client_id;
-	char *secret_key;
-	char *login, *password;
-} b_config_s;
-
-
 // api
 #include "api/wallabag_api.h"
+#include "api/wallabag_config_loader.h"
+#include "api/wallabag_config.h"
 #include "api/wallabag_oauth_token.h"
 
 // entities
 #include "entities/entry.h"
-
-
-// config
-extern b_config_s *config;
-
-extern void load_config();
-extern void unload_config();
-
 
 // database
 extern void database_drop();

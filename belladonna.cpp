@@ -21,11 +21,6 @@ static int main_handler(int event_type, int param_one, int param_two)
 		log_reset();
 		ClearScreen();
 		FullUpdate();
-
-		/*
-		oauth_token = NULL;
-		*/
-
 		break;
 	case EVT_SHOW:
 
@@ -39,15 +34,12 @@ static int main_handler(int event_type, int param_one, int param_two)
 			database_drop();
 			database_open();
 
-			load_config();
+			WallabagConfigLoader configLoader;
+			WallabagConfig config = configLoader.load();
 
 			wallabag_api.setConfig(config);
 			wallabag_api.createOAuthToken();
 			wallabag_api.loadRecentArticles();
-
-			//create_token();
-
-			//load_recent_articles(config, oauth_token);
 
 			database_display_entries();
 
@@ -66,14 +58,6 @@ static int main_handler(int event_type, int param_one, int param_two)
 
 		break;
 	case EVT_EXIT:
-		unload_config();
-
-		/*
-		if (oauth_token) {
-			destroy_token(oauth_token);
-		}
-		*/
-
 		database_close();
 
 		CloseFont(font);

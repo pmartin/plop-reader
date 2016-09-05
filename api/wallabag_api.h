@@ -6,6 +6,7 @@
 #include "wallabag_config.h"
 #include "wallabag_oauth_token.h"
 
+#include "../repositories/entry_repository.h"
 
 class WallabagApi
 {
@@ -15,7 +16,7 @@ public:
 
 	void createOAuthToken();
 
-	void loadRecentArticles();
+	void loadRecentArticles(EntryRepository repository);
 
 
 	//~WallabagApi();

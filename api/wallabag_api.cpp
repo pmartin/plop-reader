@@ -140,7 +140,7 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 }
 
 
-void WallabagApi::loadRecentArticles()
+void WallabagApi::loadRecentArticles(EntryRepository repository)
 {
 	char buffer[2048];
 	log_message("Chargement des articles...");
@@ -239,7 +239,7 @@ void WallabagApi::loadRecentArticles()
 					entry.preview_picture_url = preview_picture;
 				}
 
-				database_write_entry(entry);
+				repository.persist(entry);
 			}
 		}
 

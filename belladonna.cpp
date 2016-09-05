@@ -6,6 +6,7 @@ const int kFontSize = 16;
 
 
 WallabagApi wallabag_api;
+Database db;
 
 
 static int main_handler(int event_type, int param_one, int param_two)
@@ -31,17 +32,19 @@ static int main_handler(int event_type, int param_one, int param_two)
 			return 1;
 		}
 		else if (param_one == KEY_NEXT) {
-			database_drop();
-			database_open();
+			db.drop();
+			db.open();
 
 			WallabagConfigLoader configLoader;
 			WallabagConfig config = configLoader.load();
 
 			wallabag_api.setConfig(config);
 			wallabag_api.createOAuthToken();
-			wallabag_api.loadRecentArticles();
 
-			database_display_entries();
+			EntryRepository repository(db);
+			wallabag_api.loadRecentArticles(repository);
+
+			database_display_entries(db);
 
 			/*
 			if (step == 0) {
@@ -58,8 +61,6 @@ static int main_handler(int event_type, int param_one, int param_two)
 
 		break;
 	case EVT_EXIT:
-		database_close();
-
 		CloseFont(font);
 		break;
 	default:

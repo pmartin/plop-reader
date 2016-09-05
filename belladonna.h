@@ -18,17 +18,18 @@ extern const int kFontSize;
 #include "api/wallabag_config.h"
 #include "api/wallabag_oauth_token.h"
 
+// database
+#include "database/database.h"
+
 // entities
 #include "entities/entry.h"
 
+// repositories
+#include "repositories/entry_repository.h"
+
+
 // database
-extern void database_drop();
-extern void database_open();
-extern void database_close();
-
-extern void database_write_entry(Entry entry);
-
-void database_display_entries();
+void database_display_entries(Database db);
 
 
 // log

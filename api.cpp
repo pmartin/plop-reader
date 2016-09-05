@@ -42,7 +42,7 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
 		snprintf(enries_url, sizeof(enries_url), "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
-				config->url, encoded_access_token, encoded_sort, encoded_order, 1, 5);
+				config->url, encoded_access_token, encoded_sort, encoded_order, 1, 15);
 
 		curl_free(encoded_access_token);
 		curl_free(encoded_sort);
@@ -92,11 +92,12 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 				const char *created_at = json_object_get_string(json_object_object_get(item, "created_at"));
 				const char *updated_at = json_object_get_string(json_object_object_get(item, "updated_at"));
 				int reading_time = json_object_get_int(json_object_object_get(item, "reading_time")) * 60;
+				const char *preview_picture = json_object_get_string(json_object_object_get(item, "preview_picture"));
 
 				//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
 				//log_message(buffer);
 
-				database_write_entry(id, is_archived, is_starred, title, url, content, created_at, updated_at, reading_time);
+				database_write_entry(id, is_archived, is_starred, title, url, content, created_at, updated_at, reading_time, preview_picture);
 			}
 		}
 

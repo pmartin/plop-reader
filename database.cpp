@@ -13,7 +13,7 @@ static int callback_01(void *not_used, int argc, char **argv, char **col_name)
 	char row_buffer[256];
 
 	strcpy(buffer, " > ");
-	for(int i=0; i<argc && i<20 ; i++) {
+	for(int i=0; i<argc && i<14 ; i++) {
 		const char *short_name = NULL;
 		const char *aliases[][2] = {
 			 {"local_id", "l#"},
@@ -107,7 +107,7 @@ void database_write_entry(
 		int remote_id, int is_archived, int is_starred,
 		const char *title, const char *url, const char *content,
 		const char *created_at, const char *updated_at,
-		int reading_time
+		int reading_time, const char *preview_picture_url
 	)
 {
 	char buffer[2048];
@@ -120,14 +120,14 @@ insert into entries (
     title, url, content, 
     remote_created_at, remote_updated_at,
     local_created_at, local_updated_at,
-    reading_time
+    reading_time, preview_picture_url
 )
 values (
     :remote_id, :is_archived, :is_starred, 
     :title, :url, :content,
     :remote_created_at, :remote_updated_at,
     datetime(), datetime(),
-    :reading_time
+    :reading_time, :preview_picture_url
 )
 )sql";
 	if (sqlite3_prepare(db, sql, -1, &stmt, &tail) != SQLITE_OK) {
@@ -173,6 +173,19 @@ values (
 	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":reading_time"), reading_time) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
+	}
+
+	if (preview_picture_url != NULL) {
+		if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_url"), preview_picture_url, strlen(preview_picture_url), SQLITE_STATIC) != SQLITE_OK) {
+			snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
+			log_message(buffer);
+		}
+	}
+	else {
+		if (sqlite3_bind_null(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_url")) != SQLITE_OK) {
+			snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
+			log_message(buffer);
+		}
 	}
 
 	if (sqlite3_step(stmt) != SQLITE_DONE) {

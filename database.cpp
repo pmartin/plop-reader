@@ -71,7 +71,7 @@ void database_open()
 	const char *sql = R"sql(
 create table entries (
     local_id integer primary key,
-    remote_id integer not null,
+    remote_id text not null,
     
     local_is_archived integer not null default 0,
     remote_is_archived integer not null default 0,
@@ -103,12 +103,7 @@ create table entries (
 }
 
 
-void database_write_entry(
-		int remote_id, int is_archived, int is_starred,
-		const char *title, const char *url, const char *content,
-		const char *created_at, const char *updated_at,
-		int reading_time, const char *preview_picture_url
-	)
+void database_write_entry(Entry entry)
 {
 	char buffer[2048];
 
@@ -138,45 +133,45 @@ values (
 	//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", remote_id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
 	//log_message(buffer);
 
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":remote_id"), remote_id) != SQLITE_OK) {
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_id"), entry.remote_id.c_str(), entry.remote_id.length(), SQLITE_STATIC) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":is_archived"), is_archived) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":is_archived"), entry.remote_is_archived) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":is_starred"), is_starred) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":is_starred"), entry.remote_is_starred) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":title"), title, strlen(title), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":title"), entry.title.c_str(), entry.title.length(), SQLITE_STATIC) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":url"), url, strlen(url), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":url"), entry.url.c_str(), entry.url.length(), SQLITE_STATIC) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":content"), content, strlen(content), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":content"), entry.content.c_str(), entry.content.length(), SQLITE_STATIC) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_created_at"), created_at, strlen(created_at), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_created_at"), entry.remote_created_at.c_str(), entry.remote_created_at.length(), SQLITE_STATIC) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_updated_at"), updated_at, strlen(updated_at), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_updated_at"), entry.remote_updated_at.c_str(), entry.remote_updated_at.length(), SQLITE_STATIC) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":reading_time"), reading_time) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":reading_time"), entry.reading_time) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 		log_message(buffer);
 	}
 
-	if (preview_picture_url != NULL) {
-		if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_url"), preview_picture_url, strlen(preview_picture_url), SQLITE_STATIC) != SQLITE_OK) {
+	if (entry.preview_picture_url.length() > 0) {
+		if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_url"), entry.preview_picture_url.c_str(), entry.preview_picture_url.length(), SQLITE_STATIC) != SQLITE_OK) {
 			snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(db));
 			log_message(buffer);
 		}

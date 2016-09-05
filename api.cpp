@@ -97,7 +97,29 @@ void load_recent_articles(b_config_s *conf, b_oauth_token_s *token)
 				//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
 				//log_message(buffer);
 
-				database_write_entry(id, is_archived, is_starred, title, url, content, created_at, updated_at, reading_time, preview_picture);
+				Entry entry;
+				char tmp[128];
+				snprintf(tmp, sizeof(tmp), "%d", id);
+				entry.remote_id = tmp;
+				entry.remote_is_archived = is_archived;
+				entry.remote_is_starred = is_starred;
+				if (title != NULL) {
+					entry.title = title;
+				}
+				if (url != NULL) {
+					entry.url = url;
+				}
+				if (content != NULL) {
+					entry.content = content;
+				}
+				entry.remote_created_at = created_at;
+				entry.remote_updated_at = updated_at;
+				entry.reading_time = reading_time;
+				if (preview_picture != NULL) {
+					entry.preview_picture_url = preview_picture;
+				}
+
+				database_write_entry(entry);
 			}
 		}
 

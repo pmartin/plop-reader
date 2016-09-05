@@ -6,8 +6,10 @@ CFLAGS = -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializers -Wshadow 
 
 all: belladonna.app
 
+entities/entry.o: belladonna.h entities/entry.h entities/entry.cpp
+	$(CC) -c entities/entry.cpp $(CFLAGS) -o entities/entry.o -g -gdwarf-3
 
-api.o: belladonna.h api.cpp
+api.o: belladonna.h entities/entry.h api.cpp
 	$(CC) -c api.cpp $(CFLAGS) -o api.o -g -gdwarf-3
 
 belladonna.o: belladonna.h belladonna.cpp
@@ -26,8 +28,8 @@ oauth.o: belladonna.h oauth.cpp
 	$(CC) -c oauth.cpp $(CFLAGS) -o oauth.o -g -gdwarf-3
 
 
-belladonna.app: api.o belladonna.o config.o database.o log.o oauth.o
-	$(CC) api.o belladonna.o config.o database.o log.o oauth.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
+belladonna.app: entities/entry.o api.o belladonna.o config.o database.o log.o oauth.o
+	$(CC) entities/entry.o api.o belladonna.o config.o database.o log.o oauth.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
 
 
 clean:

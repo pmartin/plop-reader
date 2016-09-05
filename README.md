@@ -25,4 +25,5 @@ If you are using Eclipse, add the following includes:
 ```
 ${PBSDK}/arm-obreey-linux-gnueabi/sysroot/usr/include
 ${PBSDK}/arm-obreey-linux-gnueabi/sysroot/usr/local/include
+${PBSDK}/arm-obreey-linux-gnueabi/include/c++/4.8.1
 ```

@@ -1,5 +1,5 @@
 belladonna.app
-/*.o
+*.o
 
 /files/config.json
 

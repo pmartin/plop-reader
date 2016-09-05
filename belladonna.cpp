@@ -5,6 +5,9 @@ ifont *font;
 const int kFontSize = 16;
 
 
+WallabagApi wallabag_api;
+
+
 static int main_handler(int event_type, int param_one, int param_two)
 {
 	int result = 0;
@@ -19,7 +22,9 @@ static int main_handler(int event_type, int param_one, int param_two)
 		ClearScreen();
 		FullUpdate();
 
+		/*
 		oauth_token = NULL;
+		*/
 
 		break;
 	case EVT_SHOW:
@@ -35,9 +40,14 @@ static int main_handler(int event_type, int param_one, int param_two)
 			database_open();
 
 			load_config();
-			create_token();
 
-			load_recent_articles(config, oauth_token);
+			wallabag_api.setConfig(config);
+			wallabag_api.createOAuthToken();
+			wallabag_api.loadRecentArticles();
+
+			//create_token();
+
+			//load_recent_articles(config, oauth_token);
 
 			database_display_entries();
 
@@ -58,9 +68,11 @@ static int main_handler(int event_type, int param_one, int param_two)
 	case EVT_EXIT:
 		unload_config();
 
+		/*
 		if (oauth_token) {
 			destroy_token(oauth_token);
 		}
+		*/
 
 		database_close();
 

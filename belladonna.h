@@ -23,23 +23,13 @@ typedef struct b_config_s
 	char *login, *password;
 } b_config_s;
 
-// oauth
-typedef struct b_oauth_token_s
-{
-	char *access_token;
-	char *refresh_token;
-	int expires_at;
-} b_oauth_token_s;
 
-
+// api
+#include "api/wallabag_api.h"
+#include "api/wallabag_oauth_token.h"
 
 // entities
 #include "entities/entry.h"
-
-
-
-// api
-extern void load_recent_articles(b_config_s *conf, b_oauth_token_s *token);
 
 
 // config
@@ -62,14 +52,6 @@ void database_display_entries();
 // log
 extern void log_reset();
 extern void log_message(const char *msg);
-
-
-// oauth
-extern b_oauth_token_s *oauth_token;
-
-extern void create_token();
-extern void destroy_token(b_oauth_token_s *token);
-
 
 
 #endif /* BELLADONNA_H_ */

@@ -6,11 +6,14 @@ CFLAGS = -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializers -Wshadow 
 
 all: belladonna.app
 
+api/wallabag_api.o: belladonna.h api/wallabag_api.h api/wallabag_api.cpp
+	$(CC) -c api/wallabag_api.cpp $(CFLAGS) -o api/wallabag_api.o -g -gdwarf-3
+
+api/wallabag_oauth_token.o: belladonna.h api/wallabag_oauth_token.h api/wallabag_oauth_token.cpp
+	$(CC) -c api/wallabag_oauth_token.cpp $(CFLAGS) -o api/wallabag_oauth_token.o -g -gdwarf-3
+
 entities/entry.o: belladonna.h entities/entry.h entities/entry.cpp
 	$(CC) -c entities/entry.cpp $(CFLAGS) -o entities/entry.o -g -gdwarf-3
-
-api.o: belladonna.h entities/entry.h api.cpp
-	$(CC) -c api.cpp $(CFLAGS) -o api.o -g -gdwarf-3
 
 belladonna.o: belladonna.h belladonna.cpp
 	$(CC) -c belladonna.cpp $(CFLAGS) -o belladonna.o -g -gdwarf-3
@@ -24,14 +27,12 @@ database.o: belladonna.h database.cpp
 log.o: belladonna.h log.cpp
 	$(CC) -c log.cpp $(CFLAGS) -o log.o -g -gdwarf-3
 
-oauth.o: belladonna.h oauth.cpp
-	$(CC) -c oauth.cpp $(CFLAGS) -o oauth.o -g -gdwarf-3
 
-
-belladonna.app: entities/entry.o api.o belladonna.o config.o database.o log.o oauth.o
-	$(CC) entities/entry.o api.o belladonna.o config.o database.o log.o oauth.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
+belladonna.app: api/wallabag_api.o api/wallabag_oauth_token.o entities/entry.o belladonna.o config.o database.o log.o
+	$(CC) api/wallabag_api.o api/wallabag_oauth_token.o entities/entry.o belladonna.o config.o database.o log.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
 
 
 clean:
+	rm -f *.o api/*.o
 	rm -f *.o entities/*.o
 	rm -f belladonna.app

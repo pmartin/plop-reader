@@ -4,6 +4,7 @@
 #include "../belladonna.h"
 
 #include "wallabag_config.h"
+#include "wallabag_entities_factory.h"
 #include "wallabag_oauth_token.h"
 
 #include "../repositories/entry_repository.h"
@@ -31,6 +32,8 @@ private:
 	WallabagConfig config;
 
 	WallabagOAuthToken oauthToken;
+
+	WallabagEntitiesFactory entitiesFactory;
 
 	// For createOAuthToken
 	int json_string_get_token_len;

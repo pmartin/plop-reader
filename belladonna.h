@@ -34,6 +34,9 @@ extern Application app;
 // repositories
 #include "repositories/entry_repository.h"
 
+// gui
+#include "gui/gui.h"
+
 
 // database
 void database_display_entries(EntryRepository entryRepository);

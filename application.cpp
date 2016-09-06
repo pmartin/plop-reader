@@ -13,6 +13,9 @@ void Application::init()
 	WallabagConfigLoader configLoader;
 	WallabagConfig config = configLoader.load();
 	wallabag_api.setConfig(config);
+
+
+	gui.init();
 }
 
 
@@ -20,4 +23,10 @@ void Application::loadRecentArticles()
 {
 	wallabag_api.createOAuthToken();
 	wallabag_api.loadRecentArticles(entryRepository);
+}
+
+
+void Application::show()
+{
+	gui.show();
 }

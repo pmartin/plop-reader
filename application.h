@@ -8,6 +8,8 @@
 
 #include "database/database.h"
 
+#include "gui/gui.h"
+
 #include "repositories/entry_repository.h"
 
 
@@ -27,6 +29,9 @@ public:
 	}
 
 
+	void show();
+
+
 	// TODO remove this method
 	EntryRepository getEntryRepository() {
 		return entryRepository;
@@ -36,6 +41,7 @@ private:
 	Database db;
 	WallabagApi wallabag_api;
 	EntryRepository entryRepository;
+	Gui gui;
 
 };
 

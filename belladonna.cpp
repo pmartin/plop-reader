@@ -19,19 +19,24 @@ static int main_handler(int event_type, int param_one, int param_two)
 		font = OpenFont("LiberationSans", kFontSize, 1);
 		SetFont(font, BLACK);
 		log_reset();
-		ClearScreen();
-		FullUpdate();
+		//ClearScreen();
+		//FullUpdate();
 
-		app.init();
-
+		result = 1;
 		break;
 	case EVT_SHOW:
 
+		app.init();
+		app.show();
+
+		database_display_entries(app.getEntryRepository());
+
+		result = 1;
 		break;
 	case EVT_KEYPRESS:
 		if (param_one == KEY_PREV) {
 			CloseApp();
-			return 1;
+			result = 1;
 		}
 		else if (param_one == KEY_NEXT) {
 			//app.loadRecentArticles();
@@ -48,12 +53,12 @@ static int main_handler(int event_type, int param_one, int param_two)
 			//*/
 
 			step++;
-			return 1;
+			result = 1;
 		}
-
 		break;
 	case EVT_EXIT:
 		CloseFont(font);
+		result = 1;
 		break;
 	default:
 		break;

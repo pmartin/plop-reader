@@ -38,10 +38,6 @@ extern Application app;
 #include "gui/gui.h"
 
 
-// database
-void database_display_entries(EntryRepository entryRepository);
-
-
 // log
 extern void log_reset();
 extern void log_message(const char *msg);

@@ -16,7 +16,7 @@
 class Application
 {
 public:
-	Application() : entryRepository(db) {
+	Application() : entryRepository(db), gui() {
 		db.open();
 	}
 

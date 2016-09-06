@@ -2,7 +2,11 @@
 #define GUI_GUI_H_
 
 
+#include <vector>
+
 #include "inkview.h"
+
+#include "../entities/entry.h"
 
 
 extern void log_message(const char *msg);
@@ -16,11 +20,17 @@ public:
 
 	void init();
 
-	void show();
+	void show(int countAllEntries, std::vector<Entry> entries);
 
 private:
 	ifont *titleFont = NULL;
-	const int titleFontSize = 40;
+	int titleFontSize = 0;
+
+	ifont *entryTitleFont = NULL;
+	int entryTitleFontSize = 0;
+
+	ifont *entryInfosFont = NULL;
+	int entryInfosFontSize = 0;
 
 };
 

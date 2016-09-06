@@ -126,7 +126,7 @@ offset :offset
 		//log_message(buffer);
 	}
 
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":limit"), 10) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":limit"), 8) != SQLITE_OK) {
 		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
 		//log_message(buffer);
 	}

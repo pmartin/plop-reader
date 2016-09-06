@@ -28,5 +28,8 @@ void Application::loadRecentArticles()
 
 void Application::show()
 {
-	gui.show();
+	int countAllEntries = entryRepository.countAllEntries();
+	std::vector<Entry> entries = entryRepository.list();
+
+	gui.show(countAllEntries, entries);
 }

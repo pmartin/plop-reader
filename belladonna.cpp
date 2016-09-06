@@ -29,7 +29,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 		app.init();
 		app.show();
 
-		database_display_entries(app.getEntryRepository());
+		//database_display_entries(app.getEntryRepository());
 
 		result = 1;
 		break;
@@ -41,7 +41,9 @@ static int main_handler(int event_type, int param_one, int param_two)
 		else if (param_one == KEY_NEXT) {
 			//app.loadRecentArticles();
 
-			database_display_entries(app.getEntryRepository());
+			//database_display_entries(app.getEntryRepository());
+
+			app.show();
 
 			/*
 			if (step == 0) {

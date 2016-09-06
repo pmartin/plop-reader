@@ -9,6 +9,15 @@
 extern void log_message(const char *msg);
 
 
+class Internal
+{
+public:
+	bool isNull;
+	std::string key;
+	std::string value;
+};
+
+
 class Database
 {
 public:
@@ -28,8 +37,13 @@ private:
 	const char *DB_FILE = USERDATA TEMPDIR "/belladonna.sqlite3";
 	sqlite3 *db;
 
-	void createEntriesTable();
-	void createInternalsTable();
+	void migration_001_createInternalsTable();
+	void migration_002_createEntriesTable();
+
+	void saveInternal(std::string key, std::string value);
+	Internal selectInternal(std::string key);
+	void insertInternal(std::string key, std::string value);
+	void updateInternal(std::string key, std::string value);
 
 };
 

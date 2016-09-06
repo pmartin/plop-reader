@@ -62,6 +62,7 @@ void Database::open(void)
 
 void Database::runMigrations(void)
 {
+	this->createInternalsTable();
 	this->createEntriesTable();
 }
 
@@ -96,6 +97,25 @@ create table entries (
 	preview_picture_url text null,
 	preview_picture_type integer null,
 	preview_picture_path text null
+)
+)sql";
+	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail creating table : %s", err_msg);
+		log_message(buffer);
+	}
+}
+
+
+void Database::createInternalsTable()
+{
+	char *err_msg;
+	char buffer[2048];
+	const char *sql = R"sql(
+create table internals (
+	key integer primary key,
+    value text,
+    created_at text not null,
+    updated_at text not null
 )
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {

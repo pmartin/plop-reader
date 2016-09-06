@@ -29,6 +29,7 @@ private:
 	sqlite3 *db;
 
 	void createEntriesTable();
+	void createInternalsTable();
 
 };
 

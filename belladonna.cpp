@@ -25,7 +25,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 
 		// TODO instead of dropping + creating the DB, we should detect if its structure is up-to-date
 		// and run migrations only if it is not ;-)
-		db.drop();
+		//db.drop();
 		db.open();
 		db.runMigrations();
 
@@ -45,10 +45,10 @@ static int main_handler(int event_type, int param_one, int param_two)
 			WallabagConfig config = configLoader.load();
 
 			wallabag_api.setConfig(config);
-			wallabag_api.createOAuthToken();
+			//wallabag_api.createOAuthToken();
 
-			EntryRepository repository(db);
-			wallabag_api.loadRecentArticles(repository);
+			//EntryRepository repository(db);
+			//wallabag_api.loadRecentArticles(repository);
 
 			database_display_entries(db);
 

@@ -1,7 +1,7 @@
 #ifndef API_WALLABAG_API_H_
 #define API_WALLABAG_API_H_
 
-#include "../belladonna.h"
+#include "curl/curl.h"
 
 #include "wallabag_config.h"
 #include "wallabag_entities_factory.h"

@@ -5,8 +5,7 @@ ifont *font;
 const int kFontSize = 16;
 
 
-WallabagApi wallabag_api;
-Database db;
+Application app;
 
 
 static int main_handler(int event_type, int param_one, int param_two)
@@ -23,11 +22,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 		ClearScreen();
 		FullUpdate();
 
-		// TODO instead of dropping + creating the DB, we should detect if its structure is up-to-date
-		// and run migrations only if it is not ;-)
-		//db.drop();
-		db.open();
-		db.runMigrations();
+		app.init();
 
 		break;
 	case EVT_SHOW:
@@ -39,18 +34,11 @@ static int main_handler(int event_type, int param_one, int param_two)
 			return 1;
 		}
 		else if (param_one == KEY_NEXT) {
-
-
-			WallabagConfigLoader configLoader;
-			WallabagConfig config = configLoader.load();
-
-			wallabag_api.setConfig(config);
 			//wallabag_api.createOAuthToken();
 
-			EntryRepository repository(db);
-			//wallabag_api.loadRecentArticles(repository);
+			//app.loadRecentArticles();
 
-			database_display_entries(repository);
+			database_display_entries(app.getEntryRepository());
 
 			/*
 			if (step == 0) {

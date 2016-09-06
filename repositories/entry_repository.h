@@ -11,7 +11,6 @@
 class EntryRepository
 {
 public:
-
 	EntryRepository(Database &d) : db(d) {}
 
 	void persist(Entry entry);

@@ -12,6 +12,12 @@ extern ifont *font;
 extern const int kFontSize;
 
 
+#include "application.h"
+
+
+extern Application app;
+
+
 // api
 #include "api/wallabag_api.h"
 #include "api/wallabag_config_loader.h"

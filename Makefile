@@ -31,6 +31,10 @@ entities/entry.o: belladonna.h entities/entry.h entities/entry.cpp
 repositories/entry_repository.o: belladonna.h repositories/entry_repository.h repositories/entry_repository.cpp
 	$(CC) -c repositories/entry_repository.cpp $(CFLAGS) -o repositories/entry_repository.o
 
+
+application.o: application.h application.cpp
+	$(CC) -c application.cpp $(CFLAGS) -o application.o
+
 belladonna.o: belladonna.h belladonna.cpp
 	$(CC) -c belladonna.cpp $(CFLAGS) -o belladonna.o
 
@@ -41,8 +45,8 @@ log.o: belladonna.h log.cpp
 	$(CC) -c log.cpp $(CFLAGS) -o log.o
 
 
-belladonna.app: api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o repositories/entry_repository.o belladonna.o database.o log.o
-	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o repositories/entry_repository.o belladonna.o database.o log.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
+belladonna.app: api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o repositories/entry_repository.o application.o belladonna.o database.o log.o
+	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o repositories/entry_repository.o application.o belladonna.o database.o log.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
 
 
 clean:

@@ -165,3 +165,25 @@ offset :offset
 }
 
 
+int EntryRepository::countAllEntries()
+{
+	const char *sql = "select count(*) from entries";
+	sqlite3_stmt *stmt;
+	const char *tail;
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	int count = -1;
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		count = sqlite3_column_int(stmt, 0);
+	}
+
+	sqlite3_finalize(stmt);
+
+	return count;
+}
+
+

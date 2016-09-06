@@ -17,6 +17,7 @@ public:
 	void persist(Entry entry);
 
 	std::vector<Entry> list();
+	int countAllEntries();
 
 private:
 	Database &db;

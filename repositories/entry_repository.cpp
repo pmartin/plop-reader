@@ -86,19 +86,80 @@ values (
 }
 
 
-Entry *EntryRepository::list()
+std::vector<Entry> EntryRepository::list()
 {
-	Entry *entries = NULL;
+	std::vector<Entry> entries;
 
-	char *err_msg;
+	//char buffer[2048];
 
-	char buffer[2048];
+	const char *sql = R"sql(
+select 
+    local_id, 
+    remote_id, 
+    local_is_archived, 
+    remote_is_archived,
+    local_is_starred,
+    remote_is_starred,
+    title,
+    url,
+    content,
+    local_created_at,
+    remote_created_at,
+    local_updated_at,
+    remote_updated_at,
+    reading_time,
+    preview_picture_url,
+    preview_picture_type,
+    preview_picture_path
+from entries 
+order by remote_created_at desc 
+limit :limit 
+offset :offset
+)sql";
 
-	const char *sql = "select * from entries order by remote_created_at desc limit 10 offset 0";
-	if (sqlite3_exec(this->db.getDb(), sql, Database::callback_debug_log, 0, &err_msg) != SQLITE_OK) {
-		snprintf(buffer, sizeof(buffer), "Fail selecting : %s", err_msg);
-		log_message(buffer);
+	sqlite3_stmt *stmt;
+	const char *tail;
+	int result;
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
 	}
+
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":limit"), 10) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":offset"), 0) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	while ((result = sqlite3_step(stmt)) == SQLITE_ROW) {
+		Entry entry;
+		const char *tmp;
+
+		entry.id = sqlite3_column_int(stmt, 0);
+		entry.remote_id = (const char *)sqlite3_column_text(stmt, 1);
+		entry.local_is_archived = sqlite3_column_int(stmt, 2);
+		entry.remote_is_archived = sqlite3_column_int(stmt, 3);
+		entry.local_is_starred = sqlite3_column_int(stmt, 4);
+		entry.remote_is_starred = sqlite3_column_int(stmt, 5);
+		entry.title = (const char *)sqlite3_column_text(stmt, 6);
+		entry.url = (const char *)sqlite3_column_text(stmt, 7);
+		entry.content = (const char *)sqlite3_column_text(stmt, 8);
+		entry.local_created_at = (const char *)sqlite3_column_text(stmt, 9);
+		entry.remote_created_at = ((tmp = (const char *)sqlite3_column_text(stmt, 10))) ? tmp : std::string();
+		entry.local_updated_at = (const char *)sqlite3_column_text(stmt, 11);
+		entry.remote_updated_at = ((tmp = (const char *)sqlite3_column_text(stmt, 12))) ? tmp : std::string();
+		entry.reading_time = sqlite3_column_int(stmt, 13);
+		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
+		entry.preview_picture_type = sqlite3_column_int(stmt, 15);
+		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
+
+		entries.push_back(entry);
+	}
+	sqlite3_finalize(stmt);
 
 	return entries;
 }

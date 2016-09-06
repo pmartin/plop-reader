@@ -2,6 +2,8 @@
 #define REPOSITORIES_ENTRY_REPOSITORY_H_
 
 
+#include <vector>
+
 #include "../database/database.h"
 #include "../entities/entry.h"
 
@@ -14,7 +16,7 @@ public:
 
 	void persist(Entry entry);
 
-	Entry *list();
+	std::vector<Entry> list();
 
 private:
 	Database &db;

@@ -18,8 +18,6 @@ void Application::init()
 
 void Application::loadRecentArticles()
 {
-	// TODO this will not quite work if no oauth token has been created before
-	// => we must create an oauth token on-the-fly
-	// => or store one in DB or somewhere
+	wallabag_api.createOAuthToken();
 	wallabag_api.loadRecentArticles(entryRepository);
 }

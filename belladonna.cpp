@@ -34,8 +34,6 @@ static int main_handler(int event_type, int param_one, int param_two)
 			return 1;
 		}
 		else if (param_one == KEY_NEXT) {
-			//wallabag_api.createOAuthToken();
-
 			//app.loadRecentArticles();
 
 			database_display_entries(app.getEntryRepository());

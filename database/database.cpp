@@ -46,7 +46,11 @@ int Database::callback_debug_log(void *not_used, int argc, char **argv, char **c
 
 void Database::drop(void)
 {
+	sqlite3_close(this->db);
+
 	iv_unlink(Database::DB_FILE);
+
+	this->open();
 }
 
 

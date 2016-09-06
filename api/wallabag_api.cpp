@@ -42,7 +42,6 @@ size_t WallabagApi::_createAOauthTokenWriteCallback(char *ptr, size_t size, size
 
 void WallabagApi::createOAuthToken()
 {
-
 	CURL *curl;
 	CURLcode res;
 
@@ -121,6 +120,89 @@ void WallabagApi::createOAuthToken()
 }
 
 
+void WallabagApi::refreshOAuthToken()
+{
+	CURL *curl;
+	CURLcode res;
+
+	if (this->oauthToken.expires_at > time(NULL) - 60) {
+		// The OAuth token expires in more than 1 minute => no need to refresh it now
+		return;
+	}
+
+	char buffer[2048];
+	log_message("Refreshing OAuth token...");
+
+	this->json_string_get_token_len = 0;
+	this->json_string_get_token = (char *)calloc(1, 1);
+
+	char url[2048];
+	snprintf(url, sizeof(url), "%soauth/v2/token", config.url.c_str());
+
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+	if (curl) {
+		char postdata[2048];
+		char *encoded_client_id = curl_easy_escape(curl, this->config.client_id.c_str(), 0);
+		char *encoded_secret_key = curl_easy_escape(curl, this->config.secret_key.c_str(), 0);
+		char *encoded_refresh_token = curl_easy_escape(curl, this->oauthToken.refresh_token.c_str(), 0);
+
+		snprintf(postdata, sizeof(postdata), "grant_type=refresh_token&client_id=%s&client_secret=%s&refresh_token=%s",
+				encoded_client_id, encoded_secret_key, encoded_refresh_token);
+
+		curl_free(encoded_client_id);
+		curl_free(encoded_secret_key);
+		curl_free(encoded_refresh_token);
+
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
+
+		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+
+		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, WallabagApi::_createAOauthTokenHeaderCallback);
+		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_createAOauthTokenWriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK) {
+			snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
+			log_message(buffer);
+
+			goto end;
+		}
+		else {
+			json_object *json_token = json_tokener_parse(json_string_get_token);
+
+			const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
+			int expires_in = json_object_get_int(json_object_object_get(json_token, "expires_in"));
+			const char *refresh_token = json_object_get_string(json_object_object_get(json_token, "refresh_token"));
+
+			this->oauthToken.access_token = access_token;
+			this->oauthToken.refresh_token = refresh_token;
+			this->oauthToken.expires_at = time(NULL) + expires_in;
+		}
+
+		end:
+		curl_easy_cleanup(curl);
+	}
+
+	curl_global_cleanup();
+
+	free(this->json_string_get_token);
+}
+
+
 size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	WallabagApi *that = (WallabagApi *)userdata;
@@ -142,6 +224,8 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 
 void WallabagApi::loadRecentArticles(EntryRepository repository)
 {
+	this->refreshOAuthToken();
+
 	char buffer[2048];
 	log_message("Chargement des articles...");
 

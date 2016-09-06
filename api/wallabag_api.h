@@ -16,6 +16,7 @@ public:
 	void setConfig(WallabagConfig conf);
 
 	void createOAuthToken();
+	void refreshOAuthToken();
 
 	void loadRecentArticles(EntryRepository repository);
 

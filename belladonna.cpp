@@ -22,6 +22,13 @@ static int main_handler(int event_type, int param_one, int param_two)
 		log_reset();
 		ClearScreen();
 		FullUpdate();
+
+		// TODO instead of dropping + creating the DB, we should detect if its structure is up-to-date
+		// and run migrations only if it is not ;-)
+		db.drop();
+		db.open();
+		db.runMigrations();
+
 		break;
 	case EVT_SHOW:
 
@@ -32,8 +39,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 			return 1;
 		}
 		else if (param_one == KEY_NEXT) {
-			db.drop();
-			db.open();
+
 
 			WallabagConfigLoader configLoader;
 			WallabagConfig config = configLoader.load();

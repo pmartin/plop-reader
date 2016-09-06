@@ -18,6 +18,8 @@ public:
 	void drop(void);
 	void open(void);
 
+	void runMigrations(void);
+
 	sqlite3 *getDb() { return this->db; }
 
 	static int callback_debug_log(void *not_used, int argc, char **argv, char **col_name);
@@ -26,6 +28,7 @@ private:
 	const char *DB_FILE = USERDATA TEMPDIR "/belladonna.sqlite3";
 	sqlite3 *db;
 
+	void createEntriesTable();
 
 };
 

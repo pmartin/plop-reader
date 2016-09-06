@@ -52,16 +52,24 @@ void Database::drop(void)
 
 void Database::open(void)
 {
-	char *err_msg;
 	char buffer[2048];
-
-	log_message("Create database + tables...");
-
 	if (sqlite3_open(Database::DB_FILE, &this->db)) {
 		snprintf(buffer, sizeof(buffer), "Fail opening DB : %s", sqlite3_errmsg(this->db));
 		log_message(buffer);
 	}
+}
 
+
+void Database::runMigrations(void)
+{
+	this->createEntriesTable();
+}
+
+
+void Database::createEntriesTable()
+{
+	char *err_msg;
+	char buffer[2048];
 	const char *sql = R"sql(
 create table entries (
 	local_id integer primary key,

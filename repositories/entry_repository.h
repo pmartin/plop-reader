@@ -14,6 +14,8 @@ public:
 
 	void persist(Entry entry);
 
+	Entry *list();
+
 private:
 	Database &db;
 

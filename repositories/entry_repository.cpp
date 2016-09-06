@@ -84,3 +84,23 @@ values (
 	}
 	sqlite3_finalize(stmt);
 }
+
+
+Entry *EntryRepository::list()
+{
+	Entry *entries = NULL;
+
+	char *err_msg;
+
+	char buffer[2048];
+
+	const char *sql = "select * from entries order by remote_created_at desc limit 10 offset 0";
+	if (sqlite3_exec(this->db.getDb(), sql, Database::callback_debug_log, 0, &err_msg) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail selecting : %s", err_msg);
+		log_message(buffer);
+	}
+
+	return entries;
+}
+
+

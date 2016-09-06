@@ -47,10 +47,10 @@ static int main_handler(int event_type, int param_one, int param_two)
 			wallabag_api.setConfig(config);
 			//wallabag_api.createOAuthToken();
 
-			//EntryRepository repository(db);
+			EntryRepository repository(db);
 			//wallabag_api.loadRecentArticles(repository);
 
-			database_display_entries(db);
+			database_display_entries(repository);
 
 			/*
 			if (step == 0) {

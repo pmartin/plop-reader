@@ -30,7 +30,7 @@ extern const int kFontSize;
 
 
 // database
-void database_display_entries(Database db);
+void database_display_entries(EntryRepository entryRepository);
 
 
 // log

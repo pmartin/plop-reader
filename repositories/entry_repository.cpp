@@ -86,7 +86,7 @@ values (
 }
 
 
-std::vector<Entry> EntryRepository::list()
+std::vector<Entry> EntryRepository::list(int limit, int offset)
 {
 	std::vector<Entry> entries;
 
@@ -126,11 +126,11 @@ offset :offset
 		//log_message(buffer);
 	}
 
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":limit"), 8) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":limit"), limit) != SQLITE_OK) {
 		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
 		//log_message(buffer);
 	}
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":offset"), 0) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":offset"), offset) != SQLITE_OK) {
 		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
 		//log_message(buffer);
 	}

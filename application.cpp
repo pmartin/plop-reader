@@ -27,8 +27,11 @@ void Application::loadRecentArticles()
 
 void Application::show()
 {
+	int page = 0;
+	int perPage = 8;
+
 	int countAllEntries = entryRepository.countAllEntries();
-	std::vector<Entry> entries = entryRepository.list();
+	std::vector<Entry> entries = entryRepository.list(perPage, page * perPage);
 
 	gui.show(countAllEntries, entries);
 }
@@ -48,7 +51,22 @@ void Application::touchEndEvent(int x, int y)
 
 void Application::keypressEvent(int key)
 {
-	gui.keypressEvent(key);
+	//gui.keypressEvent(key);
+
+	int page;
+	int perPage = 8;
+
+	if (key == KEY_PREV) {
+		page = 0;
+	}
+	else if (key == KEY_NEXT) {
+		page = 1;
+	}
+
+	int countAllEntries = entryRepository.countAllEntries();
+	std::vector<Entry> entries = entryRepository.list(perPage, page * perPage);
+
+	gui.show(countAllEntries, entries);
 }
 
 

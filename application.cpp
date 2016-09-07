@@ -20,8 +20,10 @@ void Application::init()
 
 void Application::loadRecentArticles()
 {
-	wallabag_api.createOAuthToken();
+	Message(ICON_INFORMATION, "Working...", "Downloading most recent entries from API...", 3*1000);
+
 	wallabag_api.loadRecentArticles(entryRepository);
+	show();
 }
 
 

@@ -1,10 +1,9 @@
 #include "gui.h"
 
 #include "../application.h"
-extern Application app;
 
 
-Gui::Gui()
+Gui::Gui(Application &aapp) : app(aapp)
 {
 
 }
@@ -183,7 +182,7 @@ void Gui::touchEndEvent(int x, int y)
 	else if (syncButton.hit(x, y)) {
 		statusBarText("Touch END event at (%d;%d) => sync", x, y);
 
-		Message(ICON_INFORMATION, "TODO!", "One day, this will sync posts between this ereader and the server...", 2*1000);
+		app.loadRecentArticles();
 	}
 	else if (menuButton.hit(x, y)) {
 		statusBarText("Touch END event at (%d;%d) => menu", x, y);

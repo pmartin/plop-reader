@@ -12,13 +12,15 @@
 #include "gui_list_item_entry.h"
 
 
+class Application;
+
 extern void log_message(const char *msg);
 
 
 class Gui
 {
 public:
-	Gui();
+	Gui(Application &aapp);
 	~Gui();
 
 	void init();
@@ -54,6 +56,8 @@ private:
 	GuiButton menuButton;
 
 	std::vector<GuiListItemEntry> entriesItems;
+
+	Application &app;
 
 };
 

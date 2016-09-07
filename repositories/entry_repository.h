@@ -15,6 +15,8 @@ public:
 
 	void persist(Entry entry);
 
+	void deleteAll();
+
 	std::vector<Entry> list(int limit, int offset);
 	int countAllEntries();
 

@@ -86,6 +86,18 @@ values (
 }
 
 
+void EntryRepository::deleteAll()
+{
+	char *err_msg;
+	char buffer[2048];
+	const char *sql = "delete from entries";
+	if (sqlite3_exec(this->db.getDb(), sql, NULL, 0, &err_msg) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail deleting all from 'entries' table : %s", err_msg);
+		log_message(buffer);
+	}
+}
+
+
 std::vector<Entry> EntryRepository::list(int limit, int offset)
 {
 	std::vector<Entry> entries;

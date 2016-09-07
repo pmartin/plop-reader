@@ -125,6 +125,13 @@ void WallabagApi::refreshOAuthToken()
 	CURL *curl;
 	CURLcode res;
 
+
+	if (this->oauthToken.access_token.empty()) {
+		// We do not have an oauth token yet => request one!
+		createOAuthToken();
+		return;
+	}
+
 	if (this->oauthToken.expires_at > time(NULL) - 60) {
 		// The OAuth token expires in more than 1 minute => no need to refresh it now
 		return;
@@ -245,7 +252,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
 		snprintf(enries_url, sizeof(enries_url), "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
-				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 15);
+				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 50);
 
 		curl_free(encoded_access_token);
 		curl_free(encoded_sort);
@@ -273,6 +280,13 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 			goto end;
 		}
 		else {
+
+			// As we do not have a **sync** yet, only a **fetch**, we remove all entries
+			// from local database before inserting those received from the API.
+			// This way, we will not have duplicated in the application
+			repository.deleteAll();
+
+
 			json_object *obj = json_tokener_parse(json_string);
 
 			snprintf(buffer, sizeof(buffer), "Page %d / %d - posts %d / %d",

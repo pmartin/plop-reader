@@ -57,7 +57,7 @@ void Gui::init()
 }
 
 
-void Gui::show(int countAllEntries, std::vector<Entry> &entries)
+void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<Entry> &entries)
 {
 	char buffer[2048];
 
@@ -76,7 +76,7 @@ void Gui::show(int countAllEntries, std::vector<Entry> &entries)
 	//DrawSymbol(10, y, ARROW_LEFT);
 	exitButton.draw();
 
-	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d", entries.size(), countAllEntries);
+	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d(%d)", numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
 
 	syncButton.draw();

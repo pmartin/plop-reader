@@ -25,7 +25,7 @@ public:
 
 	void init();
 
-	void show(int countAllEntries, std::vector<Entry> &entries);
+	void show(int pageNum, int numberOfPages, int countAllEntries, std::vector<Entry> &entries);
 
 	void touchStartEvent(int x, int y);
 	void touchEndEvent(int x, int y);

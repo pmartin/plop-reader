@@ -18,6 +18,8 @@ class Application
 public:
 	Application() : entryRepository(db), gui(*this) {
 		db.open();
+		pageNum = 0;
+		numPerPage = 8;
 	}
 
 	void init();
@@ -49,6 +51,9 @@ private:
 	WallabagApi wallabag_api;
 	EntryRepository entryRepository;
 	Gui gui;
+
+	int pageNum;
+	int numPerPage;
 
 };
 

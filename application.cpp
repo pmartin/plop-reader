@@ -29,15 +29,13 @@ void Application::loadRecentArticles()
 
 void Application::show()
 {
-	int page = 0;
-	int perPage = 8;
-
 	int countAllEntries = entryRepository.countAllEntries();
+	int numberOfPages = countAllEntries / numPerPage;
 
 	std::vector<Entry> entries;
-	entryRepository.list(entries, perPage, page * perPage);
+	entryRepository.list(entries, numPerPage, pageNum * numPerPage);
 
-	gui.show(countAllEntries, entries);
+	gui.show(pageNum, numberOfPages, countAllEntries, entries);
 }
 
 
@@ -57,22 +55,21 @@ void Application::keypressEvent(int key)
 {
 	//gui.keypressEvent(key);
 
-	int page;
-	int perPage = 8;
-
-	if (key == KEY_PREV) {
-		page = 0;
-	}
-	else if (key == KEY_NEXT) {
-		page = 1;
-	}
-
 	int countAllEntries = entryRepository.countAllEntries();
+	int numberOfPages = countAllEntries / numPerPage;
+
+	if (key == KEY_PREV && pageNum > 0) {
+		pageNum -= 1;
+	}
+
+	if (key == KEY_NEXT && pageNum < numberOfPages) {
+		pageNum += 1;
+	}
 
 	std::vector<Entry> entries;
-	entryRepository.list(entries, perPage, page * perPage);
+	entryRepository.list(entries, numPerPage, pageNum * numPerPage);
 
-	gui.show(countAllEntries, entries);
+	gui.show(pageNum, numberOfPages, countAllEntries, entries);
 }
 
 

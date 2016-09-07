@@ -21,6 +21,12 @@ Gui::~Gui()
 // So, we need another initialization method, called later -- like when the ereader is ready to let us use its API...
 void Gui::init()
 {
+	OpenScreen();
+	iv_fullscreen();
+
+	// Allows to effectively be full-screen, even when redrawing
+	SetCurrentApplicationAttribute(APPLICATION_READER, 1);
+
 	titleFontSize = 52;
 	titleFont = OpenFont("LiberationSans", titleFontSize, 1);
 
@@ -32,6 +38,9 @@ void Gui::init()
 
 	statusBarFontSize = 22;
 	statusBarFont = OpenFont("LiberationSans", statusBarFontSize, 1);
+
+	screenWidth = ScreenWidth();
+	screenHeight = ScreenHeight();
 }
 
 
@@ -39,7 +48,7 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 {
 	char buffer[2048];
 
-	SetClip(0, 0, ScreenWidth(), ScreenHeight());
+	SetClip(0, 0, screenWidth, screenHeight);
 	ClearScreen();
 
 	int y = 0;
@@ -55,19 +64,19 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d", entries.size(), countAllEntries);
 	DrawString(90, y, buffer);
 
-	DrawRect(ScreenWidth() - 125 - 10, y+5, 50+5, 50+10, DGRAY);
-	DrawSymbol(ScreenWidth() - 125, y, ARROW_UPDOWN);
+	DrawRect(screenWidth - 125 - 10, y+5, 50+5, 50+10, DGRAY);
+	DrawSymbol(screenWidth - 125, y, ARROW_UPDOWN);
 
-	DrawRect(ScreenWidth() - 50 - 10, y+5, 50+5, 50+10, DGRAY);
-	DrawSymbol(ScreenWidth() - 50, y, SYMBOL_MENU);
+	DrawRect(screenWidth - 50 - 10, y+5, 50+5, 50+10, DGRAY);
+	DrawSymbol(screenWidth - 50, y, SYMBOL_MENU);
 
-	PartialUpdate(0, y, ScreenWidth(), y + titleFont->height);
+	PartialUpdate(0, y, screenWidth, y + titleFont->height);
 	y += titleFont->height;
 
-	DrawLine(0, y, ScreenWidth(), y, BLACK);
-	DrawLine(0, y + 1, ScreenWidth(), y +1, BLACK);
+	DrawLine(0, y, screenWidth, y, BLACK);
+	DrawLine(0, y + 1, screenWidth, y +1, BLACK);
 
-	PartialUpdate(0, y, ScreenWidth(), y + 1);
+	PartialUpdate(0, y, screenWidth, y + 1);
 	y += 2;
 
 
@@ -79,23 +88,23 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 		SetFont(entryTitleFont, BLACK);
 		snprintf(buffer, sizeof(buffer), "%s", entry.title.c_str());
 		DrawString(90, y, buffer);
-		PartialUpdate(90, y, ScreenWidth(), y + entryTitleFont->height);
+		PartialUpdate(90, y, screenWidth, y + entryTitleFont->height);
 		y += entryTitleFont->height;
 
 		SetFont(entryInfosFont, BLACK);
 		snprintf(buffer, sizeof(buffer), "l#=%d ; r#=%s ; la=%d ; ra=%d ; l*=%d ; r*=%d", entry.id, entry.remote_id.c_str(), entry.local_is_archived, entry.remote_is_archived, entry.local_is_starred, entry.remote_is_starred);
 		DrawString(90, y, buffer);
-		PartialUpdate(90, y, ScreenWidth(), y + entryInfosFont->height);
+		PartialUpdate(90, y, screenWidth, y + entryInfosFont->height);
 		y += entryInfosFont->height;
 
 		SetFont(entryInfosFont, BLACK);
 		snprintf(buffer, sizeof(buffer), "%s", entry.url.c_str());
 		DrawString(90, y, buffer);
-		PartialUpdate(90, y, ScreenWidth(), y + entryInfosFont->height);
+		PartialUpdate(90, y, screenWidth, y + entryInfosFont->height);
 		y += entryInfosFont->height;
 
-		DrawLine(0, y, ScreenWidth(), y, LGRAY);
-		PartialUpdate(0, y, ScreenWidth(), y);
+		DrawLine(0, y, screenWidth, y, LGRAY);
+		PartialUpdate(0, y, screenWidth, y);
 		y += 2;
 	}
 
@@ -109,8 +118,8 @@ void Gui::statusBarText(const char *format, va_list args)
 	vsnprintf(buffer, sizeof(buffer), format, args);
 
 	SetFont(statusBarFont, DGRAY);
-	DrawString(0, ScreenHeight() - 40, buffer);
-	PartialUpdate(0, ScreenHeight() - 40, ScreenWidth(), 40);
+	DrawString(0, screenHeight - 40, buffer);
+	PartialUpdate(0, screenHeight - 40, screenWidth, 40);
 }
 
 void Gui::statusBarText(const char *format...)

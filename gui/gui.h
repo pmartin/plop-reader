@@ -38,6 +38,9 @@ private:
 	ifont *statusBarFont = NULL;
 	int statusBarFontSize = 0;
 
+	int screenWidth = 0;
+	int screenHeight = 0;
+
 };
 
 

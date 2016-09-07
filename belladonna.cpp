@@ -57,6 +57,9 @@ static int main_handler(int event_type, int param_one, int param_two)
 			step++;
 			result = 1;
 		}
+		else {
+			result = 1;
+		}
 		break;
 	case EVT_EXIT:
 		CloseFont(font);

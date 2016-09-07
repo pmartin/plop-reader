@@ -45,12 +45,16 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 	SetFont(titleFont, BLACK);
 
+	DrawRect(5, y+5, 50+5, 50+10, DGRAY);
 	DrawSymbol(10, y, ARROW_LEFT);
 
 	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d", entries.size(), countAllEntries);
 	DrawString(90, y, buffer);
 
+	DrawRect(ScreenWidth() - 125 - 10, y+5, 50+5, 50+10, DGRAY);
 	DrawSymbol(ScreenWidth() - 125, y, ARROW_UPDOWN);
+
+	DrawRect(ScreenWidth() - 50 - 10, y+5, 50+5, 50+10, DGRAY);
 	DrawSymbol(ScreenWidth() - 50, y, SYMBOL_MENU);
 
 	PartialUpdate(0, y, ScreenWidth(), y + titleFont->height);
@@ -58,6 +62,7 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 	DrawLine(0, y, ScreenWidth(), y, BLACK);
 	DrawLine(0, y + 1, ScreenWidth(), y +1, BLACK);
+
 	PartialUpdate(0, y, ScreenWidth(), y + 1);
 	y += 2;
 

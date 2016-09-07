@@ -27,6 +27,8 @@ public:
 	void touchStartEvent(int x, int y);
 	void touchEndEvent(int x, int y);
 
+	void keypressEvent(int key);
+
 	void statusBarText(const char *format, va_list args);
 	void statusBarText(const char *format...);
 
@@ -47,6 +49,8 @@ private:
 	int screenHeight = 0;
 
 	GuiButton exitButton;
+	GuiButton syncButton;
+	GuiButton menuButton;
 
 };
 

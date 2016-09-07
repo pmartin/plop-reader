@@ -34,6 +34,8 @@ public:
 	void touchStartEvent(int x, int y);
 	void touchEndEvent(int x, int y);
 
+	void keypressEvent(int key);
+
 	void debug(const char *format...);
 
 

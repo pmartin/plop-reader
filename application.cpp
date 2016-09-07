@@ -14,7 +14,6 @@ void Application::init()
 	WallabagConfig config = configLoader.load();
 	wallabag_api.setConfig(config);
 
-
 	gui.init();
 }
 
@@ -44,6 +43,12 @@ void Application::touchStartEvent(int x, int y)
 void Application::touchEndEvent(int x, int y)
 {
 	gui.touchEndEvent(x, y);
+}
+
+
+void Application::keypressEvent(int key)
+{
+	gui.keypressEvent(key);
 }
 
 

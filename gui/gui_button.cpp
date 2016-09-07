@@ -13,7 +13,7 @@ void GuiButton::draw()
 	DrawRect(x, y, w, h, pressed ? BLACK : DGRAY);
 
 	if (symbol != -1) {
-		DrawSymbol(x+5, y-5, ARROW_LEFT);
+		DrawSymbol(x+5, y-5, symbol);
 	}
 	else if (str != NULL) {
 		DrawString(x+5, y, str);

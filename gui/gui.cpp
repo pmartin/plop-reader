@@ -1,5 +1,7 @@
 #include "gui.h"
 
+#include "../application.h"
+extern Application app;
 
 
 Gui::Gui()
@@ -45,6 +47,14 @@ void Gui::init()
 	exitButton.setCoordinates(5, 5, 55, 60);
 	exitButton.setFont(titleFont);
 	exitButton.setSymbol(ARROW_LEFT);
+
+	syncButton.setCoordinates(screenWidth-135, 5, 55, 60);
+	syncButton.setFont(titleFont);
+	syncButton.setSymbol(ARROW_UPDOWN);
+
+	menuButton.setCoordinates(screenWidth-60, 5, 55, 60);
+	menuButton.setFont(titleFont);
+	menuButton.setSymbol(SYMBOL_MENU);
 }
 
 
@@ -70,11 +80,8 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d", entries.size(), countAllEntries);
 	DrawString(90, y, buffer);
 
-	DrawRect(screenWidth - 125 - 10, y+5, 50+5, 50+10, DGRAY);
-	DrawSymbol(screenWidth - 125, y, ARROW_UPDOWN);
-
-	DrawRect(screenWidth - 50 - 10, y+5, 50+5, 50+10, DGRAY);
-	DrawSymbol(screenWidth - 50, y, SYMBOL_MENU);
+	syncButton.draw();
+	menuButton.draw();
 
 	PartialUpdate(0, y, screenWidth, y + titleFont->height);
 	y += titleFont->height;
@@ -120,35 +127,80 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 void Gui::touchStartEvent(int x, int y)
 {
-	if (exitButton.hit(x, y)) {
-		// Exit button
+	exitButton.setPressed(false);
+	syncButton.setPressed(false);
+	menuButton.setPressed(false);
 
+	if (exitButton.hit(x, y)) {
 		exitButton.setPressed(true);
 		statusBarText("Touch START event at (%d;%d) => exit", x, y);
+	}
+	else if (syncButton.hit(x, y)) {
+		syncButton.setPressed(true);
+		statusBarText("Touch START event at (%d;%d) => sync", x, y);
+	}
+	else if (menuButton.hit(x, y)) {
+		menuButton.setPressed(true);
+		statusBarText("Touch START event at (%d;%d) => menu", x, y);
 	}
 	else {
 		statusBarText("Touch START event at (%d;%d) => no action", x, y);
 	}
 
 	exitButton.draw();
+	syncButton.draw();
+	menuButton.draw();
 }
 
 
 void Gui::touchEndEvent(int x, int y)
 {
 	if (exitButton.hit(x, y)) {
-		// Exit button
-
 		statusBarText("Touch END event at (%d;%d) => exit", x, y);
 
+		CloseApp();
+	}
+	else if (syncButton.hit(x, y)) {
+		statusBarText("Touch END event at (%d;%d) => sync", x, y);
+
+		Message(ICON_INFORMATION, "TODO!", "One day, this will sync posts between this ereader and the server...", 2*1000);
+	}
+	else if (menuButton.hit(x, y)) {
+		statusBarText("Touch END event at (%d;%d) => menu", x, y);
+
+		Message(ICON_INFORMATION, "TODO!", "One day, there will be a menu, here...", 2*1000);
 	}
 	else {
 		statusBarText("Touch END event at (%d;%d) => no action", x, y);
 	}
 
 	exitButton.setPressed(false);
+	syncButton.setPressed(false);
+	menuButton.setPressed(false);
 
 	exitButton.draw();
+	syncButton.draw();
+	menuButton.draw();
+}
+
+
+void Gui::keypressEvent(int key)
+{
+	if (key == KEY_PREV) {
+		statusBarText("Key pressed : %d -> previous", key);
+	}
+	else if (key == KEY_NEXT) {
+		statusBarText("Key pressed : %d -> next", key);
+	}
+	else if (key == KEY_MENU) {
+		statusBarText("Key pressed : %d -> menu", key);
+	}
+	else if (key == KEY_HOME) {
+		statusBarText("Key pressed : %d -> home", key);
+	}
+	else {
+		statusBarText("Key pressed : %d", key);
+	}
 }
 
 

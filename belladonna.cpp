@@ -35,42 +35,27 @@ static int main_handler(int event_type, int param_one, int param_two)
 		result = 1;
 		break;
 	case EVT_KEYPRESS:
-		if (param_one == KEY_PREV) {
-			CloseApp();
-			result = 1;
-		}
-		else if (param_one == KEY_NEXT) {
-			//app.loadRecentArticles();
-
-			//database_display_entries(app.getEntryRepository());
-
-			app.show();
-
-			/*
-			if (step == 0) {
-
-			}
-			else {
-				CloseApp();
-			}
-			//*/
-
-			step++;
-			result = 1;
-		}
-		else {
-			result = 1;
-		}
+		app.keypressEvent(param_one);
+		result = 1;
 		break;
 	case EVT_POINTERDOWN:
 		touch_info = GetTouchInfo();
 		app.touchStartEvent(touch_info->x, touch_info->y);
 		result = 1;
 		break;
-	//case EVT_POINTERMOVE:
 	case EVT_POINTERUP:
 		touch_info = GetTouchInfo();
 		app.touchEndEvent(touch_info->x, touch_info->y);
+		result = 1;
+		break;
+	case EVT_POINTERMOVE:
+		touch_info = GetTouchInfo();
+		if (touch_info->active) {
+			app.touchStartEvent(touch_info->x, touch_info->y);
+		}
+		else {
+			app.touchEndEvent(touch_info->x, touch_info->y);
+		}
 		result = 1;
 		break;
 	case EVT_EXIT:

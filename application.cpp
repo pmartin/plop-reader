@@ -33,3 +33,12 @@ void Application::show()
 
 	gui.show(countAllEntries, entries);
 }
+
+
+void Application::debug(const char *format...)
+{
+	va_list args;
+	va_start(args, format);
+	gui.statusBarText(format, args);
+	va_end(args);
+}

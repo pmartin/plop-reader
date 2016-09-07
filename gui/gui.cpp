@@ -13,6 +13,7 @@ Gui::~Gui()
 	CloseFont(titleFont);
 	CloseFont(entryTitleFont);
 	CloseFont(entryInfosFont);
+	CloseFont(statusBarFont);
 }
 
 
@@ -28,6 +29,9 @@ void Gui::init()
 
 	entryInfosFontSize = 24;
 	entryInfosFont = OpenFont("LiberationSans", entryInfosFontSize, 1);
+
+	statusBarFontSize = 22;
+	statusBarFont = OpenFont("LiberationSans", statusBarFontSize, 1);
 }
 
 
@@ -95,7 +99,26 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 		y += 2;
 	}
 
-
 	FullUpdateHQ();
+}
+
+
+void Gui::statusBarText(const char *format, va_list args)
+{
+	char buffer[2048];
+	vsnprintf(buffer, sizeof(buffer), format, args);
+
+	SetFont(statusBarFont, DGRAY);
+	DrawString(0, ScreenHeight() - 40, buffer);
+	PartialUpdate(0, ScreenHeight() - 40, ScreenWidth(), 40);
+}
+
+void Gui::statusBarText(const char *format...)
+{
+	va_list args;
+
+	va_start(args, format);
+	statusBarText(format, args);
+	va_end(args);
 }
 

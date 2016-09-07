@@ -22,6 +22,9 @@ public:
 
 	void show(int countAllEntries, std::vector<Entry> entries);
 
+	void statusBarText(const char *format, va_list args);
+	void statusBarText(const char *format...);
+
 private:
 	ifont *titleFont = NULL;
 	int titleFontSize = 0;
@@ -31,6 +34,9 @@ private:
 
 	ifont *entryInfosFont = NULL;
 	int entryInfosFontSize = 0;
+
+	ifont *statusBarFont = NULL;
+	int statusBarFontSize = 0;
 
 };
 

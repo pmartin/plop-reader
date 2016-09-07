@@ -31,6 +31,8 @@ public:
 
 	void show();
 
+	void debug(const char *format...);
+
 
 	// TODO remove this method
 	EntryRepository getEntryRepository() {

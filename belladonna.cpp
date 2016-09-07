@@ -29,7 +29,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 		app.init();
 		app.show();
 
-		//database_display_entries(app.getEntryRepository());
+		app.debug("Welcome! Touch a post to read it, or use the buttons in the header.");
 
 		result = 1;
 		break;

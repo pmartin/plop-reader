@@ -33,7 +33,9 @@ void Application::show()
 	int perPage = 8;
 
 	int countAllEntries = entryRepository.countAllEntries();
-	std::vector<Entry> entries = entryRepository.list(perPage, page * perPage);
+
+	std::vector<Entry> entries;
+	entryRepository.list(entries, perPage, page * perPage);
 
 	gui.show(countAllEntries, entries);
 }
@@ -66,7 +68,9 @@ void Application::keypressEvent(int key)
 	}
 
 	int countAllEntries = entryRepository.countAllEntries();
-	std::vector<Entry> entries = entryRepository.list(perPage, page * perPage);
+
+	std::vector<Entry> entries;
+	entryRepository.list(entries, perPage, page * perPage);
 
 	gui.show(countAllEntries, entries);
 }

@@ -1,6 +1,10 @@
 #include "gui_list_item_entry.h"
 
 
+int GuiListItemEntry::getHeight() {
+	return titleFont->height + infosFont->height*2 + 2;
+}
+
 void GuiListItemEntry::draw()
 {
 	char buffer[2048];

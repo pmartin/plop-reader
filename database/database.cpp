@@ -132,7 +132,10 @@ create table entries (
 
 	preview_picture_url text null,
 	preview_picture_type integer null,
-	preview_picture_path text null
+	preview_picture_path text null,
+
+    local_content_file_html text null,
+    local_content_file_epub text null
 )
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {

@@ -39,5 +39,8 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 		entry.preview_picture_url = preview_picture;
 	}
 
+	entry.local_content_file_html = std::string();
+	entry.local_content_file_epub = std::string();
+
 	return entry;
 }

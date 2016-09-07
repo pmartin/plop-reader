@@ -23,9 +23,7 @@ public:
 		entry = e;
 	}
 
-	int getHeight() {
-		return titleFont->height + infosFont->height*2 + 2;
-	}
+	int getHeight();
 
 	bool hit(int xx, int yy) {
 		return xx >= x

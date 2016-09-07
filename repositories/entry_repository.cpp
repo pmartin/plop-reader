@@ -13,14 +13,16 @@ insert into entries (
 	title, url, content, 
 	remote_created_at, remote_updated_at,
 	local_created_at, local_updated_at,
-	reading_time, preview_picture_url
+	reading_time, preview_picture_url,
+    local_content_file_html, local_content_file_epub
 )
 values (
 	:remote_id, :is_archived, :is_starred, 
 	:title, :url, :content,
 	:remote_created_at, :remote_updated_at,
 	datetime(), datetime(),
-	:reading_time, :preview_picture_url
+	:reading_time, :preview_picture_url,
+    :local_content_file_html, :local_content_file_epub
 )
 )sql";
 	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
@@ -78,6 +80,15 @@ values (
 		}
 	}
 
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":local_content_file_html"), entry.local_content_file_html.c_str(), entry.local_content_file_html.length(), SQLITE_STATIC) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+		log_message(buffer);
+	}
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":local_content_file_epub"), entry.local_content_file_epub.c_str(), entry.local_content_file_epub.length(), SQLITE_STATIC) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+		log_message(buffer);
+	}
+
 	if (sqlite3_step(stmt) != SQLITE_DONE) {
 		snprintf(buffer, sizeof(buffer), "Fail inserting : %s", sqlite3_errmsg(this->db.getDb()));
 		log_message(buffer);
@@ -98,9 +109,12 @@ void EntryRepository::deleteAll()
 }
 
 
-std::vector<Entry> EntryRepository::list(int limit, int offset)
+void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset)
 {
-	std::vector<Entry> entries;
+	//std::vector<Entry> entries;
+
+	entries.clear();
+	entries.reserve(limit + 10);
 
 	//char buffer[2048];
 
@@ -122,7 +136,9 @@ select
     reading_time,
     preview_picture_url,
     preview_picture_type,
-    preview_picture_path
+    preview_picture_path,
+    local_content_file_html,
+    local_content_file_epub
 from entries 
 order by remote_created_at desc 
 limit :limit 
@@ -168,12 +184,14 @@ offset :offset
 		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
 		entry.preview_picture_type = sqlite3_column_int(stmt, 15);
 		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
+		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
+		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
 
 		entries.push_back(entry);
 	}
 	sqlite3_finalize(stmt);
 
-	return entries;
+	//return entries;
 }
 
 

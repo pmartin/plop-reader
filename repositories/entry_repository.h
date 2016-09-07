@@ -17,7 +17,7 @@ public:
 
 	void deleteAll();
 
-	std::vector<Entry> list(int limit, int offset);
+	void list(std::vector<Entry> &entries, int limit, int offset);
 	int countAllEntries();
 
 private:

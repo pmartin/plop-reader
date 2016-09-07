@@ -57,7 +57,7 @@ void Gui::init()
 }
 
 
-void Gui::show(int countAllEntries, std::vector<Entry> entries)
+void Gui::show(int countAllEntries, std::vector<Entry> &entries)
 {
 	char buffer[2048];
 

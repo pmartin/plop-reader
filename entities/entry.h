@@ -31,6 +31,9 @@ public:
 	std::string preview_picture_url;
 	int preview_picture_type;
 	std::string preview_picture_path;
+
+	std::string local_content_file_html;
+	std::string local_content_file_epub;
 };
 
 

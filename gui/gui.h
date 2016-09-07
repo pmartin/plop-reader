@@ -9,6 +9,7 @@
 #include "../entities/entry.h"
 
 #include "gui_button.h"
+#include "gui_list_item_entry.h"
 
 
 extern void log_message(const char *msg);
@@ -51,6 +52,8 @@ private:
 	GuiButton exitButton;
 	GuiButton syncButton;
 	GuiButton menuButton;
+
+	std::vector<GuiListItemEntry> entriesItems;
 
 };
 

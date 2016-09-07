@@ -31,6 +31,9 @@ entities/entry.o: belladonna.h entities/entry.h entities/entry.cpp
 gui/gui_button.o: belladonna.h gui/gui_button.h gui/gui_button.cpp
 	$(CC) -c gui/gui_button.cpp $(CFLAGS) -o gui/gui_button.o
 
+gui/gui_list_item_entry.o: belladonna.h gui/gui_list_item_entry.h gui/gui_list_item_entry.cpp
+	$(CC) -c gui/gui_list_item_entry.cpp $(CFLAGS) -o gui/gui_list_item_entry.o
+
 gui/gui.o: belladonna.h gui/gui.h gui/gui.cpp
 	$(CC) -c gui/gui.cpp $(CFLAGS) -o gui/gui.o
 
@@ -48,8 +51,8 @@ log.o: belladonna.h log.cpp
 	$(CC) -c log.cpp $(CFLAGS) -o log.o
 
 
-belladonna.app: api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui.o repositories/entry_repository.o application.o belladonna.o log.o
-	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui.o repositories/entry_repository.o application.o belladonna.o log.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
+belladonna.app: api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o belladonna.o log.o
+	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o belladonna.o log.o -o belladonna.app -linkview -lcurl -ljson-c -lsqlite3
 
 
 clean:

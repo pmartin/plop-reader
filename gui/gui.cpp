@@ -95,30 +95,40 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 	// List of articles in local DB
 
-	for (unsigned int i=0 ; i<entries.size() ; i++) {
-		Entry entry = entries.at(i);
 
-		SetFont(entryTitleFont, BLACK);
-		snprintf(buffer, sizeof(buffer), "%s", entry.title.c_str());
-		DrawString(90, y, buffer);
-		PartialUpdate(90, y, screenWidth, y + entryTitleFont->height);
-		y += entryTitleFont->height;
+	// TODO déplacer tout ça vers une méthode de changement / chargement de page
+	entriesItems.clear();
+	entriesItems.resize(8);
+	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
+		GuiListItemEntry item;
 
-		SetFont(entryInfosFont, BLACK);
-		snprintf(buffer, sizeof(buffer), "l#=%d ; r#=%s ; la=%d ; ra=%d ; l*=%d ; r*=%d", entry.id, entry.remote_id.c_str(), entry.local_is_archived, entry.remote_is_archived, entry.local_is_starred, entry.remote_is_starred);
-		DrawString(90, y, buffer);
-		PartialUpdate(90, y, screenWidth, y + entryInfosFont->height);
-		y += entryInfosFont->height;
+		item.x = 0;
+		item.y = y;
 
-		SetFont(entryInfosFont, BLACK);
-		snprintf(buffer, sizeof(buffer), "%s", entry.url.c_str());
-		DrawString(90, y, buffer);
-		PartialUpdate(90, y, screenWidth, y + entryInfosFont->height);
-		y += entryInfosFont->height;
+		item.titleFont = entryTitleFont;
+		item.infosFont = entryInfosFont;
 
-		DrawLine(0, y, screenWidth, y, LGRAY);
-		PartialUpdate(0, y, screenWidth, y);
-		y += 2;
+		item.screenWidth = screenWidth;
+		item.screenHeight = screenHeight;
+
+		if (i < entries.size()) {
+			Entry entry = entries.at(i);
+			item.hasEntry = true;
+			item.setEntry(entry);
+		}
+		else {
+			item.hasEntry = false;
+		}
+
+		entriesItems[i] = item;
+
+		y += item.getHeight();
+	}
+
+
+	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
+		GuiListItemEntry item = entriesItems.at(i);
+		item.draw();
 	}
 
 	FullUpdateHQ();
@@ -144,7 +154,17 @@ void Gui::touchStartEvent(int x, int y)
 		statusBarText("Touch START event at (%d;%d) => menu", x, y);
 	}
 	else {
-		statusBarText("Touch START event at (%d;%d) => no action", x, y);
+		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
+			GuiListItemEntry item = entriesItems.at(i);
+			if (item.hit(x, y)) {
+				if (item.hasEntry) {
+					statusBarText("Touch START event at (%d;%d) => entry#%d - %s", x, y, item.entry.id, item.entry.title.c_str());
+				}
+				else {
+					statusBarText("Touch START event at (%d;%d) => no entry", x, y);
+				}
+			}
+		}
 	}
 
 	exitButton.draw();
@@ -171,7 +191,21 @@ void Gui::touchEndEvent(int x, int y)
 		Message(ICON_INFORMATION, "TODO!", "One day, there will be a menu, here...", 2*1000);
 	}
 	else {
-		statusBarText("Touch END event at (%d;%d) => no action", x, y);
+		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
+			GuiListItemEntry item = entriesItems.at(i);
+			if (item.hit(x, y)) {
+				if (item.hasEntry) {
+					statusBarText("Touch END event at (%d;%d) => entry#%d - %s", x, y, item.entry.id, item.entry.title.c_str());
+
+					char buffer[2048];
+					snprintf(buffer, sizeof(buffer), "This should open entry li=%d / ri=%s\n-> %s", item.entry.id, item.entry.remote_id.c_str(), item.entry.title.c_str());
+					Message(ICON_INFORMATION, "Opening entry... One day!", buffer, 3*1000);
+				}
+				else {
+					statusBarText("Touch END event at (%d;%d) => no entry", x, y);
+				}
+			}
+		}
 	}
 
 	exitButton.setPressed(false);

@@ -13,8 +13,6 @@ static int main_handler(int event_type, int param_one, int param_two)
 	int result = 0;
 	iv_mtinfo *touch_info;
 
-	static int step = 0;
-
 	switch (event_type) {
 	case EVT_INIT:
 		font = OpenFont("LiberationSans", kFontSize, 1);

@@ -41,6 +41,10 @@ void Gui::init()
 
 	screenWidth = ScreenWidth();
 	screenHeight = ScreenHeight();
+
+	exitButton.setCoordinates(5, 5, 55, 60);
+	exitButton.setFont(titleFont);
+	exitButton.setSymbol(ARROW_LEFT);
 }
 
 
@@ -58,9 +62,10 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 	SetFont(titleFont, BLACK);
 
-	FillArea(5, y+5, 50+5, 50+10, WHITE);
-	DrawRect(5, y+5, 50+5, 50+10, DGRAY);
-	DrawSymbol(10, y, ARROW_LEFT);
+	//FillArea(5, y+5, 50+5, 50+10, WHITE);
+	//DrawRect(5, y+5, 50+5, 50+10, DGRAY);
+	//DrawSymbol(10, y, ARROW_LEFT);
+	exitButton.draw();
 
 	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d", entries.size(), countAllEntries);
 	DrawString(90, y, buffer);
@@ -115,28 +120,23 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 void Gui::touchStartEvent(int x, int y)
 {
-	if (x >= 5 && x <= 5 + 50+5 && y >= 5 && y <= 5 + 50+10) {
+	if (exitButton.hit(x, y)) {
 		// Exit button
 
+		exitButton.setPressed(true);
 		statusBarText("Touch START event at (%d;%d) => exit", x, y);
-
-		// Redraw exit button, pressed
-		SetFont(titleFont, BLACK);
-		FillArea(5, 0+5, 50+5, 50+10, LGRAY);
-		DrawRect(5, 0+5, 50+5, 50+10, DGRAY);
-		DrawSymbol(10, 0, ARROW_LEFT);
-		PartialUpdate(0, 0, 5 + 50 + 10, 0 + 5 + 50 + 10);
-
 	}
 	else {
 		statusBarText("Touch START event at (%d;%d) => no action", x, y);
 	}
+
+	exitButton.draw();
 }
 
 
 void Gui::touchEndEvent(int x, int y)
 {
-	if (x >= 5 && x <= 5 + 50+5 && y >= 5 && y <= 5 + 50+10) {
+	if (exitButton.hit(x, y)) {
 		// Exit button
 
 		statusBarText("Touch END event at (%d;%d) => exit", x, y);
@@ -146,12 +146,9 @@ void Gui::touchEndEvent(int x, int y)
 		statusBarText("Touch END event at (%d;%d) => no action", x, y);
 	}
 
-	// Redraw exit button, not-pressed
-	SetFont(titleFont, BLACK);
-	FillArea(5, 0+5, 50+5, 50+10, WHITE);
-	DrawRect(5, 0+5, 50+5, 50+10, DGRAY);
-	DrawSymbol(10, 0, ARROW_LEFT);
-	PartialUpdate(0, 0, 5 + 50 + 10, 0 + 5 + 50 + 10);
+	exitButton.setPressed(false);
+
+	exitButton.draw();
 }
 
 

@@ -8,6 +8,8 @@
 
 #include "../entities/entry.h"
 
+#include "gui_button.h"
+
 
 extern void log_message(const char *msg);
 
@@ -43,6 +45,8 @@ private:
 
 	int screenWidth = 0;
 	int screenHeight = 0;
+
+	GuiButton exitButton;
 
 };
 

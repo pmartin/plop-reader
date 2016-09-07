@@ -31,6 +31,9 @@ public:
 
 	void show();
 
+	void touchStartEvent(int x, int y);
+	void touchEndEvent(int x, int y);
+
 	void debug(const char *format...);
 
 

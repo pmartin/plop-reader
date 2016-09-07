@@ -58,6 +58,7 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 
 	SetFont(titleFont, BLACK);
 
+	FillArea(5, y+5, 50+5, 50+10, WHITE);
 	DrawRect(5, y+5, 50+5, 50+10, DGRAY);
 	DrawSymbol(10, y, ARROW_LEFT);
 
@@ -112,10 +113,54 @@ void Gui::show(int countAllEntries, std::vector<Entry> entries)
 }
 
 
+void Gui::touchStartEvent(int x, int y)
+{
+	if (x >= 5 && x <= 5 + 50+5 && y >= 5 && y <= 5 + 50+10) {
+		// Exit button
+
+		statusBarText("Touch START event at (%d;%d) => exit", x, y);
+
+		// Redraw exit button, pressed
+		SetFont(titleFont, BLACK);
+		FillArea(5, 0+5, 50+5, 50+10, LGRAY);
+		DrawRect(5, 0+5, 50+5, 50+10, DGRAY);
+		DrawSymbol(10, 0, ARROW_LEFT);
+		PartialUpdate(0, 0, 5 + 50 + 10, 0 + 5 + 50 + 10);
+
+	}
+	else {
+		statusBarText("Touch START event at (%d;%d) => no action", x, y);
+	}
+}
+
+
+void Gui::touchEndEvent(int x, int y)
+{
+	if (x >= 5 && x <= 5 + 50+5 && y >= 5 && y <= 5 + 50+10) {
+		// Exit button
+
+		statusBarText("Touch END event at (%d;%d) => exit", x, y);
+
+	}
+	else {
+		statusBarText("Touch END event at (%d;%d) => no action", x, y);
+	}
+
+	// Redraw exit button, not-pressed
+	SetFont(titleFont, BLACK);
+	FillArea(5, 0+5, 50+5, 50+10, WHITE);
+	DrawRect(5, 0+5, 50+5, 50+10, DGRAY);
+	DrawSymbol(10, 0, ARROW_LEFT);
+	PartialUpdate(0, 0, 5 + 50 + 10, 0 + 5 + 50 + 10);
+}
+
+
 void Gui::statusBarText(const char *format, va_list args)
 {
 	char buffer[2048];
 	vsnprintf(buffer, sizeof(buffer), format, args);
+
+	FillArea(0, screenHeight - 40, screenWidth, 40, WHITE);
 
 	SetFont(statusBarFont, DGRAY);
 	DrawString(0, screenHeight - 40, buffer);

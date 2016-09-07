@@ -22,6 +22,9 @@ public:
 
 	void show(int countAllEntries, std::vector<Entry> entries);
 
+	void touchStartEvent(int x, int y);
+	void touchEndEvent(int x, int y);
+
 	void statusBarText(const char *format, va_list args);
 	void statusBarText(const char *format...);
 

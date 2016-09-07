@@ -11,6 +11,7 @@ Application app;
 static int main_handler(int event_type, int param_one, int param_two)
 {
 	int result = 0;
+	iv_mtinfo *touch_info;
 
 	static int step = 0;
 
@@ -60,6 +61,17 @@ static int main_handler(int event_type, int param_one, int param_two)
 		else {
 			result = 1;
 		}
+		break;
+	case EVT_POINTERDOWN:
+		touch_info = GetTouchInfo();
+		app.touchStartEvent(touch_info->x, touch_info->y);
+		result = 1;
+		break;
+	//case EVT_POINTERMOVE:
+	case EVT_POINTERUP:
+		touch_info = GetTouchInfo();
+		app.touchEndEvent(touch_info->x, touch_info->y);
+		result = 1;
 		break;
 	case EVT_EXIT:
 		CloseFont(font);

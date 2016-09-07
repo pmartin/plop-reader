@@ -35,6 +35,18 @@ void Application::show()
 }
 
 
+void Application::touchStartEvent(int x, int y)
+{
+	gui.touchStartEvent(x, y);
+}
+
+
+void Application::touchEndEvent(int x, int y)
+{
+	gui.touchEndEvent(x, y);
+}
+
+
 void Application::debug(const char *format...)
 {
 	va_list args;

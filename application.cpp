@@ -73,6 +73,81 @@ void Application::keypressEvent(int key)
 }
 
 
+
+static std::string replaceAll(std::string subject, const std::string& search, const std::string& replace)
+{
+	size_t pos = 0;
+	while ((pos = subject.find(search, pos)) != std::string::npos) {
+		subject.replace(pos, search.length(), replace);
+		pos += replace.length();
+	}
+	return subject;
+}
+
+void Application::read(Entry &entry)
+{
+	//char buffer[2048];
+	//snprintf(buffer, sizeof(buffer), "This should open entry li=%d / ri=%s\n-> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
+	//Message(ICON_INFORMATION, "Opening entry... One day!", buffer, 1*1000);
+
+	if (entry.local_content_file_html.empty()) {
+		// We don't have the HTML file for the entry yet
+		// => create it from the content stored in DB
+		// TODO create (or delete) the local file when syncing with server ;-)
+
+		char filepath[2048];
+		snprintf(filepath, sizeof(filepath), "/mnt/ext1/system/tmp/belladonna/entry-%d.html", entry.id);
+		entry.local_content_file_html = filepath;
+
+		//Message(ICON_INFORMATION, "Opening entry... One day!", filepath, 1*1000);
+
+		// TODO no hard-coded path, and create this directory somewhere else and all...
+		iv_mkdir("/mnt/ext1/system/tmp/belladonna/", 0755);
+
+		FILE *fp = iv_fopen(filepath, "wb");
+
+		const char *str = R"html(
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+
+)html";
+		iv_fwrite(str, sizeof(char), strlen(str), fp);
+
+		// Yeah, I known ;-(
+		// It seems the ereader's HTML reader doesn't recognize some characters => replace those ;-(
+		// TODO find a better way... hopefully, there is a way to force the ereader to accept all those characters?
+		std::string tmp = replaceAll(entry.content, "’", "'");;
+		tmp = replaceAll(tmp, "“", "\"");
+		tmp = replaceAll(tmp, "”", "\"");
+		tmp = replaceAll(tmp, " ", " ");
+		tmp = replaceAll(tmp, "—", "--");
+		tmp = replaceAll(tmp, "…", "...");
+
+		iv_fwrite(tmp.c_str(), sizeof(char), tmp.size(), fp);
+		iv_fwrite("</body></html>", sizeof(char), strlen("</body></html>"), fp);
+
+		iv_fclose(fp);
+
+		// TODO we need a 'persist' method that updates the entry, and not insert a new one...
+		//entryRepository.persist(entry);
+	}
+
+	if (!entry.local_content_file_html.empty()) {
+		// We have an HTML file => open the reader and profit!
+		const char *parameters = "r";
+		int flags = 0;
+
+		//Message(ICON_INFORMATION, "Here we go!", entry.local_content_file_html.c_str(), 1*1000);
+
+		OpenBook(entry.local_content_file_html.c_str(), parameters, flags);
+	}
+}
+
+
 void Application::debug(const char *format...)
 {
 	va_list args;

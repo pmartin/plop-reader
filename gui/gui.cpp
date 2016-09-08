@@ -196,9 +196,7 @@ void Gui::touchEndEvent(int x, int y)
 				if (item.hasEntry) {
 					statusBarText("Touch END event at (%d;%d) => entry#%d - %s", x, y, item.entry.id, item.entry.title.c_str());
 
-					char buffer[2048];
-					snprintf(buffer, sizeof(buffer), "This should open entry li=%d / ri=%s\n-> %s", item.entry.id, item.entry.remote_id.c_str(), item.entry.title.c_str());
-					Message(ICON_INFORMATION, "Opening entry... One day!", buffer, 3*1000);
+					app.read(item.entry);
 				}
 				else {
 					statusBarText("Touch END event at (%d;%d) => no entry", x, y);

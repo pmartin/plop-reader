@@ -38,6 +38,8 @@ public:
 
 	void keypressEvent(int key);
 
+	void read(Entry &entry);
+
 	void debug(const char *format...);
 
 

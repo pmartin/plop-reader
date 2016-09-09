@@ -72,27 +72,24 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 	// Chrome : title, button to sync, ...
 
+	exitButton.forceRedraw();
+	syncButton.forceRedraw();
+	menuButton.forceRedraw();
+
+	exitButton.draw(false);
+	syncButton.draw(false);
+	menuButton.draw(false);
+
 	SetFont(titleFont, BLACK);
-
-	//FillArea(5, y+5, 50+5, 50+10, WHITE);
-	//DrawRect(5, y+5, 50+5, 50+10, DGRAY);
-	//DrawSymbol(10, y, ARROW_LEFT);
-	exitButton.draw();
-
 	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d(%d)", numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
-
-	syncButton.draw();
-	menuButton.draw();
-
-	PartialUpdate(0, y, screenWidth, y + titleFont->height);
 	y += titleFont->height;
 
 	DrawLine(0, y, screenWidth, y, BLACK);
 	DrawLine(0, y + 1, screenWidth, y +1, BLACK);
-
-	PartialUpdate(0, y, screenWidth, y + 1);
 	y += 2;
+
+	PartialUpdate(0, 0, screenWidth, y);
 
 
 	// List of articles in local DB
@@ -130,10 +127,10 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 		GuiListItemEntry item = entriesItems.at(i);
-		item.draw();
+		item.draw(false, true);
 	}
 
-	FullUpdateHQ();
+	//FullUpdateHQ();
 }
 
 
@@ -169,9 +166,9 @@ void Gui::touchStartEvent(int x, int y)
 		}
 	}
 
-	exitButton.draw();
-	syncButton.draw();
-	menuButton.draw();
+	exitButton.draw(true);
+	syncButton.draw(true);
+	menuButton.draw(true);
 }
 
 
@@ -212,9 +209,9 @@ void Gui::touchEndEvent(int x, int y)
 	syncButton.setPressed(false);
 	menuButton.setPressed(false);
 
-	exitButton.draw();
-	syncButton.draw();
-	menuButton.draw();
+	exitButton.draw(true);
+	syncButton.draw(true);
+	menuButton.draw(true);
 }
 
 

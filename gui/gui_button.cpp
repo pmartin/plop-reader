@@ -1,7 +1,7 @@
 #include "gui_button.h"
 
 
-void GuiButton::draw()
+void GuiButton::draw(bool updateScreen)
 {
 	if (mustRedraw == false) {
 		return;
@@ -19,7 +19,9 @@ void GuiButton::draw()
 		DrawString(x+5, y, str);
 	}
 
-	PartialUpdate(x, y, x+w, y+h);
+	if (updateScreen) {
+		PartialUpdate(x, y, x+w, y+h);
+	}
 
 	mustRedraw = false;
 }

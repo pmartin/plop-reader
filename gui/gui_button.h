@@ -47,7 +47,11 @@ public:
 		pressed = p;
 	}
 
-	void draw();
+	void forceRedraw() {
+		mustRedraw = true;
+	}
+
+	void draw(bool updateScreen);
 
 
 private:

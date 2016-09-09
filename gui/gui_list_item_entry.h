@@ -17,7 +17,7 @@ public:
 	bool hasEntry;
 	Entry entry;
 
-	void draw();
+	void draw(bool clearBeforeDraw, bool updateScreen);
 
 	void setEntry(Entry &e) {
 		entry = e;

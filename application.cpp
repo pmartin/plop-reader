@@ -123,9 +123,13 @@ void Application::read(Entry &entry)
 		std::string tmp = replaceAll(entry.content, "’", "'");;
 		tmp = replaceAll(tmp, "“", "\"");
 		tmp = replaceAll(tmp, "”", "\"");
-		tmp = replaceAll(tmp, " ", " ");
+		tmp = replaceAll(tmp, "\xC2\xA0", " ");
+		tmp = replaceAll(tmp, "\xE2\x80\x8A", " ");
 		tmp = replaceAll(tmp, "—", "--");
 		tmp = replaceAll(tmp, "…", "...");
+		tmp = replaceAll(tmp, "€", "&euro;");
+		tmp = replaceAll(tmp, "\x20\x18", "'");
+		tmp = replaceAll(tmp, "\x20\x19", "'");
 
 		iv_fwrite(tmp.c_str(), sizeof(char), tmp.size(), fp);
 		iv_fwrite("</body></html>", sizeof(char), strlen("</body></html>"), fp);

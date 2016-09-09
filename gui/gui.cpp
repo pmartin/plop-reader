@@ -61,6 +61,9 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 {
 	char buffer[2048];
 
+	iv_fullscreen();
+	SetCurrentApplicationAttribute(APPLICATION_READER, 1);
+
 	SetClip(0, 0, screenWidth, screenHeight);
 	ClearScreen();
 

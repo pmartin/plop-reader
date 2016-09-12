@@ -32,6 +32,12 @@ static int main_handler(int event_type, int param_one, int param_two)
 
 		result = 1;
 		break;
+	case EVT_FOREGROUND:
+		app.foreground();
+		break;
+	case EVT_BACKGROUND:
+		app.background();
+		break;
 	case EVT_KEYPRESS:
 		app.keypressEvent(param_one);
 		result = 1;

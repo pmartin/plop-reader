@@ -47,6 +47,9 @@ void Application::touchStartEvent(int x, int y)
 
 void Application::touchEndEvent(int x, int y)
 {
+	isLastActionRead = false;
+	lastReadEntryId = 0;
+
 	gui.touchEndEvent(x, y);
 }
 
@@ -148,6 +151,9 @@ void Application::read(Entry &entry)
 		//Message(ICON_INFORMATION, "Here we go!", entry.local_content_file_html.c_str(), 1*1000);
 
 		OpenBook(entry.local_content_file_html.c_str(), parameters, flags);
+
+		isLastActionRead = true;
+		lastReadEntryId = entry.id;
 	}
 }
 
@@ -159,3 +165,22 @@ void Application::debug(const char *format...)
 	gui.statusBarText(format, args);
 	va_end(args);
 }
+
+
+void Application::foreground()
+{
+	if (isLastActionRead && lastReadEntryId != 0) {
+		char buffer[2048];
+		snprintf(buffer, sizeof(buffer), "We must display action menu for entry %d", lastReadEntryId);
+		Message(ICON_INFORMATION, "After read?", buffer, 2*1000);
+	}
+	isLastActionRead = false;
+	lastReadEntryId = 0;
+}
+
+
+void Application::background()
+{
+
+}
+

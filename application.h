@@ -20,6 +20,8 @@ public:
 		db.open();
 		pageNum = 0;
 		numPerPage = 8;
+		isLastActionRead = false;
+		lastReadEntryId = 0;
 	}
 
 	void init();
@@ -42,6 +44,9 @@ public:
 
 	void debug(const char *format...);
 
+	void foreground();
+	void background();
+
 
 	// TODO remove this method
 	EntryRepository getEntryRepository() {
@@ -56,6 +61,9 @@ private:
 
 	int pageNum;
 	int numPerPage;
+
+	bool isLastActionRead;
+	int lastReadEntryId;
 
 };
 

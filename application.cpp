@@ -175,8 +175,24 @@ void Application::handleActionOnReadEntry(int entryId)
 	snprintf(buffer, sizeof(buffer), "What do you want to do with entry #%d?\n%.128s?", entry.id, entry.title.c_str());
 	int result = DialogSynchro(ICON_QUESTION, "What now with this entry?", buffer, "Archive", "Archive + Star", "Do nothing");
 
-	snprintf(buffer, sizeof(buffer), "Choice -> %d", result);
-	Message(ICON_INFORMATION, "Here we go!", buffer, 1*1000);
+	if (result == 3) {
+		// do nothing
+		return;
+	}
+
+	if (result == 2) {
+		// archive + star
+		entry.local_is_archived = true;
+		entry.local_is_starred = true;
+	}
+	else if (result == 1) {
+		// archive
+		entry.local_is_archived = true;
+	}
+	entryRepository.persist(entry);
+
+	// One entry has changed => we must redraw the list
+	show();
 }
 
 

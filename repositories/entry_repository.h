@@ -20,6 +20,8 @@ public:
 	void list(std::vector<Entry> &entries, int limit, int offset);
 	int countAllEntries();
 
+	Entry get(int entryId);
+
 private:
 	Database &db;
 

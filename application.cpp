@@ -167,12 +167,23 @@ void Application::debug(const char *format...)
 }
 
 
+void Application::handleActionOnReadEntry(int entryId)
+{
+	Entry entry = entryRepository.get(entryId);
+
+	char buffer[2048];
+	snprintf(buffer, sizeof(buffer), "What do you want to do with entry #%d?\n%.128s?", entry.id, entry.title.c_str());
+	int result = DialogSynchro(ICON_QUESTION, "What now with this entry?", buffer, "Archive", "Archive + Star", "Do nothing");
+
+	snprintf(buffer, sizeof(buffer), "Choice -> %d", result);
+	Message(ICON_INFORMATION, "Here we go!", buffer, 1*1000);
+}
+
+
 void Application::foreground()
 {
 	if (isLastActionRead && lastReadEntryId != 0) {
-		char buffer[2048];
-		snprintf(buffer, sizeof(buffer), "We must display action menu for entry %d", lastReadEntryId);
-		Message(ICON_INFORMATION, "After read?", buffer, 2*1000);
+		handleActionOnReadEntry(lastReadEntryId);
 	}
 	isLastActionRead = false;
 	lastReadEntryId = 0;

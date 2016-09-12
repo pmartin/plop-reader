@@ -217,3 +217,75 @@ int EntryRepository::countAllEntries()
 }
 
 
+Entry EntryRepository::get(int entryId)
+{
+	Entry entry;
+	entry.id = 0;
+
+	const char *sql = R"sql(
+select 
+	local_id, 
+	remote_id, 
+	local_is_archived, 
+	remote_is_archived,
+	local_is_starred,
+	remote_is_starred,
+	title,
+	url,
+	content,
+	local_created_at,
+	remote_created_at,
+	local_updated_at,
+	remote_updated_at,
+	reading_time,
+	preview_picture_url,
+	preview_picture_type,
+	preview_picture_path,
+	local_content_file_html,
+	local_content_file_epub
+from entries 
+where local_id = :id
+)sql";
+
+	sqlite3_stmt *stmt;
+	const char *tail;
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":id"), entryId) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		const char *tmp;
+
+		entry.id = sqlite3_column_int(stmt, 0);
+		entry.remote_id = (const char *)sqlite3_column_text(stmt, 1);
+		entry.local_is_archived = sqlite3_column_int(stmt, 2);
+		entry.remote_is_archived = sqlite3_column_int(stmt, 3);
+		entry.local_is_starred = sqlite3_column_int(stmt, 4);
+		entry.remote_is_starred = sqlite3_column_int(stmt, 5);
+		entry.title = (const char *)sqlite3_column_text(stmt, 6);
+		entry.url = (const char *)sqlite3_column_text(stmt, 7);
+		entry.content = (const char *)sqlite3_column_text(stmt, 8);
+		entry.local_created_at = (const char *)sqlite3_column_text(stmt, 9);
+		entry.remote_created_at = ((tmp = (const char *)sqlite3_column_text(stmt, 10))) ? tmp : std::string();
+		entry.local_updated_at = (const char *)sqlite3_column_text(stmt, 11);
+		entry.remote_updated_at = ((tmp = (const char *)sqlite3_column_text(stmt, 12))) ? tmp : std::string();
+		entry.reading_time = sqlite3_column_int(stmt, 13);
+		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
+		entry.preview_picture_type = sqlite3_column_int(stmt, 15);
+		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
+		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
+		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
+	}
+	sqlite3_finalize(stmt);
+
+	return entry;
+}
+
+

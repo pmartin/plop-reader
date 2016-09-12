@@ -47,6 +47,8 @@ public:
 	void foreground();
 	void background();
 
+	void handleActionOnReadEntry(int entryId);
+
 
 	// TODO remove this method
 	EntryRepository getEntryRepository() {

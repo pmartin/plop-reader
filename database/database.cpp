@@ -107,6 +107,10 @@ void Database::migration_002_createEntriesTable()
 {
 	char *err_msg;
 	char buffer[2048];
+
+	// TODO add index on remote_id (used to find an entry during sync)
+	// TODO add index on remote_created_at (use for sort in entries list)
+
 	const char *sql = R"sql(
 create table entries (
 	local_id integer primary key,

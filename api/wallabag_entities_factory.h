@@ -13,6 +13,7 @@ class WallabagEntitiesFactory
 public:
 
 	Entry createEntryFromJson(json_object *item);
+	Entry mergeLocalAndRemoteEntries(Entry &local, Entry &remote);
 
 };
 

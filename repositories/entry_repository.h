@@ -21,6 +21,7 @@ public:
 	int countAllEntries();
 
 	Entry get(int entryId);
+	Entry findByRemoteId(int remoteId);
 
 private:
 	Database &db;

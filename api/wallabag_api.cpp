@@ -284,7 +284,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 			// As we do not have a **sync** yet, only a **fetch**, we remove all entries
 			// from local database before inserting those received from the API.
 			// This way, we will not have duplicated in the application
-			repository.deleteAll();
+			//repository.deleteAll();
 
 
 			json_object *obj = json_tokener_parse(json_string);
@@ -301,8 +301,20 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 			for (int i=0 ; i<items->length ; i++) {
 				json_object *item = (json_object *)array_list_get_idx(items, i);
 
-				Entry entry = this->entitiesFactory.createEntryFromJson(item);
-				repository.persist(entry);
+				int remoteId = json_object_get_int(json_object_object_get(item, "id"));
+				Entry localEntry = repository.findByRemoteId(remoteId);
+				if (localEntry.id > 0) {
+					// Entry already exists in local DB => we must merge the remote data with the local data
+					// and save an updated version of the entry in local DB
+					Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
+					Entry entry = this->entitiesFactory.mergeLocalAndRemoteEntries(localEntry, remoteEntry);
+					repository.persist(entry);
+				}
+				else {
+					// Entry does not already exist in local DB => just create it
+					Entry entry = this->entitiesFactory.createEntryFromJson(item);
+					repository.persist(entry);
+				}
 			}
 		}
 

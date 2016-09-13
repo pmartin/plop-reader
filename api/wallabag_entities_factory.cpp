@@ -17,6 +17,9 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
 	//log_message(buffer);
 
+
+	// TODO stocker des TS UTC
+
 	struct tm tm;
 	memset(&tm, 0, sizeof(struct tm));
 	strptime(created_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
@@ -85,9 +88,15 @@ Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &r
 	}
 
 	if (remote.remote_updated_at > local.local_updated_at && local.local_is_archived != remote.remote_is_archived) {
+		if (remote.remote_id.compare("2393") == 0) {
+			log_message("Use 'is_archived' from server");
+		}
 		entry.local_is_archived = remote.remote_is_archived;
 	}
 	else {
+		if (remote.remote_id.compare("2393") == 0) {
+				log_message("Keep local 'is_archived'");
+			}
 		entry.local_is_archived = local.local_is_archived;
 	}
 	entry.remote_is_archived = remote.remote_is_archived;

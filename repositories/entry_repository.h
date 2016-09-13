@@ -17,8 +17,14 @@ public:
 
 	void deleteAll();
 
-	void list(std::vector<Entry> &entries, int limit, int offset);
+	void list(std::vector<Entry> &entries, int limit, int offset,
+			int archived, int starred);
+
 	int countAllEntries();
+
+	void listUnread(std::vector<Entry> &entries, int limit, int offset);
+	void listArchived(std::vector<Entry> &entries, int limit, int offset);
+	void listStarred(std::vector<Entry> &entries, int limit, int offset);
 
 	Entry get(int entryId);
 	Entry findByRemoteId(int remoteId);

@@ -16,12 +16,15 @@
 class Application
 {
 public:
+	enum entries_mode {MODE_UNREAD, MODE_ARCHIVED, MODE_STARRED};
+
 	Application() : entryRepository(db), gui(*this) {
 		db.open();
 		pageNum = 0;
 		numPerPage = 8;
 		isLastActionRead = false;
 		lastReadEntryId = 0;
+		mode = MODE_UNREAD;
 	}
 
 	void init();
@@ -60,6 +63,8 @@ private:
 	WallabagApi wallabag_api;
 	EntryRepository entryRepository;
 	Gui gui;
+
+	entries_mode mode;
 
 	int pageNum;
 	int numPerPage;

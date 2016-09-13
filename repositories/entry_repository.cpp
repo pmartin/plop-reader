@@ -173,7 +173,27 @@ void EntryRepository::deleteAll()
 }
 
 
-void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset)
+void EntryRepository::listUnread(std::vector<Entry> &entries, int limit, int offset)
+{
+	return list(entries, limit, offset, 0, 1);
+}
+
+
+void EntryRepository::listArchived(std::vector<Entry> &entries, int limit, int offset)
+{
+	return list(entries, limit, offset, 2, 1);
+}
+
+
+void EntryRepository::listStarred(std::vector<Entry> &entries, int limit, int offset)
+{
+	return list(entries, limit, offset, 1, 2);
+}
+
+
+void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset,
+		int archived, int starred
+)
 {
 	//std::vector<Entry> entries;
 
@@ -182,7 +202,30 @@ void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset)
 
 	//char buffer[2048];
 
-	const char *sql = R"sql(
+	std::vector<std::string> conditions;
+
+	if (archived == 0) {
+		conditions.push_back("local_is_archived = 0");
+	}
+	else if (archived == 1) {
+		conditions.push_back("(local_is_archived = 0 or local_is_archived = 1)");
+	}
+	else if (archived == 2) {
+		conditions.push_back("local_is_archived = 1");
+	}
+
+	if (starred == 0) {
+		conditions.push_back("local_is_starred = 0");
+	}
+	else if (starred == 1) {
+		conditions.push_back("(local_is_starred = 0 or local_is_starred = 1)");
+	}
+	else if (starred == 2) {
+		conditions.push_back("local_is_starred = 1");
+	}
+
+
+	const char *sqlTemplate = R"sql(
 select 
     local_id, 
     remote_id, 
@@ -204,6 +247,7 @@ select
     local_content_file_html,
     local_content_file_epub
 from entries 
+%s
 order by remote_created_at desc 
 limit :limit 
 offset :offset
@@ -212,6 +256,24 @@ offset :offset
 	sqlite3_stmt *stmt;
 	const char *tail;
 	int result;
+
+	char sql[2048];
+	if (conditions.empty()) {
+		snprintf(sql, sizeof(sql), sqlTemplate, "");
+	}
+	else {
+		std::string plop = "where ";
+		for (unsigned int i=0 ; i<conditions.size() ; i++) {
+			plop = plop.append(conditions.at(i));
+			if (i + 1 < conditions.size()) {
+				plop.append(" and ");
+			}
+		}
+		snprintf(sql, sizeof(sql), sqlTemplate, plop.c_str());
+	}
+
+	log_message(sql);
+
 
 	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
 		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));

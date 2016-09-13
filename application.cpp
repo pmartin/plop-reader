@@ -70,8 +70,20 @@ void Application::show()
 	int countAllEntries = entryRepository.countAllEntries();
 	int numberOfPages = countAllEntries / numPerPage;
 
+	//ClearScreen();
+
 	std::vector<Entry> entries;
-	entryRepository.list(entries, numPerPage, pageNum * numPerPage);
+	if (mode == MODE_UNREAD) {
+		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
+	}
+	else if (mode == MODE_ARCHIVED) {
+		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
+	}
+	else if (mode == MODE_STARRED) {
+		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
+	}
+
+	//sleep(5);
 
 	gui.show(pageNum, numberOfPages, countAllEntries, entries);
 }
@@ -108,7 +120,15 @@ void Application::keypressEvent(int key)
 	}
 
 	std::vector<Entry> entries;
-	entryRepository.list(entries, numPerPage, pageNum * numPerPage);
+	if (mode == MODE_UNREAD) {
+		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
+	}
+	else if (mode == MODE_ARCHIVED) {
+		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
+	}
+	else if (mode == MODE_STARRED) {
+		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
+	}
 
 	gui.show(pageNum, numberOfPages, countAllEntries, entries);
 }

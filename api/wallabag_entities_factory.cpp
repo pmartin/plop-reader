@@ -72,43 +72,87 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &remote)
 {
 	Entry entry;
+	bool isLocalUpdated = false;
 
 	entry.id = local.id;
-	entry.remote_id = remote.remote_id;
+	if (entry.remote_id != remote.remote_id) {
+		entry.remote_id = remote.remote_id;
+		isLocalUpdated = true;
+	}
 
-	entry.remote_updated_at = remote.remote_updated_at;
+	if (entry.remote_updated_at != remote.remote_updated_at) {
+		// Note: this has no effect on isLocalUpdated
+		entry.remote_updated_at = remote.remote_updated_at;
+	}
 
 	if (remote.remote_updated_at > local.local_updated_at && local.local_is_archived != remote.remote_is_archived) {
 		entry.local_is_archived = remote.remote_is_archived;
+		isLocalUpdated = true;
 	}
 	else {
 		entry.local_is_archived = local.local_is_archived;
 	}
-	entry.remote_is_archived = remote.remote_is_archived;
+
+	if (entry.remote_is_archived != remote.remote_is_archived) {
+		entry.remote_is_archived = remote.remote_is_archived;
+		isLocalUpdated = true;
+	}
 
 	if (remote.remote_updated_at > local.local_updated_at && local.local_is_starred != remote.remote_is_starred) {
 		entry.local_is_starred = remote.remote_is_starred;
+		isLocalUpdated = true;
 	}
 	else {
 		entry.local_is_starred = local.local_is_starred;
 	}
-	entry.remote_is_starred = remote.remote_is_starred;
+
+	if (entry.remote_is_starred != remote.remote_is_starred) {
+		entry.remote_is_starred = remote.remote_is_starred;
+		isLocalUpdated = true;
+	}
 
 	// For some fields, we always use what comes from the remote
-	entry.remote_created_at = remote.remote_created_at;
-	entry.title = remote.title;
-	entry.url = remote.url;
-	entry.content = remote.content;
-	entry.reading_time = remote.reading_time;
-	entry.preview_picture_url = remote.preview_picture_url;
+	if (entry.remote_created_at != remote.remote_created_at) {
+		entry.remote_created_at = remote.remote_created_at;
+		isLocalUpdated = true;
+	}
+	if (entry.title != remote.title) {
+		entry.title = remote.title;
+		isLocalUpdated = true;
+	}
+	if (entry.url != remote.url) {
+		entry.url = remote.url;
+		isLocalUpdated = true;
+	}
+	if (entry.content != remote.content) {
+		entry.content = remote.content;
+		isLocalUpdated = true;
+	}
+	if (entry.reading_time != remote.reading_time) {
+		entry.reading_time = remote.reading_time;
+		isLocalUpdated = true;
+	}
+	if (entry.preview_picture_url != remote.preview_picture_url) {
+		entry.preview_picture_url = remote.preview_picture_url;
+		isLocalUpdated = true;
+	}
 
 	// For some other fields that are more specific to the application, we always use what we had locally
 	entry.local_created_at = local.local_created_at;
 	entry.local_content_file_html = local.local_content_file_html;
 	entry.local_content_file_epub = local.local_content_file_epub;
 
-	// TODO mettre à jour date locale si on a récupèré des infos du serveur
-	entry.local_updated_at = local.local_updated_at;
+	if (isLocalUpdated && remote.remote_updated_at > local.local_updated_at) {
+		// Some new data have been obtained from the server,
+		// AND the entry has been updated more recently on the server than on the device
+		// => use the updated_at date from the server
+		entry.local_updated_at = remote.remote_updated_at;
+	}
+	else {
+		// Entry has not been updated on the server, or it's more recent on the ereader
+		// => Keep the updated_at date we had on the device
+		entry.local_updated_at = local.local_updated_at;
+	}
 
 	return entry;
 }

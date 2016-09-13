@@ -197,6 +197,7 @@ void Application::handleActionOnReadEntry(int entryId)
 		entry.local_is_archived = true;
 	}
 
+	// The entry has been updated locally => keep track of it, to known it might have to be synced to server later on
 	entry.local_updated_at = time(NULL);
 
 	entryRepository.persist(entry);

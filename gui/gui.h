@@ -13,6 +13,7 @@
 
 
 class Application;
+extern Application app;
 
 extern void log_message(const char *msg);
 
@@ -59,7 +60,7 @@ private:
 
 	std::vector<GuiListItemEntry> entriesItems;
 
-	Application &app;
+	Application &app_ref;
 
 };
 

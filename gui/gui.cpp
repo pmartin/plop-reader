@@ -3,7 +3,7 @@
 #include "../application.h"
 
 
-Gui::Gui(Application &aapp) : app(aapp)
+Gui::Gui(Application &aapp) : app_ref(aapp)
 {
 
 }
@@ -172,32 +172,25 @@ void Gui::touchStartEvent(int x, int y)
 }
 
 
-static void menu_01_handler(int index)
-{
-	char buffer[2048];
-	snprintf(buffer, sizeof(buffer), "Menu: index %d has been selected!", index);
-	//Message(ICON_INFORMATION, "Debug", buffer, 3*1000);
-}
-
+// This needs to be global, so it can be accessed by the callback function of the menu ;-(
+static imenu *menu;
 
 void Gui::plopMenu()
 {
-	// TODO libérer la mémoire à la fermeture du menu ^^
+	char *str3 = (char *)malloc(strlen("Mode = entrées starrées") + 1);
+	strcpy(str3, "Mode = entrées starrées");
 
-	char *str3 = (char *)malloc(strlen("Et voici encore une entrée !") + 1);
-	strcpy(str3, "Et voici encore une entrée !");
+	char *str2 = (char *)malloc(strlen("Mode = entrées archivées") + 1);
+	strcpy(str2, "Mode = entrées archivées");
 
-	char *str2 = (char *)malloc(strlen("Mon second sous-menu") + 1);
-	strcpy(str2, "Mon second sous-menu");
+	char *str1 = (char *)malloc(strlen("Mode = entrées non lues") + 1);
+	strcpy(str1, "Mode = entrées non lues");
 
-	char *str1 = (char *)malloc(strlen("Mon sous menu 1") + 1);
-	strcpy(str1, "Mon sous menu 1");
-
-	char *str0 = (char *)malloc(strlen("Plop glop menu!") + 1);
-	strcpy(str0, "Plop glop menu!");
+	char *str0 = (char *)malloc(strlen("Mon menu !") + 1);
+	strcpy(str0, "Mon menu !");
 
 
-	imenu *menu = (imenu *)calloc(4, sizeof(imenu));
+	menu = (imenu *)calloc(4, sizeof(imenu));
 
 	menu[0].type = 1;
 	menu[0].index = 0;
@@ -215,18 +208,35 @@ void Gui::plopMenu()
 	menu[2].submenu = &menu[3];
 
 	menu[3].type = 2;
-	menu[3].index = 2;
+	menu[3].index = 3;
 	menu[3].text = str3;
 	menu[3].submenu = NULL;
 
+	auto callback = [](int index) {
+		//char buffer[2048];
+		//snprintf(buffer, sizeof(buffer), "Menu: index %d has been selected!\n-> %s", index, menu[index].text);
+		//Message(ICON_INFORMATION, "Debug", buffer, 3*1000);
 
-	irect rect = GetMenuRect(menu);
+		// free memory of menu
+		for (int i=0 ; i<4 ; i++) {
+			free(menu[i].text);
+		}
+		free(menu);
+
+		if (index == 1) {
+			app.setMode(Application::MODE_UNREAD);
+		}
+		else if (index == 2) {
+			app.setMode(Application::MODE_ARCHIVED);
+		}
+		else if (index == 3) {
+			app.setMode(Application::MODE_STARRED);
+		}
+	};
 
 	SetMenuFont(entryTitleFont);
-
-	OpenMenu(menu, 0, (screenWidth-rect.w)/2, (screenHeight-rect.h)/3, (iv_menuhandler)menu_01_handler);
-
-
+	irect rect = GetMenuRect(menu);
+	OpenMenu(menu, 0, (screenWidth-rect.w)/2, (screenHeight-rect.h)/3, callback);
 }
 
 

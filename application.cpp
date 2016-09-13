@@ -65,8 +65,20 @@ void Application::loadRecentArticles()
 }
 
 
+void Application::setMode(int m)
+{
+	mode = (entries_mode)m;
+	pageNum = 0;
+
+	show();
+}
+
+
 void Application::show()
 {
+	// TODO la pagination ne doit pas se faire sur le nombre total d'entrées,
+	// mais sur le nombre d'entrées du type en cours d'affichage
+
 	int countAllEntries = entryRepository.countAllEntries();
 	int numberOfPages = countAllEntries / numPerPage;
 

@@ -52,6 +52,8 @@ public:
 
 	void handleActionOnReadEntry(int entryId);
 
+	void setMode(int m);
+
 
 	// TODO remove this method
 	EntryRepository getEntryRepository() {

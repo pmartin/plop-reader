@@ -92,8 +92,8 @@ void Database::migration_001_createInternalsTable()
 create table internals (
 	key text primary key,
     value text,
-    created_at text not null,
-    updated_at text not null
+    created_at integer not null,
+    updated_at integer not null
 )
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
@@ -126,11 +126,11 @@ create table entries (
 	url text not null,
 	content text not null,
 
-	local_created_at text not null,
-	remote_created_at text null,
+	local_created_at integer not null,
+	remote_created_at integer null,
 
-	local_updated_at text not null,
-	remote_updated_at text null,
+	local_updated_at integer not null,
+	remote_updated_at integer null,
 
 	reading_time integer null,
 
@@ -199,7 +199,7 @@ Internal Database::selectInternal(std::string key)
 
 void Database::insertInternal(std::string key, std::string value)
 {
-	const char *sqlInsert = "insert into internals (`key`, `value`, `created_at`, `updated_at`) values (:key, :value, datetime(), datetime())";
+	const char *sqlInsert = "insert into internals (`key`, `value`, `created_at`, `updated_at`) values (:key, :value, strftime('%s','now'), strftime('%s','now'))";
 
 	sqlite3_stmt *stmt;
 	const char *tail;
@@ -228,7 +228,7 @@ void Database::insertInternal(std::string key, std::string value)
 
 void Database::updateInternal(std::string key, std::string value)
 {
-	const char *sqlUpdate = "update internals set value = :value, updated_at = datetime() where key = :key";
+	const char *sqlUpdate = "update internals set value = :value, updated_at = strftime('%s','now') where key = :key";
 
 	sqlite3_stmt *stmt;
 	const char *tail;

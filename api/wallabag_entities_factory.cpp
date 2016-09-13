@@ -9,13 +9,22 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	const char *title = json_object_get_string(json_object_object_get(item, "title"));
 	const char *url = json_object_get_string(json_object_object_get(item, "url"));
 	const char *content = json_object_get_string(json_object_object_get(item, "content"));
-	const char *created_at = json_object_get_string(json_object_object_get(item, "created_at"));
-	const char *updated_at = json_object_get_string(json_object_object_get(item, "updated_at"));
+	const char *created_at_str = json_object_get_string(json_object_object_get(item, "created_at"));
+	const char *updated_at_str = json_object_get_string(json_object_object_get(item, "updated_at"));
 	int reading_time = json_object_get_int(json_object_object_get(item, "reading_time")) * 60;
 	const char *preview_picture = json_object_get_string(json_object_object_get(item, "preview_picture"));
 
 	//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
 	//log_message(buffer);
+
+	struct tm tm;
+	memset(&tm, 0, sizeof(struct tm));
+	strptime(created_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
+	time_t created_at_ts = mktime(&tm);
+
+	memset(&tm, 0, sizeof(struct tm));
+	strptime(updated_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
+	time_t updated_at_ts = mktime(&tm);
 
 	Entry entry;
 	entry.id = 0;
@@ -41,8 +50,8 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	if (content != NULL) {
 		entry.content = content;
 	}
-	entry.remote_created_at = created_at;
-	entry.remote_updated_at = updated_at;
+	entry.remote_created_at = created_at_ts;
+	entry.remote_updated_at = updated_at_ts;
 	entry.reading_time = reading_time;
 	if (preview_picture != NULL) {
 		entry.preview_picture_url = preview_picture;
@@ -71,7 +80,7 @@ Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &r
 	//   local.local_updated_at = "2016-09-12 21:15:12"   -> En réalité, 23:15:12 heure française (il faut donc interprêter cette heure comme UTC, alors qu'il lui manque les marqueur correspondant)
 	char buffer[2048];
 	if (remote.remote_id.compare("2393") == 0) {
-		snprintf(buffer, sizeof(buffer), "remote.remote_updated_at=%s  ;  local.local_updated_at=%s", remote.remote_updated_at.c_str(), local.local_updated_at.c_str());
+		snprintf(buffer, sizeof(buffer), "remote.remote_updated_at=%d  ;  local.local_updated_at=%d", remote.remote_updated_at, local.local_updated_at);
 		log_message(buffer);
 	}
 

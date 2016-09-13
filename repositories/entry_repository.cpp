@@ -26,7 +26,7 @@ values (
     :local_is_starred, :remote_is_starred, 
 	:title, :url, :content,
 	:remote_created_at, :remote_updated_at,
-	datetime(), datetime(),
+	strftime('%s','now'), strftime('%s','now'),
 	:reading_time, :preview_picture_url,
     :local_content_file_html, :local_content_file_epub
 )
@@ -45,7 +45,7 @@ set
     content = :content, 
 	remote_created_at = :remote_created_at, 
     remote_updated_at = :remote_updated_at, 
-    local_updated_at = datetime(),
+    local_updated_at = strftime('%s','now'),
 	reading_time = :reading_time, 
     preview_picture_url = :preview_picture_url,
     local_content_file_html = :local_content_file_html, 
@@ -107,14 +107,15 @@ where
 		log_message(buffer);
 	}
 
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_created_at"), entry.remote_created_at.c_str(), entry.remote_created_at.length(), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":remote_created_at"), entry.remote_created_at) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding remote_created_at : %s", sqlite3_errmsg(this->db.getDb()));
 		log_message(buffer);
 	}
-	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_updated_at"), entry.remote_updated_at.c_str(), entry.remote_updated_at.length(), SQLITE_STATIC) != SQLITE_OK) {
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":remote_updated_at"), entry.remote_updated_at) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding remote_updated_at : %s", sqlite3_errmsg(this->db.getDb()));
 		log_message(buffer);
 	}
+
 
 	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":reading_time"), entry.reading_time) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding reading_time : %s", sqlite3_errmsg(this->db.getDb()));
@@ -230,10 +231,10 @@ offset :offset
 		entry.title = (const char *)sqlite3_column_text(stmt, 6);
 		entry.url = (const char *)sqlite3_column_text(stmt, 7);
 		entry.content = (const char *)sqlite3_column_text(stmt, 8);
-		entry.local_created_at = (const char *)sqlite3_column_text(stmt, 9);
-		entry.remote_created_at = ((tmp = (const char *)sqlite3_column_text(stmt, 10))) ? tmp : std::string();
-		entry.local_updated_at = (const char *)sqlite3_column_text(stmt, 11);
-		entry.remote_updated_at = ((tmp = (const char *)sqlite3_column_text(stmt, 12))) ? tmp : std::string();
+		entry.local_created_at = sqlite3_column_int(stmt, 9);
+		entry.remote_created_at = sqlite3_column_int(stmt, 10);
+		entry.local_updated_at = sqlite3_column_int(stmt, 11);
+		entry.remote_updated_at = sqlite3_column_int(stmt, 12);
 		entry.reading_time = sqlite3_column_int(stmt, 13);
 		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
 		entry.preview_picture_type = sqlite3_column_int(stmt, 15);
@@ -326,10 +327,10 @@ where local_id = :id
 		entry.title = (const char *)sqlite3_column_text(stmt, 6);
 		entry.url = (const char *)sqlite3_column_text(stmt, 7);
 		entry.content = (const char *)sqlite3_column_text(stmt, 8);
-		entry.local_created_at = (const char *)sqlite3_column_text(stmt, 9);
-		entry.remote_created_at = ((tmp = (const char *)sqlite3_column_text(stmt, 10))) ? tmp : std::string();
-		entry.local_updated_at = (const char *)sqlite3_column_text(stmt, 11);
-		entry.remote_updated_at = ((tmp = (const char *)sqlite3_column_text(stmt, 12))) ? tmp : std::string();
+		entry.local_created_at = sqlite3_column_int(stmt, 9);
+		entry.remote_created_at = sqlite3_column_int(stmt, 10);
+		entry.local_updated_at = sqlite3_column_int(stmt, 11);
+		entry.remote_updated_at = sqlite3_column_int(stmt, 12);
 		entry.reading_time = sqlite3_column_int(stmt, 13);
 		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
 		entry.preview_picture_type = sqlite3_column_int(stmt, 15);
@@ -400,10 +401,10 @@ where remote_id = :id
 		entry.title = (const char *)sqlite3_column_text(stmt, 6);
 		entry.url = (const char *)sqlite3_column_text(stmt, 7);
 		entry.content = (const char *)sqlite3_column_text(stmt, 8);
-		entry.local_created_at = (const char *)sqlite3_column_text(stmt, 9);
-		entry.remote_created_at = ((tmp = (const char *)sqlite3_column_text(stmt, 10))) ? tmp : std::string();
-		entry.local_updated_at = (const char *)sqlite3_column_text(stmt, 11);
-		entry.remote_updated_at = ((tmp = (const char *)sqlite3_column_text(stmt, 12))) ? tmp : std::string();
+		entry.local_created_at = sqlite3_column_int(stmt, 9);
+		entry.remote_created_at = sqlite3_column_int(stmt, 10);
+		entry.local_updated_at = sqlite3_column_int(stmt, 11);
+		entry.remote_updated_at = sqlite3_column_int(stmt, 12);
 		entry.reading_time = sqlite3_column_int(stmt, 13);
 		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
 		entry.preview_picture_type = sqlite3_column_int(stmt, 15);

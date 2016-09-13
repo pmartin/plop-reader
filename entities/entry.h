@@ -20,11 +20,11 @@ public:
 	std::string url;
 	std::string content;
 
-	std::string local_created_at;
-	std::string remote_created_at;
+	int local_created_at;
+	int remote_created_at;
 
-	std::string local_updated_at;
-	std::string remote_updated_at;
+	int local_updated_at;
+	int remote_updated_at;
 
 	int reading_time;
 

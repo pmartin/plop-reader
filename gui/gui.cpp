@@ -172,6 +172,64 @@ void Gui::touchStartEvent(int x, int y)
 }
 
 
+static void menu_01_handler(int index)
+{
+	char buffer[2048];
+	snprintf(buffer, sizeof(buffer), "Menu: index %d has been selected!", index);
+	//Message(ICON_INFORMATION, "Debug", buffer, 3*1000);
+}
+
+
+void Gui::plopMenu()
+{
+	// TODO libérer la mémoire à la fermeture du menu ^^
+
+	char *str3 = (char *)malloc(strlen("Et voici encore une entrée !") + 1);
+	strcpy(str3, "Et voici encore une entrée !");
+
+	char *str2 = (char *)malloc(strlen("Mon second sous-menu") + 1);
+	strcpy(str2, "Mon second sous-menu");
+
+	char *str1 = (char *)malloc(strlen("Mon sous menu 1") + 1);
+	strcpy(str1, "Mon sous menu 1");
+
+	char *str0 = (char *)malloc(strlen("Plop glop menu!") + 1);
+	strcpy(str0, "Plop glop menu!");
+
+
+	imenu *menu = (imenu *)calloc(4, sizeof(imenu));
+
+	menu[0].type = 1;
+	menu[0].index = 0;
+	menu[0].text = str0;
+	menu[0].submenu = &menu[1];
+
+	menu[1].type = 2;
+	menu[1].index = 1;
+	menu[1].text = str1;
+	menu[1].submenu = &menu[2];
+
+	menu[2].type = 2;
+	menu[2].index = 2;
+	menu[2].text = str2;
+	menu[2].submenu = &menu[3];
+
+	menu[3].type = 2;
+	menu[3].index = 2;
+	menu[3].text = str3;
+	menu[3].submenu = NULL;
+
+
+	irect rect = GetMenuRect(menu);
+
+	SetMenuFont(entryTitleFont);
+
+	OpenMenu(menu, 0, (screenWidth-rect.w)/2, (screenHeight-rect.h)/3, (iv_menuhandler)menu_01_handler);
+
+
+}
+
+
 void Gui::touchEndEvent(int x, int y)
 {
 	if (exitButton.hit(x, y)) {
@@ -187,7 +245,8 @@ void Gui::touchEndEvent(int x, int y)
 	else if (menuButton.hit(x, y)) {
 		statusBarText("Touch END event at (%d;%d) => menu", x, y);
 
-		Message(ICON_INFORMATION, "TODO!", "One day, there will be a menu, here...", 2*1000);
+		//Message(ICON_INFORMATION, "TODO!", "One day, there will be a menu, here...", 2*1000);
+		plopMenu();
 	}
 	else {
 		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {

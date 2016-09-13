@@ -35,6 +35,8 @@ public:
 	void statusBarText(const char *format, va_list args);
 	void statusBarText(const char *format...);
 
+	void plopMenu();
+
 private:
 	ifont *titleFont = NULL;
 	int titleFontSize = 0;

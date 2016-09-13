@@ -18,17 +18,48 @@ void Application::init()
 }
 
 
+// To fetch data from server (or sync data to server), a network connection is required ;-)
+bool Application::connectToNetwork()
+{
+	iv_netinfo *netinfo = NetInfo();
+	if (netinfo->connected) {
+		// Already connected => nothing more to do
+		return true;
+	}
+
+	const char *network_name = NULL;
+	int result = NetConnect2(network_name, 1);
+	if (result != 0) {
+		// Failed to connect
+		return false;
+	}
+
+	// Just to be sure: check if we are, now, connected
+	netinfo = NetInfo();
+	if (netinfo->connected) {
+		return true;
+	}
+
+	// Connection failed, I don't know why
+	return false;
+}
+
+
 void Application::loadRecentArticles()
 {
-	Message(ICON_INFORMATION, "Working...", "Downloading most recent entries from API...", 3*1000);
+	if (!connectToNetwork()) {
+		// No network connection... not going to be able to synchronize!
+		Message(ICON_ERROR, "Synchronization failed!", "No active network connection, no way to synchronize!", 3*1000);
+	}
+	else {
+		// So the debug log is easier to read...
+		//ClearScreen();
 
-	// So the debug log is easier to read...
-	//ClearScreen();
+		wallabag_api.loadRecentArticles(entryRepository);
 
-	wallabag_api.loadRecentArticles(entryRepository);
-
-	// Just so have a bit of time to read the debug log...
-	//sleep(5);
+		// Just so have a bit of time to read the debug log...
+		//sleep(5);
+	}
 
 	show();
 }

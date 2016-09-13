@@ -67,6 +67,8 @@ private:
 	bool isLastActionRead;
 	int lastReadEntryId;
 
+	bool connectToNetwork();
+
 };
 
 

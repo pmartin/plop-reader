@@ -64,25 +64,10 @@ where
 			snprintf(buffer, sizeof(buffer), "Fail binding local_id : %s", sqlite3_errmsg(this->db.getDb()));
 			log_message(buffer);
 		}
-		if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":local_created_at"), entry.local_created_at) != SQLITE_OK) {
-			snprintf(buffer, sizeof(buffer), "Fail binding local_created_at : %s", sqlite3_errmsg(this->db.getDb()));
-			log_message(buffer);
-		}
 	}
 	else {
 		if (sqlite3_prepare(this->db.getDb(), sqlInsert, -1, &stmt, &tail) != SQLITE_OK) {
 			snprintf(buffer, sizeof(buffer), "Fail preparing (insert): %s", sqlite3_errmsg(this->db.getDb()));
-			log_message(buffer);
-		}
-
-		// TODO stocker des TS UTC
-		time_t ts_local = time(NULL);
-//		struct tm *tm_utc = gmtime(&ts_local);
-//		time_t ts_utc = timegm(tm_utc);
-		time_t ts_utc = ts_local - 3600*2;
-		entry.local_created_at = ts_utc;
-		if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":local_created_at"), entry.local_created_at) != SQLITE_OK) {
-			snprintf(buffer, sizeof(buffer), "Fail binding local_created_at : %s", sqlite3_errmsg(this->db.getDb()));
 			log_message(buffer);
 		}
 	}
@@ -123,17 +108,15 @@ where
 		log_message(buffer);
 	}
 
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":local_created_at"), entry.local_created_at) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail binding local_created_at : %s", sqlite3_errmsg(this->db.getDb()));
+		log_message(buffer);
+	}
 	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":remote_created_at"), entry.remote_created_at) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding remote_created_at : %s", sqlite3_errmsg(this->db.getDb()));
 		log_message(buffer);
 	}
 
-	// TODO stocker des TS UTC
-	time_t ts_local = time(NULL);
-//		struct tm *tm_utc = gmtime(&ts_local);
-//		time_t ts_utc = timegm(tm_utc);
-	time_t ts_utc = ts_local - 3600*2;
-	entry.local_updated_at = ts_utc;
 	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":local_updated_at"), entry.local_updated_at) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail binding local_updated_at : %s", sqlite3_errmsg(this->db.getDb()));
 		log_message(buffer);

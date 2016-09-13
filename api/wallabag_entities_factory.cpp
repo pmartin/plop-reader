@@ -17,17 +17,14 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
 	//log_message(buffer);
 
-
-	// TODO stocker des TS UTC
-
 	struct tm tm;
 	memset(&tm, 0, sizeof(struct tm));
 	strptime(created_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
-	time_t created_at_ts = mktime(&tm);
+	time_t created_at_ts = timegm(&tm);
 
 	memset(&tm, 0, sizeof(struct tm));
 	strptime(updated_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
-	time_t updated_at_ts = mktime(&tm);
+	time_t updated_at_ts = timegm(&tm);
 
 	Entry entry;
 	entry.id = 0;
@@ -53,8 +50,13 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	if (content != NULL) {
 		entry.content = content;
 	}
+
+	entry.local_created_at = created_at_ts;
 	entry.remote_created_at = created_at_ts;
+
+	entry.local_updated_at = updated_at_ts;
 	entry.remote_updated_at = updated_at_ts;
+
 	entry.reading_time = reading_time;
 	if (preview_picture != NULL) {
 		entry.preview_picture_url = preview_picture;
@@ -67,8 +69,6 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 }
 
 
-extern void log_message(const char *msg);
-
 Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &remote)
 {
 	Entry entry;
@@ -78,25 +78,10 @@ Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &r
 
 	entry.remote_updated_at = remote.remote_updated_at;
 
-	// TODO les comparaisons de dates sont foireuses : ce qui arrive de l'API et ce qui est en DB sont dans des formats différents ;-(
-	//   remote.remote_updated_at = "2016-09-12T18:30:11+0000"  -> En réalité, 20:30:11 heure française (donc, OK puisque l'heure données ici est UTC)
-	//   local.local_updated_at = "2016-09-12 21:15:12"   -> En réalité, 23:15:12 heure française (il faut donc interprêter cette heure comme UTC, alors qu'il lui manque les marqueur correspondant)
-	char buffer[2048];
-	if (remote.remote_id.compare("2393") == 0) {
-		snprintf(buffer, sizeof(buffer), "remote.remote_updated_at=%d  ;  local.local_updated_at=%d", remote.remote_updated_at, local.local_updated_at);
-		log_message(buffer);
-	}
-
 	if (remote.remote_updated_at > local.local_updated_at && local.local_is_archived != remote.remote_is_archived) {
-		if (remote.remote_id.compare("2393") == 0) {
-			log_message("Use 'is_archived' from server");
-		}
 		entry.local_is_archived = remote.remote_is_archived;
 	}
 	else {
-		if (remote.remote_id.compare("2393") == 0) {
-				log_message("Keep local 'is_archived'");
-			}
 		entry.local_is_archived = local.local_is_archived;
 	}
 	entry.remote_is_archived = remote.remote_is_archived;

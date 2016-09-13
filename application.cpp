@@ -23,12 +23,12 @@ void Application::loadRecentArticles()
 	Message(ICON_INFORMATION, "Working...", "Downloading most recent entries from API...", 3*1000);
 
 	// So the debug log is easier to read...
-	ClearScreen();
+	//ClearScreen();
 
 	wallabag_api.loadRecentArticles(entryRepository);
 
 	// Just so have a bit of time to read the debug log...
-	sleep(5);
+	//sleep(5);
 
 	show();
 }
@@ -196,6 +196,9 @@ void Application::handleActionOnReadEntry(int entryId)
 		// archive
 		entry.local_is_archived = true;
 	}
+
+	entry.local_updated_at = time(NULL);
+
 	entryRepository.persist(entry);
 
 	// One entry has changed => we must redraw the list

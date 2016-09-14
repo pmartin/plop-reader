@@ -1,47 +1,30 @@
+#include "log.h"
+
 #include "belladonna.h"
 
-// TODO remove all this old-school logging stuff
 
-
-static ifont *font;
-static const int kFontSize = 16;
-
-static int y_log;
-
-
-void log_init()
+int Log::log(unsigned int level, const char *str ...)
 {
-	font = OpenFont("LiberationSans", kFontSize, 1);
-	SetFont(font, BLACK);
+	FILE *fp = iv_fopen(FILEPATH, "a");
 
-	log_reset();
-}
+	char outerBuffer[2048];
+	char innerBuffer[1500];
 
+	va_list args;
+	va_start(args, str);
+	vsnprintf(innerBuffer, sizeof(innerBuffer), str, args);
+	va_end(args);
 
-void log_reset()
-{
-	y_log = 80;
-	ClearScreen();
-	FullUpdateHQ();
-}
-
-
-void log_message(const char *msg)
-{
-	if (strlen(msg) == 0) {
-		return;
+	const char *levelsStrings[] = {"debug", "info", "warn", "error"};
+	if (level > sizeof(levelsStrings) - 1) {
+		level = sizeof(levelsStrings) - 1;
 	}
 
-	SetFont(font, BLACK);
+	snprintf(outerBuffer, sizeof(outerBuffer), "[%ld][%s] %s<br>\n", time(NULL), levelsStrings[level], innerBuffer);
+	int written = iv_fwrite(outerBuffer, sizeof(char), strlen(outerBuffer), fp);
 
-	DrawTextRect(0, y_log, ScreenWidth(), kFontSize, msg, ALIGN_LEFT);
-	PartialUpdate(0, y_log, ScreenWidth(), y_log + kFontSize + 2);
-	y_log += kFontSize + 2;
-}
+	iv_fclose(fp);
 
-
-void log_close()
-{
-	CloseFont(font);
+	return written;
 }
 

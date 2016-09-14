@@ -519,15 +519,15 @@ where remote_id = :id
 	sqlite3_stmt *stmt;
 	const char *tail;
 
-	char buffer[2048];
+	//char buffer[2048];
 	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
-		snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
 	}
 
 	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":id"), remoteId) != SQLITE_OK) {
-		snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
 	}
 
 	if (sqlite3_step(stmt) == SQLITE_ROW) {

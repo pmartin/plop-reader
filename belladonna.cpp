@@ -11,7 +11,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 
 	switch (event_type) {
 	case EVT_INIT:
-		log_init();
+		//log_init();
 		result = 1;
 		break;
 	case EVT_SHOW:
@@ -54,7 +54,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 		result = 1;
 		break;
 	case EVT_EXIT:
-		log_close();
+		//log_close();
 		result = 1;
 		break;
 	default:

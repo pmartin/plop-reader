@@ -33,13 +33,7 @@ extern Application app;
 // gui
 #include "gui/gui.h"
 
-
 // log
-// TODO remove all this old-school logging stuff
-extern void log_init();
-extern void log_reset();
-extern void log_message(const char *msg);
-extern void log_close();
-
+#include "log.h"
 
 #endif /* BELLADONNA_H_ */

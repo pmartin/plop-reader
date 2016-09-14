@@ -47,7 +47,7 @@ application.o: application.h application.cpp
 belladonna.o: belladonna.h belladonna.cpp
 	$(CC) -c belladonna.cpp $(CFLAGS) -o belladonna.o
 
-log.o: belladonna.h log.cpp
+log.o: belladonna.h log.h log.cpp
 	$(CC) -c log.cpp $(CFLAGS) -o log.o
 
 

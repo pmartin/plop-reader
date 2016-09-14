@@ -13,10 +13,12 @@ void Database::drop(void)
 
 void Database::open(void)
 {
-	char buffer[2048];
+	//char buffer[2048];
 	if (sqlite3_open(Database::DB_FILE, &this->db)) {
-		snprintf(buffer, sizeof(buffer), "Fail opening DB : %s", sqlite3_errmsg(this->db));
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "Fail opening DB : %s", sqlite3_errmsg(this->db));
+		//log_message(buffer);
+
+		// TODO error-handling
 	}
 }
 
@@ -47,7 +49,7 @@ void Database::runMigrations(void)
 void Database::migration_001_createInternalsTable()
 {
 	char *err_msg;
-	char buffer[2048];
+	//char buffer[2048];
 	const char *sql = R"sql(
 create table internals (
 	key text primary key,
@@ -57,8 +59,10 @@ create table internals (
 )
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
-		snprintf(buffer, sizeof(buffer), "Fail creating table : %s", err_msg);
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "Fail creating table : %s", err_msg);
+		//log_message(buffer);
+
+		// TODO error-handling
 	}
 }
 
@@ -66,7 +70,7 @@ create table internals (
 void Database::migration_002_createEntriesTable()
 {
 	char *err_msg;
-	char buffer[2048];
+	//char buffer[2048];
 	const char *sql = R"sql(
 create table entries (
 	local_id integer primary key,
@@ -99,22 +103,26 @@ create table entries (
 )
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
-		snprintf(buffer, sizeof(buffer), "Fail creating table : %s", err_msg);
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "Fail creating table : %s", err_msg);
+		//log_message(buffer);
+
+		// TODO error-handling
 	}
 }
 
 void Database::migration_003_createIndexesOnEntries()
 {
 	char *err_msg;
-	char buffer[2048];
+	//char buffer[2048];
 	const char *sql = R"sql(
 create unique index idx_entries_remote_id on entries (remote_id);
 create index idx_entries_local_updated_at on entries (local_updated_at desc);
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
-		snprintf(buffer, sizeof(buffer), "Fail migration 003 : %s", err_msg);
-		log_message(buffer);
+		//snprintf(buffer, sizeof(buffer), "Fail migration 003 : %s", err_msg);
+		//log_message(buffer);
+
+		// TODO error-handling
 	}
 }
 

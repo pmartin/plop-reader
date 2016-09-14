@@ -1,4 +1,5 @@
 #include "application.h"
+#include "log.h"
 
 
 void Application::init()

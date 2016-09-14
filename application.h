@@ -76,6 +76,9 @@ private:
 
 	bool connectToNetwork();
 
+	int countEntriesForCurrentMode();
+	void listEntriesForCurrentMode(std::vector<Entry> &entries);
+
 };
 
 

@@ -78,30 +78,12 @@ void Application::setMode(int m)
 
 void Application::show()
 {
-	// TODO la pagination ne doit pas se faire sur le nombre total d'entrées,
-	// mais sur le nombre d'entrées du type en cours d'affichage
-
-	int countEntries;
-
-	//ClearScreen();
-
 	std::vector<Entry> entries;
-	if (mode == MODE_UNREAD) {
-		countEntries = entryRepository.countUnread();
-		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
-	}
-	else if (mode == MODE_ARCHIVED) {
-		countEntries = entryRepository.countArchived();
-		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
-	}
-	else if (mode == MODE_STARRED) {
-		countEntries = entryRepository.countStarred();
-		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
-	}
+	listEntriesForCurrentMode(entries);
 
-	//sleep(5);
-
+	int countEntries = countEntriesForCurrentMode();
 	int numberOfPages = countEntries / numPerPage;
+
 	gui.show(pageNum, numberOfPages, countEntries, entries);
 }
 
@@ -123,18 +105,7 @@ void Application::touchEndEvent(int x, int y)
 
 void Application::keypressEvent(int key)
 {
-	int countEntries;
-
-	if (mode == MODE_UNREAD) {
-		countEntries = entryRepository.countUnread();
-	}
-	else if (mode == MODE_ARCHIVED) {
-		countEntries = entryRepository.countArchived();
-	}
-	else if (mode == MODE_STARRED) {
-		countEntries = entryRepository.countStarred();
-	}
-
+	int countEntries = countEntriesForCurrentMode();
 	int numberOfPages = countEntries / numPerPage;
 
 	if (key == KEY_PREV && pageNum > 0) {
@@ -286,5 +257,34 @@ void Application::foreground()
 void Application::background()
 {
 
+}
+
+
+int Application::countEntriesForCurrentMode()
+{
+	if (mode == MODE_UNREAD) {
+		return entryRepository.countUnread();
+	}
+	if (mode == MODE_ARCHIVED) {
+		return entryRepository.countArchived();
+	}
+	if (mode == MODE_STARRED) {
+		return entryRepository.countStarred();
+	}
+	return 0;
+}
+
+
+void Application::listEntriesForCurrentMode(std::vector<Entry> &entries)
+{
+	if (mode == MODE_UNREAD) {
+		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
+	}
+	else if (mode == MODE_ARCHIVED) {
+		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
+	}
+	else if (mode == MODE_STARRED) {
+		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
+	}
 }
 

@@ -38,9 +38,16 @@ public:
 
 	void plopMenu();
 
+	void setMode(int m) {
+		mode = m;
+	}
+
 private:
 	ifont *titleFont = NULL;
 	int titleFontSize = 0;
+
+	ifont *smallTitleFont = NULL;
+	int smallTitleFontSize = 0;
 
 	ifont *entryTitleFont = NULL;
 	int entryTitleFontSize = 0;
@@ -61,6 +68,8 @@ private:
 	std::vector<GuiListItemEntry> entriesItems;
 
 	Application &app_ref;
+
+	int mode;
 
 };
 

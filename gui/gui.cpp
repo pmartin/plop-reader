@@ -5,13 +5,14 @@
 
 Gui::Gui(Application &aapp) : app_ref(aapp)
 {
-
+	mode = Application::entries_mode::MODE_UNREAD;
 }
 
 
 Gui::~Gui()
 {
 	CloseFont(titleFont);
+	CloseFont(smallTitleFont);
 	CloseFont(entryTitleFont);
 	CloseFont(entryInfosFont);
 	CloseFont(statusBarFont);
@@ -30,6 +31,9 @@ void Gui::init()
 
 	titleFontSize = 52;
 	titleFont = OpenFont("LiberationSans", titleFontSize, 1);
+
+	smallTitleFontSize = 28;
+	smallTitleFont = OpenFont("LiberationSans", smallTitleFontSize, 1);
 
 	entryTitleFontSize = 32;
 	entryTitleFont = OpenFont("LiberationSans", entryTitleFontSize, 1);
@@ -80,10 +84,28 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	syncButton.draw(false);
 	menuButton.draw(false);
 
-	SetFont(titleFont, BLACK);
-	snprintf(buffer, sizeof(buffer), "Belladonna - %d/%d(%d)", numPage, numberOfPages, countAllEntries);
+	SetFont(smallTitleFont, BLACK);
+
+	if (mode == 1) {
+		snprintf(buffer, sizeof(buffer), "Belladonna - entrées non lues");
+	}
+	else if (mode == 2) {
+		snprintf(buffer, sizeof(buffer), "Belladonna - entrées archivées");
+	}
+	else if (mode == 3) {
+		snprintf(buffer, sizeof(buffer), "Belladonna - entrées favorites");
+	}
+	else {
+		snprintf(buffer, sizeof(buffer), "Belladonna");
+	}
 	DrawString(90, y, buffer);
-	y += titleFont->height;
+	y += 34;
+
+	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entrées)", numPage, numberOfPages, countAllEntries);
+	DrawString(90, y, buffer);
+	y += 34;
+
+	y += 4;
 
 	DrawLine(0, y, screenWidth, y, BLACK);
 	DrawLine(0, y + 1, screenWidth, y +1, BLACK);

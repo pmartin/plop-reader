@@ -16,7 +16,7 @@
 class Application
 {
 public:
-	enum entries_mode {MODE_UNREAD, MODE_ARCHIVED, MODE_STARRED};
+	enum entries_mode {MODE_UNREAD=1, MODE_ARCHIVED, MODE_STARRED};
 
 	Application() : entryRepository(db), gui(*this) {
 		db.open();

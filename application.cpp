@@ -70,6 +70,8 @@ void Application::setMode(int m)
 	mode = (entries_mode)m;
 	pageNum = 0;
 
+	gui.setMode(mode);
+
 	show();
 }
 

@@ -36,7 +36,7 @@ public:
 	void statusBarText(const char *format, va_list args);
 	void statusBarText(const char *format...);
 
-	void plopMenu();
+	void displayMainMenu();
 
 	void setMode(int m) {
 		mode = m;

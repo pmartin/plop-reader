@@ -197,7 +197,7 @@ void Gui::touchStartEvent(int x, int y)
 // This needs to be global, so it can be accessed by the callback function of the menu ;-(
 static imenu *menu;
 
-void Gui::plopMenu()
+void Gui::displayMainMenu()
 {
 	const char *str0 = "Belladonna";
 	const char *str1 = "Mode = entrées non lues";
@@ -261,8 +261,7 @@ void Gui::touchEndEvent(int x, int y)
 	else if (menuButton.hit(x, y)) {
 		statusBarText("Touch END event at (%d;%d) => menu", x, y);
 
-		//Message(ICON_INFORMATION, "TODO!", "One day, there will be a menu, here...", 2*1000);
-		plopMenu();
+		displayMainMenu();
 	}
 	else {
 		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {

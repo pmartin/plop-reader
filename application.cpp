@@ -66,7 +66,7 @@ void Application::loadRecentArticles()
 void Application::setMode(int m)
 {
 	mode = (entries_mode)m;
-	pageNum = 0;
+	pageNum = 1;
 
 	gui.setMode(mode);
 
@@ -80,7 +80,7 @@ void Application::show()
 	listEntriesForCurrentMode(entries);
 
 	int countEntries = countEntriesForCurrentMode();
-	int numberOfPages = countEntries / numPerPage;
+	int numberOfPages = ceil((float)countEntries / (float)numPerPage);
 
 	gui.show(pageNum, numberOfPages, countEntries, entries);
 }
@@ -104,9 +104,9 @@ void Application::touchEndEvent(int x, int y)
 void Application::keypressEvent(int key)
 {
 	int countEntries = countEntriesForCurrentMode();
-	int numberOfPages = countEntries / numPerPage;
+	int numberOfPages = ceil((float)countEntries / (float)numPerPage);
 
-	if (key == KEY_PREV && pageNum > 0) {
+	if (key == KEY_PREV && pageNum > 1) {
 		pageNum -= 1;
 	}
 
@@ -317,13 +317,13 @@ int Application::countEntriesForCurrentMode()
 void Application::listEntriesForCurrentMode(std::vector<Entry> &entries)
 {
 	if (mode == MODE_UNREAD) {
-		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
+		entryRepository.listUnread(entries, numPerPage, (pageNum-1) * numPerPage);
 	}
 	else if (mode == MODE_ARCHIVED) {
-		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
+		entryRepository.listArchived(entries, numPerPage, (pageNum-1) * numPerPage);
 	}
 	else if (mode == MODE_STARRED) {
-		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
+		entryRepository.listStarred(entries, numPerPage, (pageNum-1) * numPerPage);
 	}
 }
 

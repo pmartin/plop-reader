@@ -1,6 +1,8 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
+#include <tgmath.h>
+
 
 #include "api/wallabag_api.h"
 #include "api/wallabag_config_loader.h"
@@ -20,7 +22,7 @@ public:
 
 	Application() : entryRepository(db), gui(*this) {
 		db.open();
-		pageNum = 0;
+		pageNum = 1;
 		numPerPage = 8;
 		isLastActionRead = false;
 		lastReadEntryId = 0;

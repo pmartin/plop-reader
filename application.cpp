@@ -79,25 +79,28 @@ void Application::show()
 	// TODO la pagination ne doit pas se faire sur le nombre total d'entrées,
 	// mais sur le nombre d'entrées du type en cours d'affichage
 
-	int countAllEntries = entryRepository.countAllEntries();
-	int numberOfPages = countAllEntries / numPerPage;
+	int countEntries;
 
 	//ClearScreen();
 
 	std::vector<Entry> entries;
 	if (mode == MODE_UNREAD) {
+		countEntries = entryRepository.countUnread();
 		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
 	}
 	else if (mode == MODE_ARCHIVED) {
+		countEntries = entryRepository.countArchived();
 		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
 	}
 	else if (mode == MODE_STARRED) {
+		countEntries = entryRepository.countStarred();
 		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
 	}
 
 	//sleep(5);
 
-	gui.show(pageNum, numberOfPages, countAllEntries, entries);
+	int numberOfPages = countEntries / numPerPage;
+	gui.show(pageNum, numberOfPages, countEntries, entries);
 }
 
 
@@ -120,8 +123,19 @@ void Application::keypressEvent(int key)
 {
 	//gui.keypressEvent(key);
 
-	int countAllEntries = entryRepository.countAllEntries();
-	int numberOfPages = countAllEntries / numPerPage;
+	int countEntries;
+
+	if (mode == MODE_UNREAD) {
+		countEntries = entryRepository.countUnread();
+	}
+	else if (mode == MODE_ARCHIVED) {
+		countEntries = entryRepository.countArchived();
+	}
+	else if (mode == MODE_STARRED) {
+		countEntries = entryRepository.countStarred();
+	}
+
+	int numberOfPages = countEntries / numPerPage;
 
 	if (key == KEY_PREV && pageNum > 0) {
 		pageNum -= 1;
@@ -142,7 +156,7 @@ void Application::keypressEvent(int key)
 		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
 	}
 
-	gui.show(pageNum, numberOfPages, countAllEntries, entries);
+	gui.show(pageNum, numberOfPages, countEntries, entries);
 }
 
 

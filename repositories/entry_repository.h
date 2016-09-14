@@ -22,6 +22,11 @@ public:
 
 	int countAllEntries();
 
+	int countUnread();
+	int countArchived();
+	int countStarred();
+	int count(int archived, int starred);
+
 	void listUnread(std::vector<Entry> &entries, int limit, int offset);
 	void listArchived(std::vector<Entry> &entries, int limit, int offset);
 	void listStarred(std::vector<Entry> &entries, int limit, int offset);

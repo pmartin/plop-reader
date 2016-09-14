@@ -272,8 +272,6 @@ offset :offset
 		snprintf(sql, sizeof(sql), sqlTemplate, plop.c_str());
 	}
 
-	log_message(sql);
-
 
 	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
 		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
@@ -321,6 +319,82 @@ offset :offset
 }
 
 
+int EntryRepository::countUnread()
+{
+	return count(0, 1);
+}
+
+int EntryRepository::countArchived()
+{
+	return count(2, 1);
+}
+
+int EntryRepository::countStarred()
+{
+	return count(1, 2);
+}
+
+
+int EntryRepository::count(int archived, int starred)
+{
+	std::vector<std::string> conditions;
+
+	if (archived == 0) {
+		conditions.push_back("local_is_archived = 0");
+	}
+	else if (archived == 1) {
+		conditions.push_back("(local_is_archived = 0 or local_is_archived = 1)");
+	}
+	else if (archived == 2) {
+		conditions.push_back("local_is_archived = 1");
+	}
+
+	if (starred == 0) {
+		conditions.push_back("local_is_starred = 0");
+	}
+	else if (starred == 1) {
+		conditions.push_back("(local_is_starred = 0 or local_is_starred = 1)");
+	}
+	else if (starred == 2) {
+		conditions.push_back("local_is_starred = 1");
+	}
+
+	const char *sqlTemplate = "select count(*) from entries %s";
+
+	char sql[2048];
+	if (conditions.empty()) {
+		snprintf(sql, sizeof(sql), sqlTemplate, "");
+	}
+	else {
+		std::string plop = "where ";
+		for (unsigned int i=0 ; i<conditions.size() ; i++) {
+			plop = plop.append(conditions.at(i));
+			if (i + 1 < conditions.size()) {
+				plop.append(" and ");
+			}
+		}
+		snprintf(sql, sizeof(sql), sqlTemplate, plop.c_str());
+	}
+
+	sqlite3_stmt *stmt;
+	const char *tail;
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	int result = -1;
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		result = sqlite3_column_int(stmt, 0);
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+
 int EntryRepository::countAllEntries()
 {
 	const char *sql = "select count(*) from entries";
@@ -332,14 +406,14 @@ int EntryRepository::countAllEntries()
 		//log_message(buffer);
 	}
 
-	int count = -1;
+	int result = -1;
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
-		count = sqlite3_column_int(stmt, 0);
+		result = sqlite3_column_int(stmt, 0);
 	}
 
 	sqlite3_finalize(stmt);
 
-	return count;
+	return result;
 }
 
 

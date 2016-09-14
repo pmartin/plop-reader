@@ -81,9 +81,11 @@ void WallabagApi::createOAuthToken()
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
 
-		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
+			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		}
 
 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, WallabagApi::_createAOauthTokenHeaderCallback);
 		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
@@ -171,9 +173,11 @@ void WallabagApi::refreshOAuthToken()
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
 
-		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
+			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		}
 
 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, WallabagApi::_createAOauthTokenHeaderCallback);
 		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
@@ -265,9 +269,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
 
-		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-		curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
+			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		}
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_loadRecentArticlesWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);

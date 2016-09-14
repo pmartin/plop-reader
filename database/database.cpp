@@ -66,21 +66,24 @@ void Database::open(void)
 
 void Database::runMigrations(void)
 {
+	const std::string currentVersion = "3";
+
 	Internal migrationVersion = this->selectInternal("db.migration_version");
 	if (migrationVersion.isNull) {
 		migrationVersion.value = "0";
 	}
 
 	if (migrationVersion.value < "1") {
-		//log_message("Create table internals");
 		this->migration_001_createInternalsTable();
 	}
 	if (migrationVersion.value < "2") {
-		//log_message("Create table entries");
 		this->migration_002_createEntriesTable();
 	}
+	if (migrationVersion.value < "3") {
+		this->migration_003_createIndexesOnEntries();
+	}
 
-	this->saveInternal("db.migration_version", "2");
+	this->saveInternal("db.migration_version", currentVersion);
 }
 
 
@@ -107,10 +110,6 @@ void Database::migration_002_createEntriesTable()
 {
 	char *err_msg;
 	char buffer[2048];
-
-	// TODO add index on remote_id (used to find an entry during sync)
-	// TODO add index on remote_created_at (use for sort in entries list)
-
 	const char *sql = R"sql(
 create table entries (
 	local_id integer primary key,
@@ -144,6 +143,20 @@ create table entries (
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
 		snprintf(buffer, sizeof(buffer), "Fail creating table : %s", err_msg);
+		log_message(buffer);
+	}
+}
+
+void Database::migration_003_createIndexesOnEntries()
+{
+	char *err_msg;
+	char buffer[2048];
+	const char *sql = R"sql(
+create unique index idx_entries_remote_id on entries (remote_id);
+create index idx_entries_local_updated_at on entries (local_updated_at desc);
+)sql";
+	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
+		snprintf(buffer, sizeof(buffer), "Fail migration 003 : %s", err_msg);
 		log_message(buffer);
 	}
 }

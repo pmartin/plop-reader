@@ -39,6 +39,7 @@ private:
 
 	void migration_001_createInternalsTable();
 	void migration_002_createEntriesTable();
+	void migration_003_createIndexesOnEntries();
 
 	void saveInternal(std::string key, std::string value);
 	Internal selectInternal(std::string key);

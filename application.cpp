@@ -123,8 +123,6 @@ void Application::touchEndEvent(int x, int y)
 
 void Application::keypressEvent(int key)
 {
-	//gui.keypressEvent(key);
-
 	int countEntries;
 
 	if (mode == MODE_UNREAD) {
@@ -147,18 +145,7 @@ void Application::keypressEvent(int key)
 		pageNum += 1;
 	}
 
-	std::vector<Entry> entries;
-	if (mode == MODE_UNREAD) {
-		entryRepository.listUnread(entries, numPerPage, pageNum * numPerPage);
-	}
-	else if (mode == MODE_ARCHIVED) {
-		entryRepository.listArchived(entries, numPerPage, pageNum * numPerPage);
-	}
-	else if (mode == MODE_STARRED) {
-		entryRepository.listStarred(entries, numPerPage, pageNum * numPerPage);
-	}
-
-	gui.show(pageNum, numberOfPages, countEntries, entries);
+	show();
 }
 
 

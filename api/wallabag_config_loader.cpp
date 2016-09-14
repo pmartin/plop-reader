@@ -4,11 +4,13 @@
 WallabagConfig WallabagConfigLoader::load(void)
 {
 	WallabagConfig config;
+	json_object *obj = json_object_from_file(CONFIG_FILE);
 
-	//char buffer[2048];
-	const char *filepath = "/mnt/ext1/system/tmp/belladonna.json";
+	if (obj == NULL) {
+		// TODO error-handling when JSON config file is not OK
+	}
 
-	json_object *obj = json_object_from_file(filepath);
+	// TODO error-handling on each field loaded from the JSON file
 
 	const char *url = json_object_get_string(json_object_object_get(obj, "url"));
 	config.url = url;

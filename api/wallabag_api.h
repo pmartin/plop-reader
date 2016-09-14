@@ -20,13 +20,7 @@ public:
 
 	void loadRecentArticles(EntryRepository repository);
 
-
-	//~WallabagApi();
-
-
-	static size_t _createAOauthTokenHeaderCallback(char *ptr, size_t size, size_t nitems, void *userdata);
 	static size_t _createAOauthTokenWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
-
 	static size_t _loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 private:

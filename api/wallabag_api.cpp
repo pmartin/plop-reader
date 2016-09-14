@@ -7,20 +7,6 @@ void WallabagApi::setConfig(WallabagConfig conf)
 }
 
 
-size_t WallabagApi::_createAOauthTokenHeaderCallback(char *ptr, size_t size, size_t nitems, void *userdata)
-{
-	//WallabagApi *that = (WallabagApi *)userdata;
-
-	//char buffer[1024];
-
-	int data_size = size * nitems;
-	//snprintf(buffer, sizeof(buffer), "  Header : %d bytes : %.128s", data_size, ptr);
-	//log_message(buffer);
-
-	return data_size;
-}
-
-
 size_t WallabagApi::_createAOauthTokenWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	WallabagApi *that = (WallabagApi *)userdata;
@@ -29,7 +15,7 @@ size_t WallabagApi::_createAOauthTokenWriteCallback(char *ptr, size_t size, size
 
 	that->json_string_get_token = (char *)realloc(that->json_string_get_token, that->json_string_get_token_len + data_size + 1);
 	if (that->json_string_get_token == NULL) {
-		// TODO not good ^^
+		// TODO error-handling
 	}
 
 	memcpy(that->json_string_get_token + that->json_string_get_token_len, ptr, data_size);
@@ -45,8 +31,8 @@ void WallabagApi::createOAuthToken()
 	CURL *curl;
 	CURLcode res;
 
-	char buffer[2048];
-	log_message("Requesting OAuth token...");
+	//char buffer[2048];
+	//log_message("Requesting OAuth token...");
 
 	this->json_string_get_token_len = 0;
 	this->json_string_get_token = (char *)calloc(1, 1);
@@ -87,16 +73,15 @@ void WallabagApi::createOAuthToken()
 			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
 		}
 
-		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, WallabagApi::_createAOauthTokenHeaderCallback);
-		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
-
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_createAOauthTokenWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
-			snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
-			log_message(buffer);
+			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
+			//log_message(buffer);
+
+			// TODO error-handling
 
 			goto end;
 		}
@@ -139,8 +124,8 @@ void WallabagApi::refreshOAuthToken()
 		return;
 	}
 
-	char buffer[2048];
-	log_message("Refreshing OAuth token...");
+	//char buffer[2048];
+	//log_message("Refreshing OAuth token...");
 
 	this->json_string_get_token_len = 0;
 	this->json_string_get_token = (char *)calloc(1, 1);
@@ -179,16 +164,15 @@ void WallabagApi::refreshOAuthToken()
 			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
 		}
 
-		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, WallabagApi::_createAOauthTokenHeaderCallback);
-		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
-
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_createAOauthTokenWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
-			snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
-			log_message(buffer);
+			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
+			//log_message(buffer);
+
+			// TODO error-handling
 
 			goto end;
 		}
@@ -222,7 +206,7 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 
 	that->json_string = (char *)realloc(that->json_string, that->json_string_len + data_size + 1);
 	if (that->json_string == NULL) {
-		// TODO not good ^^
+		// TODO error-handling
 	}
 
 	memcpy(that->json_string + that->json_string_len, ptr, data_size);
@@ -237,8 +221,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 {
 	this->refreshOAuthToken();
 
-	char buffer[2048];
-	log_message("Chargement des articles...");
+	//char buffer[2048];
+	//log_message("Chargement des articles...");
 
 	char enries_url[2048];
 
@@ -280,8 +264,10 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
-			snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
-			log_message(buffer);
+			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
+			//log_message(buffer);
+
+			// TODO error-handling
 
 			goto end;
 		}
@@ -295,13 +281,13 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 
 			json_object *obj = json_tokener_parse(json_string);
 
-			snprintf(buffer, sizeof(buffer), "Page %d / %d - posts %d / %d",
-				json_object_get_int(json_object_object_get(obj, "page")),
-				json_object_get_int(json_object_object_get(obj, "pages")),
-				json_object_get_int(json_object_object_get(obj, "limit")),
-				json_object_get_int(json_object_object_get(obj, "total"))
-			);
-			log_message(buffer);
+			//snprintf(buffer, sizeof(buffer), "Page %d / %d - posts %d / %d",
+			//	json_object_get_int(json_object_object_get(obj, "page")),
+			//	json_object_get_int(json_object_object_get(obj, "pages")),
+			//	json_object_get_int(json_object_object_get(obj, "limit")),
+			//	json_object_get_int(json_object_object_get(obj, "total"))
+			//);
+			//log_message(buffer);
 
 			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 			for (int i=0 ; i<items->length ; i++) {

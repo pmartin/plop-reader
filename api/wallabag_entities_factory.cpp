@@ -1,6 +1,15 @@
 #include "wallabag_entities_factory.h"
 
 
+time_t WallabagEntitiesFactory::datetimeStringToTimeT(const char *str)
+{
+	struct tm tm;
+	memset(&tm, 0, sizeof(struct tm));
+	strptime(str, "%Y-%m-%dT%H:%M:%S%z", &tm);
+	return timegm(&tm);
+}
+
+
 Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 {
 	int id = json_object_get_int(json_object_object_get(item, "id"));
@@ -14,17 +23,8 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	int reading_time = json_object_get_int(json_object_object_get(item, "reading_time")) * 60;
 	const char *preview_picture = json_object_get_string(json_object_object_get(item, "preview_picture"));
 
-	//snprintf(buffer, sizeof(buffer), "%d - (%c%c) %s (%s)", id, (is_archived ? 'a' : '.'), (is_starred ? '*' : '.'), title, url);
-	//log_message(buffer);
-
-	struct tm tm;
-	memset(&tm, 0, sizeof(struct tm));
-	strptime(created_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
-	time_t created_at_ts = timegm(&tm);
-
-	memset(&tm, 0, sizeof(struct tm));
-	strptime(updated_at_str, "%Y-%m-%dT%H:%M:%S%z", &tm);
-	time_t updated_at_ts = timegm(&tm);
+	time_t created_at_ts = datetimeStringToTimeT(created_at_str);
+	time_t updated_at_ts = datetimeStringToTimeT(updated_at_str);
 
 	Entry entry;
 	entry.id = 0;
@@ -40,16 +40,9 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	entry.local_is_starred = is_starred;
 	entry.remote_is_starred = is_starred;
 
-
-	if (title != NULL) {
-		entry.title = title;
-	}
-	if (url != NULL) {
-		entry.url = url;
-	}
-	if (content != NULL) {
-		entry.content = content;
-	}
+	entry.title = title != NULL ? title : std::string();
+	entry.url = url != NULL ? url : std::string();
+	entry.content = content != NULL ? content : std::string();
 
 	entry.local_created_at = created_at_ts;
 	entry.remote_created_at = created_at_ts;
@@ -58,10 +51,7 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	entry.remote_updated_at = updated_at_ts;
 
 	entry.reading_time = reading_time;
-	if (preview_picture != NULL) {
-		entry.preview_picture_url = preview_picture;
-	}
-
+	entry.preview_picture_url = preview_picture != NULL ? preview_picture : std::string();
 	entry.local_content_file_html = std::string();
 	entry.local_content_file_epub = std::string();
 

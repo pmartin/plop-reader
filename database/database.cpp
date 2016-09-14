@@ -1,49 +1,6 @@
 #include "database.h"
 
 
-int Database::callback_debug_log(void *not_used, int argc, char **argv, char **col_name)
-{
-	char buffer[128*5];
-	char row_buffer[256];
-
-	strcpy(buffer, " > ");
-	for(int i=0; i<argc && i<14 ; i++) {
-		const char *short_name = NULL;
-		const char *aliases[][2] = {
-			 {"local_id", "l#"},
-			 {"remote_id", "r#"},
-			 {"local_is_archived", "la"},
-			 {"remote_is_archived", "ra"},
-			 {"local_is_starred", "l*"},
-			 {"remote_is_starred", "r*"},
-			 {"local_created_at", "lcT"},
-			 {"remote_created_at", "rcT"},
-			 {"local_updated_at", "luT"},
-			 {"remote_updated_at", "ruT"},
-			 {"reading_time", "t"},
-			 {"preview_picture_url", "pu"},
-			 {"preview_picture_type", "pt"},
-			 {"preview_picture_path", "pp"}
-		};
-		const int nb_aliases = 14;
-		for (int a=0 ; a<nb_aliases ; a++) {
-			if (iv_strcmp(aliases[a][0], col_name[i]) == 0) {
-				short_name = aliases[a][1];
-				break;
-			}
-		}
-
-		snprintf(row_buffer, sizeof(row_buffer), "%s=%s, ", (short_name ? short_name : col_name[i]), argv[i] ? argv[i] : "NULL");
-		strcat(buffer, row_buffer);
-	}
-
-	if (strlen(buffer) > 3) {
-		log_message(buffer);
-	}
-	return 0;
-}
-
-
 void Database::drop(void)
 {
 	sqlite3_close(this->db);

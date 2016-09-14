@@ -15,5 +15,4 @@ public:
 };
 
 
-
 #endif /* API_WALLABAG_CONFIG_H_ */

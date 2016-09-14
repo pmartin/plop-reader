@@ -16,6 +16,9 @@ public:
 	Entry createEntryFromJson(json_object *item);
 	Entry mergeLocalAndRemoteEntries(Entry &local, Entry &remote);
 
+private:
+	time_t datetimeStringToTimeT(const char *str);
+
 };
 
 

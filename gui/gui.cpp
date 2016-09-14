@@ -199,50 +199,34 @@ static imenu *menu;
 
 void Gui::plopMenu()
 {
-	char *str3 = (char *)malloc(strlen("Mode = entrées starrées") + 1);
-	strcpy(str3, "Mode = entrées starrées");
-
-	char *str2 = (char *)malloc(strlen("Mode = entrées archivées") + 1);
-	strcpy(str2, "Mode = entrées archivées");
-
-	char *str1 = (char *)malloc(strlen("Mode = entrées non lues") + 1);
-	strcpy(str1, "Mode = entrées non lues");
-
-	char *str0 = (char *)malloc(strlen("Mon menu !") + 1);
-	strcpy(str0, "Mon menu !");
-
+	const char *str0 = "Belladonna";
+	const char *str1 = "Mode = entrées non lues";
+	const char *str2 = "Mode = entrées archivées";
+	const char *str3 = "Mode = entrées starrées";
 
 	menu = (imenu *)calloc(4, sizeof(imenu));
 
 	menu[0].type = 1;
 	menu[0].index = 0;
-	menu[0].text = str0;
+	menu[0].text = (char *)str0;
 	menu[0].submenu = &menu[1];
 
 	menu[1].type = 2;
 	menu[1].index = 1;
-	menu[1].text = str1;
+	menu[1].text = (char *)str1;
 	menu[1].submenu = &menu[2];
 
 	menu[2].type = 2;
 	menu[2].index = 2;
-	menu[2].text = str2;
+	menu[2].text = (char *)str2;
 	menu[2].submenu = &menu[3];
 
 	menu[3].type = 2;
 	menu[3].index = 3;
-	menu[3].text = str3;
+	menu[3].text = (char *)str3;
 	menu[3].submenu = NULL;
 
 	auto callback = [](int index) {
-		//char buffer[2048];
-		//snprintf(buffer, sizeof(buffer), "Menu: index %d has been selected!\n-> %s", index, menu[index].text);
-		//Message(ICON_INFORMATION, "Debug", buffer, 3*1000);
-
-		// free memory of menu
-		for (int i=0 ; i<4 ; i++) {
-			free(menu[i].text);
-		}
 		free(menu);
 
 		if (index == 1) {

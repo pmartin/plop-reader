@@ -8,10 +8,6 @@
 #include "sqlite3.h"
 
 
-extern ifont *font;
-extern const int kFontSize;
-
-
 #include "application.h"
 
 
@@ -39,8 +35,11 @@ extern Application app;
 
 
 // log
+// TODO remove all this old-school logging stuff
+extern void log_init();
 extern void log_reset();
 extern void log_message(const char *msg);
+extern void log_close();
 
 
 #endif /* BELLADONNA_H_ */

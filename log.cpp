@@ -1,7 +1,21 @@
 #include "belladonna.h"
 
+// TODO remove all this old-school logging stuff
+
+
+static ifont *font;
+static const int kFontSize = 16;
 
 static int y_log;
+
+
+void log_init()
+{
+	font = OpenFont("LiberationSans", kFontSize, 1);
+	SetFont(font, BLACK);
+
+	log_reset();
+}
 
 
 void log_reset()
@@ -25,4 +39,9 @@ void log_message(const char *msg)
 	y_log += kFontSize + 2;
 }
 
+
+void log_close()
+{
+	CloseFont(font);
+}
 

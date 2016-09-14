@@ -1,10 +1,6 @@
 #include "belladonna.h"
 
 
-ifont *font;
-const int kFontSize = 16;
-
-
 Application app;
 
 
@@ -15,12 +11,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 
 	switch (event_type) {
 	case EVT_INIT:
-		font = OpenFont("LiberationSans", kFontSize, 1);
-		SetFont(font, BLACK);
-		log_reset();
-		//ClearScreen();
-		//FullUpdate();
-
+		log_init();
 		result = 1;
 		break;
 	case EVT_SHOW:
@@ -63,7 +54,7 @@ static int main_handler(int event_type, int param_one, int param_two)
 		result = 1;
 		break;
 	case EVT_EXIT:
-		CloseFont(font);
+		log_close();
 		result = 1;
 		break;
 	default:

@@ -54,12 +54,6 @@ public:
 
 	void setMode(int m);
 
-
-	// TODO remove this method
-	EntryRepository getEntryRepository() {
-		return entryRepository;
-	}
-
 private:
 	Database db;
 	WallabagApi wallabag_api;

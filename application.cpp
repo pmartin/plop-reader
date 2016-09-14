@@ -3,8 +3,8 @@
 
 void Application::init()
 {
-	// TODO instead of dropping + creating the DB, we should detect if its structure is up-to-date
-	// and run migrations only if it is not ;-)
+	// Note: this is only left for debugging purposes, if one needs to
+	// empty the database easily
 	//db.drop();
 
 	db.runMigrations();
@@ -50,16 +50,13 @@ void Application::loadRecentArticles()
 	if (!connectToNetwork()) {
 		// No network connection... not going to be able to synchronize!
 		Message(ICON_ERROR, "Synchronization failed!", "No active network connection, no way to synchronize!", 3*1000);
-	}
-	else {
-		// So the debug log is easier to read...
-		//ClearScreen();
 
-		wallabag_api.loadRecentArticles(entryRepository);
-
-		// Just so have a bit of time to read the debug log...
-		//sleep(5);
+		return;
 	}
+
+	// TODO some error handling around here, to display an message of something
+	// TODO progress bar, also ;-)
+	wallabag_api.loadRecentArticles(entryRepository);
 
 	show();
 }
@@ -143,13 +140,13 @@ void Application::read(Entry &entry)
 		// TODO create (or delete) the local file when syncing with server ;-)
 
 		char filepath[2048];
-		snprintf(filepath, sizeof(filepath), "/mnt/ext1/system/tmp/belladonna/entry-%d.html", entry.id);
+		snprintf(filepath, sizeof(filepath), USERDATA TEMPDIR "/belladonna/entry-%d.html", entry.id);
 		entry.local_content_file_html = filepath;
 
 		//Message(ICON_INFORMATION, "Opening entry... One day!", filepath, 1*1000);
 
 		// TODO no hard-coded path, and create this directory somewhere else and all...
-		iv_mkdir("/mnt/ext1/system/tmp/belladonna/", 0755);
+		iv_mkdir(USERDATA TEMPDIR "/belladonna/", 0755);
 
 		FILE *fp = iv_fopen(filepath, "wb");
 
@@ -189,12 +186,7 @@ void Application::read(Entry &entry)
 
 	if (!entry.local_content_file_html.empty()) {
 		// We have an HTML file => open the reader and profit!
-		const char *parameters = "r";
-		int flags = 0;
-
-		//Message(ICON_INFORMATION, "Here we go!", entry.local_content_file_html.c_str(), 1*1000);
-
-		OpenBook(entry.local_content_file_html.c_str(), parameters, flags);
+		OpenBook(entry.local_content_file_html.c_str(), "r", 0);
 
 		isLastActionRead = true;
 		lastReadEntryId = entry.id;

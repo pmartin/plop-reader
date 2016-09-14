@@ -217,21 +217,67 @@ void Application::handleActionOnReadEntry(int entryId)
 
 	char buffer[2048];
 	snprintf(buffer, sizeof(buffer), "What do you want to do with entry #%d?\n%.128s?", entry.id, entry.title.c_str());
-	int result = DialogSynchro(ICON_QUESTION, "What now with this entry?", buffer, "Archive", "Archive + Star", "Do nothing");
+
+	bool isArchived = entry.local_is_archived;
+	bool isStarred = entry.local_is_starred;
+
+	const char *strButton1, *strButton2;
+
+	if (isArchived == false) {
+		strButton1 = "Archive";
+		if (isStarred == false) {
+			strButton2 = "Archive + Star";
+		}
+		else {
+			strButton2 = "Archive + Un-star";
+		}
+	}
+	else {
+		strButton1 = "Un-archive";
+		if (isStarred == false) {
+			strButton2 = "Un-archive + Star";
+		}
+		else {
+			strButton2 = "Un-archive + Un-star";
+		}
+	}
+
+	int result = DialogSynchro(ICON_QUESTION, "What now with this entry?", buffer, strButton1, strButton2, "Do nothing");
 
 	if (result == 3) {
 		// do nothing
 		return;
 	}
 
-	if (result == 2) {
-		// archive + star
-		entry.local_is_archived = true;
-		entry.local_is_starred = true;
+	if (result == 1) {
+		if (isArchived == false) {
+			entry.local_is_archived = true;
+		}
+		else {
+			entry.local_is_archived = false;
+		}
 	}
-	else if (result == 1) {
-		// archive
-		entry.local_is_archived = true;
+	if (result == 2) {
+		if (isArchived == false) {
+			if (isStarred == false) {
+				entry.local_is_archived = true;
+				entry.local_is_starred = true;
+			}
+			else {
+				entry.local_is_archived = true;
+				entry.local_is_starred = false;
+			}
+		}
+		else {
+			if (isStarred == false) {
+				entry.local_is_archived = false;
+				entry.local_is_starred = true;
+			}
+			else {
+				entry.local_is_archived = false;
+				entry.local_is_starred = false;
+			}
+		}
 	}
 
 	// The entry has been updated locally => keep track of it, to known it might have to be synced to server later on

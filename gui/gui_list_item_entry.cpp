@@ -15,7 +15,7 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen)
 		FillArea(x, initialY, screenWidth, getHeight(), WHITE);
 	}
 
-	if (hasEntry == false) {
+	if (_hasEntry == false) {
 		if (updateScreen) {
 			PartialUpdate(x, initialY, screenWidth, getHeight());
 		}

@@ -121,24 +121,12 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	entriesItems.clear();
 	entriesItems.resize(8);
 	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
-		GuiListItemEntry item;
+		GuiListItemEntry item(entryTitleFont, entryInfosFont);
 
-		item.x = 0;
-		item.y = y;
-
-		item.titleFont = entryTitleFont;
-		item.infosFont = entryInfosFont;
-
-		item.screenWidth = screenWidth;
-		item.screenHeight = screenHeight;
-
+		item.setCoordinates(0, y);
 		if (i < entries.size()) {
 			Entry entry = entries.at(i);
-			item.hasEntry = true;
 			item.setEntry(entry);
-		}
-		else {
-			item.hasEntry = false;
 		}
 
 		entriesItems[i] = item;
@@ -178,8 +166,8 @@ void Gui::touchStartEvent(int x, int y)
 		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 			GuiListItemEntry item = entriesItems.at(i);
 			if (item.hit(x, y)) {
-				if (item.hasEntry) {
-					statusBarText("Touch START event at (%d;%d) => entry#%d - %s", x, y, item.entry.id, item.entry.title.c_str());
+				if (item.hasEntry()) {
+					statusBarText("Touch START event at (%d;%d) => entry#%d - %s", x, y, item.getEntry().id, item.getEntry().title.c_str());
 				}
 				else {
 					statusBarText("Touch START event at (%d;%d) => no entry", x, y);
@@ -267,10 +255,10 @@ void Gui::touchEndEvent(int x, int y)
 		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 			GuiListItemEntry item = entriesItems.at(i);
 			if (item.hit(x, y)) {
-				if (item.hasEntry) {
-					statusBarText("Touch END event at (%d;%d) => entry#%d - %s", x, y, item.entry.id, item.entry.title.c_str());
+				if (item.hasEntry()) {
+					statusBarText("Touch END event at (%d;%d) => entry#%d - %s", x, y, item.getEntry().id, item.getEntry().title.c_str());
 
-					app.read(item.entry);
+					app.read(item.getEntry());
 				}
 				else {
 					statusBarText("Touch END event at (%d;%d) => no entry", x, y);

@@ -11,16 +11,40 @@
 class GuiListItemEntry
 {
 public:
-	int x;
-	int y;
+	GuiListItemEntry() {
+		GuiListItemEntry(NULL, NULL);
+	}
 
-	bool hasEntry;
-	Entry entry;
+	GuiListItemEntry(ifont *ttitleFont, ifont *iinfosFont) {
+		_hasEntry = false;
+
+		screenWidth = ScreenWidth();
+		screenHeight = ScreenHeight();
+
+		titleFont = ttitleFont;
+		infosFont = iinfosFont;
+
+		x = y = 0;
+	}
+
+	void setCoordinates(int xx, int yy) {
+		x = xx;
+		y = yy;
+	}
 
 	void draw(bool clearBeforeDraw, bool updateScreen);
 
 	void setEntry(Entry &e) {
+		_hasEntry = true;
 		entry = e;
+	}
+
+	Entry &getEntry() {
+		return entry;
+	}
+
+	bool hasEntry() {
+		return _hasEntry;
 	}
 
 	int getHeight();
@@ -33,13 +57,16 @@ public:
 		;
 	}
 
-	ifont *titleFont;
-	ifont *infosFont;
+private:
+	bool _hasEntry;
+	Entry entry;
+
+	int x, y;
 
 	int screenWidth, screenHeight;
 
-private:
-
+	ifont *titleFont;
+	ifont *infosFont;
 };
 
 

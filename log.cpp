@@ -36,7 +36,13 @@ int Log::logWithLevel(unsigned int level, const char *str ...)
 	escaped = replaceAll(escaped, "<", "&lt;");
 	escaped = replaceAll(escaped, ">", "&gt;");
 
-	snprintf(outerBuffer, sizeof(outerBuffer), "[%ld][%s] %s<br>\n", time(NULL), levelsStrings[level], escaped.c_str());
+	time_t ts = time(NULL);
+	struct tm* tm_info;
+	tm_info = gmtime(&ts);
+	char time_buffer[32];
+	strftime(time_buffer, sizeof(time_buffer), "%Y:%m:%d %H:%M:%S", tm_info);
+
+	snprintf(outerBuffer, sizeof(outerBuffer), "[%s][%s] %s<br>\n", time_buffer, levelsStrings[level], escaped.c_str());
 	int written = iv_fwrite(outerBuffer, sizeof(char), strlen(outerBuffer), fp);
 
 	iv_fclose(fp);

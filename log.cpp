@@ -20,6 +20,8 @@ int Log::log(unsigned int level, const char *str ...)
 		level = sizeof(levelsStrings) - 1;
 	}
 
+	// TODO as we are writing HTML logs, we must escape the HTML special characters!
+
 	snprintf(outerBuffer, sizeof(outerBuffer), "[%ld][%s] %s<br>\n", time(NULL), levelsStrings[level], innerBuffer);
 	int written = iv_fwrite(outerBuffer, sizeof(char), strlen(outerBuffer), fp);
 

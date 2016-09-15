@@ -4,17 +4,19 @@
 #include "inkview.h"
 
 
-#define DEBUG(str...) Log::getInstance().log(0, str);
-#define LOG(str...) Log::getInstance().log(1, str);
-#define INFO(str...) Log::getInstance().log(1, str);
-#define WARN(str...) Log::getInstance().log(2, str);
-#define ERROR(str...) Log::getInstance().log(3, str);
+#define DEBUG(str...) Log::getInstance().logWithLevel(Log::LOG_DEBUG, str);
+#define LOG(str...) Log::getInstance().logWithLevel(Log::LOG_INFO, str);
+#define INFO(str...) Log::getInstance().logWithLevel(Log::LOG_INFO, str);
+#define WARN(str...) Log::getInstance().logWithLevel(Log::LOG_WARN, str);
+#define ERROR(str...) Log::getInstance().logWithLevel(Log::LOG_ERROR, str);
 
 
 class Log
 {
 public:
-	int log(unsigned int level, const char *str ...);
+	enum {LOG_DEBUG=0, LOG_INFO, LOG_WARN, LOG_ERROR};
+
+	int logWithLevel(unsigned int level, const char *str ...);
 
 	static Log &getInstance()
 	{

@@ -3,7 +3,7 @@
 #include "belladonna.h"
 
 
-int Log::log(unsigned int level, const char *str ...)
+int Log::logWithLevel(unsigned int level, const char *str ...)
 {
 	FILE *fp = iv_fopen(FILEPATH, "a");
 

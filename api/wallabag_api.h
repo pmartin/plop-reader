@@ -9,6 +9,8 @@
 
 #include "../repositories/entry_repository.h"
 
+#include "../log.h"
+
 class WallabagApi
 {
 
@@ -19,6 +21,8 @@ public:
 	void refreshOAuthToken();
 
 	void loadRecentArticles(EntryRepository repository);
+
+	void syncEntriesToServer(EntryRepository repository);
 
 	static size_t _createAOauthTokenWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
 	static size_t _loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);

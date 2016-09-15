@@ -34,6 +34,8 @@ public:
 	Entry get(int entryId);
 	Entry findByRemoteId(int remoteId);
 
+	void findUpdatedLocallyMoreRecentlyThanRemotely(std::vector<Entry> &entries);
+
 private:
 	Database &db;
 

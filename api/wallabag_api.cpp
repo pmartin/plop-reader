@@ -198,6 +198,7 @@ void WallabagApi::refreshOAuthToken()
 }
 
 
+// TODO rename this method: it's used as a callback for other requests too
 size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	WallabagApi *that = (WallabagApi *)userdata;
@@ -318,3 +319,119 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 
 	free(this->json_string);
 }
+
+
+
+void WallabagApi::syncEntriesToServer(EntryRepository repository)
+{
+	this->refreshOAuthToken();
+
+	// Basic idea :
+	// For each entry that's been updated more recently on the device than on the server,
+	// send updates (archived / starred statuses) to the server
+
+	/*
+	std::vector<Entry> changedEntries;
+	repository.findUpdatedLocallyMoreRecentlyThanRemotely(changedEntries);
+
+	for (unsigned int i=0 ; i<changedEntries.size() ; i++) {
+		Entry entry = changedEntries.at(i);
+
+		DEBUG("Must sync entry l#%d r#%s ; local_updated_at=%d remote_updated_at=%d ; local_is_archived=%d remote_is_archived=%d ; local_is_starred=%d remote_is_starred=%d",
+			entry.id, entry.remote_id.c_str(),
+			entry.local_updated_at, entry.remote_updated_at,
+			entry.local_is_archived, entry.remote_is_archived,
+			entry.local_is_starred, entry.remote_is_starred
+		);
+	}
+	*/
+
+	// But first, let's start with synchronizing just 1 specific entry
+	// -> A post on my blog (i.e. an entry I can mark as read even if it's not "really" -- kind of a test entry)
+	Entry entry = repository.findByRemoteId(2394);
+
+	char enries_url[2048];
+
+	CURL *curl;
+	CURLcode res;
+
+	this->json_string_len = 0;
+	this->json_string = (char *)calloc(1, 1);
+
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+	if (curl) {
+
+		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
+
+		snprintf(enries_url, sizeof(enries_url), "%sapi/entries/%s.json?access_token=%s",
+				config.url.c_str(), entry.remote_id.c_str(), encoded_access_token);
+
+		DEBUG("URL: %s", enries_url);
+
+		curl_free(encoded_access_token);
+
+
+		char postdata[2048];
+		snprintf(postdata, sizeof(postdata), "archive=%d&starred=%d", entry.local_is_archived, entry.local_is_starred);
+		DEBUG("  -> archive=%d starred=%d", entry.local_is_archived, entry.local_is_starred);
+
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
+
+
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+
+		curl_easy_setopt(curl, CURLOPT_URL, enries_url);
+
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+
+		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
+			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		}
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_loadRecentArticlesWriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK) {
+
+			ERROR("Error %d : %s", res, curl_easy_strerror(res));
+
+			// TODO error-handling
+
+			goto end;
+		}
+		else {
+
+
+			//json_object *obj = json_tokener_parse(json_string);
+
+			DEBUG("Response from server: %s", json_string);
+
+
+			// TODO mettre à jour l'entrée locale, pour correspondre à ce qui est sur le serveur
+			//   => flags archive / starred
+			//   => local_updated_at
+			// Note : on obtient l'entrée en JSON, en retour de l'appel d'API ;-)
+			//   => on a ce qu'il faut pour la MAJ en local \o/
+
+
+		}
+
+		end:
+		curl_easy_cleanup(curl);
+	}
+
+	curl_global_cleanup();
+
+	free(this->json_string);
+}
+
+
+

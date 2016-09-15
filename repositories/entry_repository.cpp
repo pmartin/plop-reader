@@ -559,3 +559,77 @@ where remote_id = :id
 }
 
 
+// TODO less copy-paste with other methods
+// TODO instead of loading all entries to the vector, maybe use a callback, invoked on each entry ?
+void EntryRepository::findUpdatedLocallyMoreRecentlyThanRemotely(std::vector<Entry> &entries)
+{
+	const char *sql = R"sql(
+select 
+	local_id, 
+	remote_id, 
+	local_is_archived, 
+	remote_is_archived,
+	local_is_starred,
+	remote_is_starred,
+	title,
+	url,
+	content,
+	local_created_at,
+	remote_created_at,
+	local_updated_at,
+	remote_updated_at,
+	reading_time,
+	preview_picture_url,
+	preview_picture_type,
+	preview_picture_path,
+	local_content_file_html,
+	local_content_file_epub
+from entries 
+where
+    local_updated_at > remote_updated_at
+    and (
+        local_is_archived <> remote_is_archived
+        or local_is_starred <> remote_is_starred
+    )
+)sql";
+
+	sqlite3_stmt *stmt;
+	const char *tail;
+
+	entries.clear();
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	int result;
+	while ((result = sqlite3_step(stmt)) == SQLITE_ROW) {
+		Entry entry;
+		const char *tmp;
+
+		entry.id = sqlite3_column_int(stmt, 0);
+		entry.remote_id = (const char *)sqlite3_column_text(stmt, 1);
+		entry.local_is_archived = sqlite3_column_int(stmt, 2);
+		entry.remote_is_archived = sqlite3_column_int(stmt, 3);
+		entry.local_is_starred = sqlite3_column_int(stmt, 4);
+		entry.remote_is_starred = sqlite3_column_int(stmt, 5);
+		entry.title = (const char *)sqlite3_column_text(stmt, 6);
+		entry.url = (const char *)sqlite3_column_text(stmt, 7);
+		entry.content = (const char *)sqlite3_column_text(stmt, 8);
+		entry.local_created_at = sqlite3_column_int(stmt, 9);
+		entry.remote_created_at = sqlite3_column_int(stmt, 10);
+		entry.local_updated_at = sqlite3_column_int(stmt, 11);
+		entry.remote_updated_at = sqlite3_column_int(stmt, 12);
+		entry.reading_time = sqlite3_column_int(stmt, 13);
+		entry.preview_picture_url = ((tmp = (const char *)sqlite3_column_text(stmt, 14))) ? tmp : std::string();
+		entry.preview_picture_type = sqlite3_column_int(stmt, 15);
+		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
+		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
+		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
+
+		entries.push_back(entry);
+	}
+	sqlite3_finalize(stmt);
+}
+

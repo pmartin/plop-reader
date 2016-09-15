@@ -410,9 +410,16 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository)
 		else {
 
 
-			//json_object *obj = json_tokener_parse(json_string);
+			json_object *item = json_tokener_parse(json_string);
+			Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 
-			DEBUG("Response from server: %s", json_string);
+			DEBUG("Entry l#%d r#%s -> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
+			DEBUG(" * la=%d->%d ; ra=%d->%d", entry.local_is_archived, remoteEntry.local_is_archived, entry.remote_is_archived, remoteEntry.remote_is_archived);
+			DEBUG(" * l*=%d->%d ; r*=%d->%d", entry.local_is_starred, remoteEntry.local_is_starred, entry.remote_is_starred, remoteEntry.remote_is_starred);
+
+			entry = this->entitiesFactory.mergeLocalAndRemoteEntries(entry, remoteEntry);
+			repository.persist(entry);
+
 
 
 			// TODO mettre à jour l'entrée locale, pour correspondre à ce qui est sur le serveur

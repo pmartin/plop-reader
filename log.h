@@ -3,6 +3,7 @@
 
 #include "inkview.h"
 
+#include <string>
 
 #define DEBUG(str...) Log::getInstance().logWithLevel(Log::LOG_DEBUG, str);
 #define LOG(str...) Log::getInstance().logWithLevel(Log::LOG_INFO, str);

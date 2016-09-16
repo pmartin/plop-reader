@@ -29,7 +29,7 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen)
 
 
 	SetFont(infosFont, BLACK);
-	snprintf(buffer, sizeof(buffer), "l#%d r#%s la%d ra%d l*%d r*%d lu%d ru%d", entry.id, entry.remote_id.c_str(), entry.local_is_archived, entry.remote_is_archived, entry.local_is_starred, entry.remote_is_starred, entry.local_updated_at, entry.remote_updated_at);
+	snprintf(buffer, sizeof(buffer), "#%d/%s a%d/%d *%d/%d u%d/%d t%d", entry.id, entry.remote_id.c_str(), entry.local_is_archived, entry.remote_is_archived, entry.local_is_starred, entry.remote_is_starred, entry.local_updated_at, entry.remote_updated_at, (int)ceil((float)entry.reading_time/(float)60));
 	DrawString(90, yy, buffer);
 	yy += infosFont->height;
 

@@ -3,6 +3,7 @@
 
 
 #include "inkview.h"
+#include <math.h>
 
 
 #include "../entities/entry.h"

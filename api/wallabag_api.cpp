@@ -241,7 +241,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
 		snprintf(enries_url, sizeof(enries_url), "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
-				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 100);
+				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 200);
 
 		curl_free(encoded_access_token);
 		curl_free(encoded_sort);

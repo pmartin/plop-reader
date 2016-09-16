@@ -57,7 +57,7 @@ void Application::loadRecentArticles()
 
 	// TODO some error handling around here, to display an message of something
 	// TODO progress bar, also ;-)
-	//wallabag_api.loadRecentArticles(entryRepository);
+	wallabag_api.loadRecentArticles(entryRepository);
 
 	// Send changes to server, for entries marked as archived/starred recently on the device
 	wallabag_api.syncEntriesToServer(entryRepository);

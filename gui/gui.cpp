@@ -318,3 +318,22 @@ void Gui::statusBarText(const char *format...)
 	va_end(args);
 }
 
+
+
+void Gui::openProgressBar(int icon, const char *title, const char *text, int percent, iv_dialoghandler hproc)
+{
+	OpenProgressbar(icon, title, text, percent, hproc);
+}
+
+
+int Gui::updateProgressBar(const char *text, int percent)
+{
+	return UpdateProgressbar(text, percent);
+}
+
+
+void Gui::closeProgressBar()
+{
+	CloseProgressbar();
+}
+

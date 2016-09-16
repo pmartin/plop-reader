@@ -55,12 +55,20 @@ void Application::loadRecentArticles()
 		return;
 	}
 
-	// TODO some error handling around here, to display an message of something
-	// TODO progress bar, also ;-)
-	wallabag_api.loadRecentArticles(entryRepository);
+	gui.openProgressBar(ICON_WIFI, "Synchronizing with server", "Starting synchronization", 0, [](int button) {});
+	gui.updateProgressBar("Fetching recent entries from server", 5);
+
+	wallabag_api.loadRecentArticles(entryRepository, [](const char *text, int percent, void *context) {
+		app.gui.updateProgressBar(text, percent);
+	});
+
+	gui.updateProgressBar("Sending updated statuses to server", 50);
 
 	// Send changes to server, for entries marked as archived/starred recently on the device
 	wallabag_api.syncEntriesToServer(entryRepository);
+
+	gui.updateProgressBar("All done \\o/", 100);
+	gui.closeProgressBar();
 
 	show();
 }

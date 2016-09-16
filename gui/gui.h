@@ -18,6 +18,9 @@ extern Application app;
 extern void log_message(const char *msg);
 
 
+typedef void (*gui_update_progressbar)(const char *text, int percent, void *context);
+
+
 class Gui
 {
 public:
@@ -41,6 +44,10 @@ public:
 	void setMode(int m) {
 		mode = m;
 	}
+
+	void openProgressBar(int icon, const char *title, const char *text, int percent, iv_dialoghandler hproc);
+	int updateProgressBar(const char *text, int percent);
+	void closeProgressBar();
 
 private:
 	ifont *titleFont = NULL;

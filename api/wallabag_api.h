@@ -10,6 +10,8 @@
 #include "../repositories/entry_repository.h"
 
 #include "../log.h"
+#include "../gui/gui.h"
+
 
 class WallabagApi
 {
@@ -20,7 +22,7 @@ public:
 	void createOAuthToken();
 	void refreshOAuthToken();
 
-	void loadRecentArticles(EntryRepository repository);
+	void loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 
 	void syncEntriesToServer(EntryRepository repository);
 

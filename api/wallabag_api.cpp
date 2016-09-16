@@ -218,8 +218,9 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 }
 
 
-void WallabagApi::loadRecentArticles(EntryRepository repository)
+void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater)
 {
+	progressbarUpdater("Obtention / rafraichissement token oauth", 10, NULL);
 	this->refreshOAuthToken();
 
 	//char buffer[2048];
@@ -263,6 +264,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_loadRecentArticlesWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
+		progressbarUpdater("Envoi requête HTTP chargement entries", 25, NULL);
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
 			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
@@ -289,6 +291,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository)
 			//	json_object_get_int(json_object_object_get(obj, "total"))
 			//);
 			//log_message(buffer);
+
+			progressbarUpdater("Enregistrement des entries en local", 35, NULL);
 
 			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 			for (int i=0 ; i<items->length ; i++) {

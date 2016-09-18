@@ -30,6 +30,8 @@ public:
 	static size_t _loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 private:
+	void syncOneEntryToServer(EntryRepository repository, Entry &entry);
+
 	WallabagConfig config;
 
 	WallabagOAuthToken oauthToken;

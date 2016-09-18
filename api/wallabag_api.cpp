@@ -350,9 +350,14 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 
 	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_START, NULL);
 
-	/*
+
 	std::vector<Entry> changedEntries;
 	repository.findUpdatedLocallyMoreRecentlyThanRemotely(changedEntries);
+
+	int numberOfEntries = changedEntries.size();
+	float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_UP_START;
+	float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_UP_END - Gui::SYNC_PROGRESS_PERCENTAGE_UP_START);
+	float nextIncrement = incrementPercentageEvery;
 
 	for (unsigned int i=0 ; i<changedEntries.size() ; i++) {
 		Entry entry = changedEntries.at(i);
@@ -363,13 +368,22 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 			entry.local_is_archived, entry.remote_is_archived,
 			entry.local_is_starred, entry.remote_is_starred
 		);
+
+		syncOneEntryToServer(repository, entry);
+
+		if (i >= nextIncrement) {
+			nextIncrement += incrementPercentageEvery;
+			percentage += 1;
+			progressbarUpdater("Sending updated statuses to server", percentage, NULL);
+		}
 	}
-	*/
 
-	// But first, let's start with synchronizing just 1 specific entry
-	// -> A post on my blog (i.e. an entry I can mark as read even if it's not "really" -- kind of a test entry)
-	Entry entry = repository.findByRemoteId(2394);
+	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_END, NULL);
+}
 
+
+void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
+{
 	char enries_url[2048];
 
 	CURL *curl;
@@ -381,7 +395,6 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
 	if (curl) {
-
 		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
 
 		snprintf(enries_url, sizeof(enries_url), "%sapi/entries/%s.json?access_token=%s",
@@ -429,7 +442,6 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 		}
 		else {
 
-
 			json_object *item = json_tokener_parse(json_string);
 			Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 
@@ -439,16 +451,6 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 
 			entry = this->entitiesFactory.mergeLocalAndRemoteEntries(entry, remoteEntry);
 			repository.persist(entry);
-
-
-
-			// TODO mettre à jour l'entrée locale, pour correspondre à ce qui est sur le serveur
-			//   => flags archive / starred
-			//   => local_updated_at
-			// Note : on obtient l'entrée en JSON, en retour de l'appel d'API ;-)
-			//   => on a ce qu'il faut pour la MAJ en local \o/
-
-
 		}
 
 		end:
@@ -457,10 +459,7 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 
 	curl_global_cleanup();
 
-	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_END, NULL);
-
 	free(this->json_string);
 }
-
 
 

@@ -220,9 +220,9 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 
 void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater)
 {
-	progressbarUpdater("Obtention / rafraichissement token oauth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	this->refreshOAuthToken();
-	progressbarUpdater("Obtention / rafraichissement token oauth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
+	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 
 	//char buffer[2048];
 	//log_message("Chargement des articles...");
@@ -294,7 +294,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 			//);
 			//log_message(buffer);
 
-			progressbarUpdater("Enregistrement des entries en local", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
+			progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
 			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 			int numberOfEntries = items->length;
@@ -322,11 +322,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 				if (i >= nextIncrement) {
 					nextIncrement += incrementPercentageEvery;
 					percentage += 1;
-					progressbarUpdater("Enregistrement des entries en local", percentage, NULL);
+					progressbarUpdater("Enregistrement des entries en local...", percentage, NULL);
 				}
 			}
 
-			progressbarUpdater("Enregistrement des entries en local : fait.", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
+			progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
 		}
 
 		end:

@@ -297,7 +297,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 			progressbarUpdater("Enregistrement des entries en local", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
 			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
-			for (int i=0 ; i<items->length ; i++) {
+			int numberOfEntries = items->length;
+			float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START;
+			float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START);
+			float nextIncrement = incrementPercentageEvery;
+			for (int i=0 ; i<numberOfEntries ; i++) {
 				json_object *item = (json_object *)array_list_get_idx(items, i);
 
 				int remoteId = json_object_get_int(json_object_object_get(item, "id"));
@@ -313,6 +317,12 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 					// Entry does not already exist in local DB => just create it
 					Entry entry = this->entitiesFactory.createEntryFromJson(item);
 					repository.persist(entry);
+				}
+
+				if (i >= nextIncrement) {
+					nextIncrement += incrementPercentageEvery;
+					percentage += 1;
+					progressbarUpdater("Enregistrement des entries en local", percentage, NULL);
 				}
 			}
 

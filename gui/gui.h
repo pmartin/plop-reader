@@ -49,6 +49,22 @@ public:
 	int updateProgressBar(const char *text, int percent);
 	void closeProgressBar();
 
+	static const int SYNC_PROGRESS_PERCENTAGE_ALL_START = 0;
+
+	static const int SYNC_PROGRESS_PERCENTAGE_OAUTH_START = 5;
+	static const int SYNC_PROGRESS_PERCENTAGE_OAUTH_END = 10;
+
+	static const int SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START = 10;
+	static const int SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END = 20;
+
+	static const int SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START = 20;
+	static const int SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END = 50;
+
+	static const int SYNC_PROGRESS_PERCENTAGE_UP_START = 50;
+	static const int SYNC_PROGRESS_PERCENTAGE_UP_END = 95;
+
+	static const int SYNC_PROGRESS_PERCENTAGE_ALL_DONE = 100;
+
 private:
 	ifont *titleFont = NULL;
 	int titleFontSize = 0;

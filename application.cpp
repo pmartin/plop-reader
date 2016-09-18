@@ -56,18 +56,18 @@ void Application::loadRecentArticles()
 	}
 
 	gui.openProgressBar(ICON_WIFI, "Synchronizing with server", "Starting synchronization", 0, [](int button) {});
-	gui.updateProgressBar("Fetching recent entries from server", 5);
+	gui.updateProgressBar("Fetching recent entries from server", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_START);
 
 	wallabag_api.loadRecentArticles(entryRepository, [](const char *text, int percent, void *context) {
 		app.gui.updateProgressBar(text, percent);
 	});
 
-	gui.updateProgressBar("Sending updated statuses to server", 50);
+		// Send changes to server, for entries marked as archived/starred recently on the device
+	wallabag_api.syncEntriesToServer(entryRepository, [](const char *text, int percent, void *context) {
+		app.gui.updateProgressBar(text, percent);
+	});
 
-	// Send changes to server, for entries marked as archived/starred recently on the device
-	wallabag_api.syncEntriesToServer(entryRepository);
-
-	gui.updateProgressBar("All done \\o/", 100);
+	gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
 	gui.closeProgressBar();
 
 	show();

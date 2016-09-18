@@ -24,7 +24,7 @@ public:
 
 	void loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 
-	void syncEntriesToServer(EntryRepository repository);
+	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 
 	static size_t _createAOauthTokenWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
 	static size_t _loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);

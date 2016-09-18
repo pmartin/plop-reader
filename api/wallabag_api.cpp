@@ -220,8 +220,9 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 
 void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater)
 {
-	progressbarUpdater("Obtention / rafraichissement token oauth", 10, NULL);
+	progressbarUpdater("Obtention / rafraichissement token oauth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	this->refreshOAuthToken();
+	progressbarUpdater("Obtention / rafraichissement token oauth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 
 	//char buffer[2048];
 	//log_message("Chargement des articles...");
@@ -264,8 +265,9 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_loadRecentArticlesWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
-		progressbarUpdater("Envoi requête HTTP chargement entries", 25, NULL);
+		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
 		res = curl_easy_perform(curl);
+		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
 		if (res != CURLE_OK) {
 			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
 			//log_message(buffer);
@@ -292,7 +294,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 			//);
 			//log_message(buffer);
 
-			progressbarUpdater("Enregistrement des entries en local", 35, NULL);
+			progressbarUpdater("Enregistrement des entries en local", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
 			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 			for (int i=0 ; i<items->length ; i++) {
@@ -313,6 +315,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 					repository.persist(entry);
 				}
 			}
+
+			progressbarUpdater("Enregistrement des entries en local : fait.", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
 		}
 
 		end:
@@ -326,13 +330,15 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 
 
 
-void WallabagApi::syncEntriesToServer(EntryRepository repository)
+void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater)
 {
 	this->refreshOAuthToken();
 
 	// Basic idea :
 	// For each entry that's been updated more recently on the device than on the server,
 	// send updates (archived / starred statuses) to the server
+
+	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_START, NULL);
 
 	/*
 	std::vector<Entry> changedEntries;
@@ -440,6 +446,8 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository)
 	}
 
 	curl_global_cleanup();
+
+	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_END, NULL);
 
 	free(this->json_string);
 }

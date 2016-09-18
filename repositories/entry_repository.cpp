@@ -513,7 +513,7 @@ select
 	local_content_file_html,
 	local_content_file_epub
 from entries 
-where remote_id = :id
+where remote_id = :remote_id
 )sql";
 
 	sqlite3_stmt *stmt;
@@ -525,8 +525,10 @@ where remote_id = :id
 		//log_message(buffer);
 	}
 
-	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":id"), remoteId) != SQLITE_OK) {
-		//snprintf(buffer, sizeof(buffer), "Fail binding : %s", sqlite3_errmsg(this->db.getDb()));
+	char remoteIdStr[128];
+	snprintf(remoteIdStr, sizeof(remoteIdStr), "%d", remoteId);
+	if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":remote_id"), remoteIdStr, strlen(remoteIdStr), SQLITE_STATIC) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding local_content_file_html : %s", sqlite3_errmsg(this->db.getDb()));
 		//log_message(buffer);
 	}
 

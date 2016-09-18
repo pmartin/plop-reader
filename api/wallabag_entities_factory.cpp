@@ -62,69 +62,117 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &remote)
 {
 	Entry entry;
+	entry._isChanged = false;
 	bool isLocalUpdated = false;
 
 	entry.id = local.id;
-	if (entry.remote_id != remote.remote_id) {
+	if (local.remote_id != remote.remote_id) {
 		entry.remote_id = remote.remote_id;
 		isLocalUpdated = true;
+		entry._isChanged = true;
+	}
+	else {
+		entry.remote_id = local.remote_id;
 	}
 
-	if (entry.remote_updated_at != remote.remote_updated_at) {
+	if (local.remote_updated_at != remote.remote_updated_at) {
 		// Note: this has no effect on isLocalUpdated
 		entry.remote_updated_at = remote.remote_updated_at;
+		entry._isChanged = true;
+	}
+	else {
+		entry.remote_updated_at = local.remote_updated_at;
 	}
 
 	if (remote.remote_updated_at > local.local_updated_at && local.local_is_archived != remote.remote_is_archived) {
 		entry.local_is_archived = remote.remote_is_archived;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
 	else {
 		entry.local_is_archived = local.local_is_archived;
 	}
 
-	if (entry.remote_is_archived != remote.remote_is_archived) {
+	if (local.remote_is_archived != remote.remote_is_archived) {
 		entry.remote_is_archived = remote.remote_is_archived;
 		isLocalUpdated = true;
+		entry._isChanged = true;
+	}
+	else {
+		entry.remote_is_archived = local.remote_is_archived;
 	}
 
 	if (remote.remote_updated_at > local.local_updated_at && local.local_is_starred != remote.remote_is_starred) {
 		entry.local_is_starred = remote.remote_is_starred;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
 	else {
 		entry.local_is_starred = local.local_is_starred;
 	}
 
-	if (entry.remote_is_starred != remote.remote_is_starred) {
+	if (local.remote_is_starred != remote.remote_is_starred) {
 		entry.remote_is_starred = remote.remote_is_starred;
 		isLocalUpdated = true;
+		entry._isChanged = true;
+	}
+	else {
+		entry.remote_is_starred = local.remote_is_starred;
 	}
 
 	// For some fields, we always use what comes from the remote
-	if (entry.remote_created_at != remote.remote_created_at) {
+	if (local.remote_created_at != remote.remote_created_at) {
 		entry.remote_created_at = remote.remote_created_at;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
-	if (entry.title != remote.title) {
+	else {
+		entry.remote_created_at = local.remote_created_at;
+	}
+
+	if (local.title != remote.title) {
 		entry.title = remote.title;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
-	if (entry.url != remote.url) {
+	else {
+		entry.title = local.title;
+	}
+
+	if (local.url != remote.url) {
 		entry.url = remote.url;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
-	if (entry.content != remote.content) {
+	else {
+		entry.url = local.url;
+	}
+
+	if (local.content != remote.content) {
 		entry.content = remote.content;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
-	if (entry.reading_time != remote.reading_time) {
+	else {
+		entry.content = local.content;
+	}
+
+	if (local.reading_time != remote.reading_time) {
 		entry.reading_time = remote.reading_time;
 		isLocalUpdated = true;
+		entry._isChanged = true;
 	}
-	if (entry.preview_picture_url != remote.preview_picture_url) {
+	else {
+		entry.reading_time = local.reading_time;
+	}
+
+	if (local.preview_picture_url != remote.preview_picture_url) {
 		entry.preview_picture_url = remote.preview_picture_url;
 		isLocalUpdated = true;
+		entry._isChanged = true;
+	}
+	else {
+		entry.preview_picture_url = local.preview_picture_url;
 	}
 
 	// For some other fields that are more specific to the application, we always use what we had locally
@@ -137,6 +185,7 @@ Entry WallabagEntitiesFactory::mergeLocalAndRemoteEntries(Entry &local, Entry &r
 		// AND the entry has been updated more recently on the server than on the device
 		// => use the updated_at date from the server
 		entry.local_updated_at = remote.remote_updated_at;
+		entry._isChanged = true;
 	}
 	else {
 		// Entry has not been updated on the server, or it's more recent on the ereader

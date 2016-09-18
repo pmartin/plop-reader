@@ -311,7 +311,10 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 					// and save an updated version of the entry in local DB
 					Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 					Entry entry = this->entitiesFactory.mergeLocalAndRemoteEntries(localEntry, remoteEntry);
-					repository.persist(entry);
+
+					if (entry._isChanged) {
+						repository.persist(entry);
+					}
 				}
 				else {
 					// Entry does not already exist in local DB => just create it

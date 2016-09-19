@@ -7,6 +7,7 @@
 #include "inkview.h"
 
 #include "../entities/entry.h"
+#include "../defines.h"
 
 #include "gui_button.h"
 #include "gui_list_item_entry.h"

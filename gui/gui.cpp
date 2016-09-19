@@ -233,7 +233,18 @@ void Gui::displayMainMenu()
 			app.setMode(Application::MODE_STARRED);
 		}
 		else if (index == 4) {
-			DialogSynchro(ICON_INFORMATION, "Belladonna reader", "Texte d'a propos", "OK", NULL, NULL);
+			const char *text = "Belladonna Reader " BELLADONNA_VERSION_STR "\n"
+					BELLADONNA_WEBSITE_URL "\n"
+					"\n"
+					"A Wallabag application for Pocketbook Touch Lux ereaders." "\n"
+					"\n"
+					"Developed by Pascal MARTIN.\n"
+					"@pascal_martin\n"
+					"https://blog.pascal-martin.fr\n"
+					"\n"
+					"Contribute (GPL-3.0):" "\n"
+					BELLADONNE_OPENSOURCE_URL;
+			DialogSynchro(ICON_INFORMATION, "Belladonna reader", text, "OK", NULL, NULL);
 		}
 	};
 

@@ -187,7 +187,7 @@ static imenu *menu;
 
 void Gui::displayMainMenu()
 {
-	const char *str0 = "Belladonna";
+	const char *str0 = BELLADONNA_APPLICATION_FULLNAME;
 	const char *str1 = "Mode = entrées non lues";
 	const char *str2 = "Mode = entrées archivées";
 	const char *str3 = "Mode = entrées starrées";
@@ -233,7 +233,7 @@ void Gui::displayMainMenu()
 			app.setMode(Application::MODE_STARRED);
 		}
 		else if (index == 4) {
-			const char *text = "Belladonna Reader " BELLADONNA_VERSION_STR "\n"
+			const char *text = BELLADONNA_APPLICATION_FULLNAME " " BELLADONNA_VERSION_STR "\n"
 					BELLADONNA_WEBSITE_URL "\n"
 					"\n"
 					"A Wallabag application for Pocketbook Touch Lux ereaders." "\n"

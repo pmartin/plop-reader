@@ -2,6 +2,9 @@
 #define DEFINES_H_
 
 
+#define BELLADONNA_APPLICATION_FULLNAME "Belladonna Reader"
+#define BELLADONNA_APPLICATION_SHORTNAME "Belladonna"
+
 #define BELLADONNA_VERSION_STR "v0.1.0"
 #define BELLADONNA_VERSION_NUM 1
 #define BELLADONNA_WEBSITE_URL "http://belladonna-reader.org"

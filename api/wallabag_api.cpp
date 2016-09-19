@@ -198,44 +198,42 @@ void WallabagApi::refreshOAuthToken()
 }
 
 
-void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
+
+CURLcode WallabagApi::doHttpRequest(
+	std::function<char * (CURL *curl)> getUrl,
+	std::function<char * (CURL *curl)> getMethod,
+	std::function<char * (CURL *curl)> getData,
+	std::function<void (void)> beforeRequest,
+	std::function<void (void)> afterRequest,
+	std::function<void (CURLcode res, char *json_string)> onSuccess,
+	std::function<void (CURLcode res)> onFailure
+)
 {
-	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
-	this->refreshOAuthToken();
-	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
-
-	//char buffer[2048];
-	//log_message("Chargement des articles...");
-	DEBUG("Fetching remote articles (only considering those updated_at > %ld)", lastSyncTimestamp);
-
-	char enries_url[2048];
-
 	CURL *curl;
-	CURLcode res;
+	CURLcode res = CURLE_OK;
 
 	this->json_string_len = 0;
 	this->json_string = (char *)calloc(1, 1);
 
-	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
 	if (curl) {
-		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
-		char *encoded_sort = curl_easy_escape(curl, "updated", 0);
-		char *encoded_order = curl_easy_escape(curl, "desc", 0);
+		char *url = getUrl(curl);
+		char *method = getMethod(curl);
+		char *data = getData(curl);
 
-		snprintf(enries_url, sizeof(enries_url), "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
-				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 200);
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
 
-		curl_free(encoded_access_token);
-		curl_free(encoded_sort);
-		curl_free(encoded_order);
-
-		curl_easy_setopt(curl, CURLOPT_URL, enries_url);
+		curl_easy_setopt(curl, CURLOPT_URL, url);
 
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+
+		if (data != NULL) {
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
+		}
 
 		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
 			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
@@ -246,89 +244,131 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
-		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+		beforeRequest();
+
 		res = curl_easy_perform(curl);
-		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+
+		afterRequest();
+
+
 		if (res != CURLE_OK) {
-			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
-			//log_message(buffer);
-
-			// TODO error-handling
-
-			goto end;
+			onFailure(res);
 		}
 		else {
+			onSuccess(res, json_string);
+		}
 
-			// As we do not have a **sync** yet, only a **fetch**, we remove all entries
-			// from local database before inserting those received from the API.
-			// This way, we will not have duplicated in the application
-			//repository.deleteAll();
+		curl_easy_cleanup(curl);
+
+		free(url);
+		free(method);
+		if (data != NULL) {
+			free(data);
+		}
+	}
+
+	free(this->json_string);
+
+	return res;
+}
 
 
-			json_object *obj = json_tokener_parse(json_string);
+void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
+{
+	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+	this->refreshOAuthToken();
+	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 
-			//snprintf(buffer, sizeof(buffer), "Page %d / %d - posts %d / %d",
-			//	json_object_get_int(json_object_object_get(obj, "page")),
-			//	json_object_get_int(json_object_object_get(obj, "pages")),
-			//	json_object_get_int(json_object_object_get(obj, "limit")),
-			//	json_object_get_int(json_object_object_get(obj, "total"))
-			//);
-			//log_message(buffer);
 
-			progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
+	auto getUrl = [this] (CURL *curl) -> char * {
+		char *entries_url = (char *)calloc(2048, sizeof(char));
 
-			array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
-			int numberOfEntries = items->length;
-			float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START;
-			float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START);
-			float nextIncrement = incrementPercentageEvery;
-			for (int i=0 ; i<numberOfEntries ; i++) {
-				json_object *item = (json_object *)array_list_get_idx(items, i);
+		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
+		char *encoded_sort = curl_easy_escape(curl, "updated", 0);
+		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
-				Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
+		snprintf(entries_url, 2048, "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
+				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 200);
 
-				if (lastSyncTimestamp != 0) {
-					time_t updated_at_ts = remoteEntry.remote_updated_at;
-					if (lastSyncTimestamp > updated_at_ts) {
-						// Remote updated_at if older than last sync => the entry has not been modified on the server
-						// since we last fetched it => no need to re-save it locally
-						continue;
-					}
-				}
+		curl_free(encoded_access_token);
+		curl_free(encoded_sort);
+		curl_free(encoded_order);
 
-				int remoteId = json_object_get_int(json_object_object_get(item, "id"));
-				Entry localEntry = repository.findByRemoteId(remoteId);
-				if (localEntry.id > 0) {
-					// Entry already exists in local DB => we must merge the remote data with the local data
-					// and save an updated version of the entry in local DB
-					Entry entry = this->entitiesFactory.mergeLocalAndRemoteEntries(localEntry, remoteEntry);
-					if (entry._isChanged) {
-						repository.persist(entry);
-					}
-				}
-				else {
-					// Entry does not already exist in local DB => just create it
-					Entry entry = remoteEntry;
-					repository.persist(entry);
-				}
+		return entries_url;
+	};
 
-				if (i >= nextIncrement) {
-					nextIncrement += incrementPercentageEvery;
-					percentage += 1;
-					progressbarUpdater("Enregistrement des entries en local...", percentage, NULL);
+	auto getMethod = [this] (CURL *curl) -> char * {
+		char *method = (char *)malloc(strlen("GET") + 1);
+		strcpy(method, "GET");
+		return method;
+	};
+
+	auto getData = [this] (CURL *curl) -> char * {
+		return NULL;
+	};
+
+	auto beforeRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+	};
+
+	auto afterRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+	};
+
+	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
+		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
+
+		json_object *obj = json_tokener_parse(json_string);
+		array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
+		int numberOfEntries = items->length;
+		float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START;
+		float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START);
+		float nextIncrement = incrementPercentageEvery;
+		for (int i=0 ; i<numberOfEntries ; i++) {
+			json_object *item = (json_object *)array_list_get_idx(items, i);
+
+			Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
+
+			if (lastSyncTimestamp != 0) {
+				time_t updated_at_ts = remoteEntry.remote_updated_at;
+				if (lastSyncTimestamp > updated_at_ts) {
+					// Remote updated_at if older than last sync => the entry has not been modified on the server
+					// since we last fetched it => no need to re-save it locally
+					continue;
 				}
 			}
 
-			progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
+			int remoteId = json_object_get_int(json_object_object_get(item, "id"));
+			Entry localEntry = repository.findByRemoteId(remoteId);
+			if (localEntry.id > 0) {
+				// Entry already exists in local DB => we must merge the remote data with the local data
+				// and save an updated version of the entry in local DB
+				Entry entry = this->entitiesFactory.mergeLocalAndRemoteEntries(localEntry, remoteEntry);
+				if (entry._isChanged) {
+					repository.persist(entry);
+				}
+			}
+			else {
+				// Entry does not already exist in local DB => just create it
+				Entry entry = remoteEntry;
+				repository.persist(entry);
+			}
+
+			if (i >= nextIncrement) {
+				nextIncrement += incrementPercentageEvery;
+				percentage += 1;
+				progressbarUpdater("Enregistrement des entries en local...", percentage, NULL);
+			}
 		}
 
-		end:
-		curl_easy_cleanup(curl);
-	}
+		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
+	};
 
-	curl_global_cleanup();
+	auto onFailure = [this] (CURLcode res) -> void {
+		// TODO error-handling
+	};
 
-	free(this->json_string);
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
 }
 
 

@@ -322,11 +322,11 @@ void Gui::statusBarText(const char *format, va_list args)
 	char buffer[2048];
 	vsnprintf(buffer, sizeof(buffer), format, args);
 
-	FillArea(0, screenHeight - 40, screenWidth, 40, WHITE);
+	FillArea(0, screenHeight - 32, screenWidth, 32, WHITE);
 
 	SetFont(statusBarFont, DGRAY);
-	DrawString(0, screenHeight - 40, buffer);
-	PartialUpdate(0, screenHeight - 40, screenWidth, 40);
+	DrawString(0, screenHeight - 34, buffer);
+	PartialUpdate(0, screenHeight - 32, screenWidth, 32);
 }
 
 void Gui::statusBarText(const char *format...)

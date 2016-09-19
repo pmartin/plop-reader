@@ -36,6 +36,7 @@ public:
 	}
 
 	void init();
+	void deinit();
 
 	void loadRecentArticles();
 

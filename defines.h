@@ -10,4 +10,8 @@
 #define BELLADONNA_WEBSITE_URL "http://belladonna-reader.org"
 #define BELLADONNA_OPENSOURCE_URL "https://github.com/pmartin/belladonna"
 
+// On a TL3: /mnt/ext1/system/usr/share/belladonna
+#define BELLADONNA_BASE_DIRECTORY USERDATA "/share/belladonna"
+#define BELLADONNA_ENTRIES_CONTENT_DIRECTORY BELLADONNA_BASE_DIRECTORY "/entries"
+
 #endif /* DEFINES_H_ */

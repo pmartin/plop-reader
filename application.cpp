@@ -158,13 +158,13 @@ void Application::read(Entry &entry)
 		// TODO create (or delete) the local file when syncing with server ;-)
 
 		char filepath[2048];
-		snprintf(filepath, sizeof(filepath), USERDATA TEMPDIR "/belladonna/entry-%d.html", entry.id);
+		snprintf(filepath, sizeof(filepath), BELLADONNA_ENTRIES_CONTENT_DIRECTORY "/entry-%d.html", entry.id);
 		entry.local_content_file_html = filepath;
 
 		//Message(ICON_INFORMATION, "Opening entry... One day!", filepath, 1*1000);
 
 		// TODO no hard-coded path, and create this directory somewhere else and all...
-		iv_mkdir(USERDATA TEMPDIR "/belladonna/", 0755);
+		iv_mkdir(BELLADONNA_ENTRIES_CONTENT_DIRECTORY, 0755);
 
 		FILE *fp = iv_fopen(filepath, "wb");
 

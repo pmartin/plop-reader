@@ -5,7 +5,7 @@
 #include "json-c/json.h"
 
 #include "wallabag_config.h"
-
+#include "../defines.h"
 
 class WallabagConfigLoader
 {
@@ -13,7 +13,7 @@ public:
 	WallabagConfig load(void);
 
 private:
-	const char *CONFIG_FILE = USERDATA TEMPDIR "/belladonna.json";
+	const char *CONFIG_FILE = BELLADONNA_BASE_DIRECTORY "/config.json";
 };
 
 

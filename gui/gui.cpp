@@ -191,8 +191,9 @@ void Gui::displayMainMenu()
 	const char *str1 = "Mode = entrées non lues";
 	const char *str2 = "Mode = entrées archivées";
 	const char *str3 = "Mode = entrées starrées";
+	const char *str4 = "A propos";
 
-	menu = (imenu *)calloc(4, sizeof(imenu));
+	menu = (imenu *)calloc(6, sizeof(imenu));
 
 	menu[0].type = 1;
 	menu[0].index = 0;
@@ -212,7 +213,12 @@ void Gui::displayMainMenu()
 	menu[3].type = 2;
 	menu[3].index = 3;
 	menu[3].text = (char *)str3;
-	menu[3].submenu = NULL;
+	menu[3].submenu = &menu[4];
+
+	menu[4].type = 2;
+	menu[4].index = 4;
+	menu[4].text = (char *)str4;
+	menu[4].submenu = NULL;
 
 	auto callback = [](int index) {
 		free(menu);
@@ -225,6 +231,9 @@ void Gui::displayMainMenu()
 		}
 		else if (index == 3) {
 			app.setMode(Application::MODE_STARRED);
+		}
+		else if (index == 4) {
+			DialogSynchro(ICON_INFORMATION, "Belladonna reader", "Texte d'a propos", "OK", NULL, NULL);
 		}
 	};
 

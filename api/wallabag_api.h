@@ -26,21 +26,15 @@ public:
 
 	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 
-	static size_t _createAOauthTokenWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
-	static size_t _loadRecentArticlesWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
-
 private:
 	void syncOneEntryToServer(EntryRepository repository, Entry &entry);
+	static size_t _curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 	WallabagConfig config;
 
 	WallabagOAuthToken oauthToken;
 
 	WallabagEntitiesFactory entitiesFactory;
-
-	// For createOAuthToken
-	int json_string_get_token_len;
-	char *json_string_get_token;
 
 	// For loadRecentArticles
 	int json_string_len;

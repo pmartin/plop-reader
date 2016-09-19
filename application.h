@@ -2,7 +2,7 @@
 #define APPLICATION_H_
 
 #include <tgmath.h>
-
+#include <string>
 
 #include "api/wallabag_api.h"
 #include "api/wallabag_config_loader.h"
@@ -13,6 +13,12 @@
 #include "gui/gui.h"
 
 #include "repositories/entry_repository.h"
+
+
+#include <sstream>
+
+#define SSTR( x ) static_cast< std::ostringstream & >( \
+        ( std::ostringstream() << std::dec << x ) ).str()
 
 
 class Application

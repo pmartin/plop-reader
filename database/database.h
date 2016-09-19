@@ -29,6 +29,9 @@ public:
 
 	void runMigrations(void);
 
+	void saveInternal(std::string key, std::string value);
+	Internal selectInternal(std::string key);
+
 	sqlite3 *getDb() { return this->db; }
 
 private:
@@ -39,8 +42,6 @@ private:
 	void migration_002_createEntriesTable();
 	void migration_003_createIndexesOnEntries();
 
-	void saveInternal(std::string key, std::string value);
-	Internal selectInternal(std::string key);
 	void insertInternal(std::string key, std::string value);
 	void updateInternal(std::string key, std::string value);
 

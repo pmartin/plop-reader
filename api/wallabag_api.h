@@ -22,7 +22,7 @@ public:
 	void createOAuthToken();
 	void refreshOAuthToken();
 
-	void loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater);
+	void loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater);
 
 	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 

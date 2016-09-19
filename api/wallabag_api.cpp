@@ -218,7 +218,7 @@ size_t WallabagApi::_loadRecentArticlesWriteCallback(char *ptr, size_t size, siz
 }
 
 
-void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_progressbar progressbarUpdater)
+void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
 {
 	progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	this->refreshOAuthToken();
@@ -226,6 +226,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 
 	//char buffer[2048];
 	//log_message("Chargement des articles...");
+	DEBUG("Fetching remote articles (only considering those updated_at > %ld)", lastSyncTimestamp);
 
 	char enries_url[2048];
 
@@ -304,21 +305,30 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, gui_update_prog
 			for (int i=0 ; i<numberOfEntries ; i++) {
 				json_object *item = (json_object *)array_list_get_idx(items, i);
 
+				Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
+
+				if (lastSyncTimestamp != 0) {
+					time_t updated_at_ts = remoteEntry.remote_updated_at;
+					if (lastSyncTimestamp > updated_at_ts) {
+						// Remote updated_at if older than last sync => the entry has not been modified on the server
+						// since we last fetched it => no need to re-save it locally
+						continue;
+					}
+				}
+
 				int remoteId = json_object_get_int(json_object_object_get(item, "id"));
 				Entry localEntry = repository.findByRemoteId(remoteId);
 				if (localEntry.id > 0) {
 					// Entry already exists in local DB => we must merge the remote data with the local data
 					// and save an updated version of the entry in local DB
-					Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 					Entry entry = this->entitiesFactory.mergeLocalAndRemoteEntries(localEntry, remoteEntry);
-
 					if (entry._isChanged) {
 						repository.persist(entry);
 					}
 				}
 				else {
 					// Entry does not already exist in local DB => just create it
-					Entry entry = this->entitiesFactory.createEntryFromJson(item);
+					Entry entry = remoteEntry;
 					repository.persist(entry);
 				}
 

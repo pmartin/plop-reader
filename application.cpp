@@ -58,7 +58,10 @@ void Application::loadRecentArticles()
 	gui.openProgressBar(ICON_WIFI, "Synchronizing with server", "Starting synchronization", 0, [](int button) {});
 	gui.updateProgressBar("Fetching recent entries from server", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_START);
 
-	wallabag_api.loadRecentArticles(entryRepository, [](const char *text, int percent, void *context) {
+	Internal lastSyncTimestampObj = db.selectInternal("sync.last-sync.timestamp");
+	time_t lastSyncTimestamp = lastSyncTimestampObj.isNull ? 0 : atoi(lastSyncTimestampObj.value.c_str());
+
+	wallabag_api.loadRecentArticles(entryRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
 		app.gui.updateProgressBar(text, percent);
 	});
 
@@ -66,6 +69,9 @@ void Application::loadRecentArticles()
 	wallabag_api.syncEntriesToServer(entryRepository, [](const char *text, int percent, void *context) {
 		app.gui.updateProgressBar(text, percent);
 	});
+
+	db.saveInternal("sync.last-sync.timestamp", SSTR(time(NULL)));
+	DEBUG("Saving last sync TS = %ld", time(NULL));
 
 	gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
 	gui.closeProgressBar();

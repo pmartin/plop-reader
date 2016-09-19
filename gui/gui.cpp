@@ -243,7 +243,7 @@ void Gui::displayMainMenu()
 					"https://blog.pascal-martin.fr\n"
 					"\n"
 					"Contribute (GPL-3.0):" "\n"
-					BELLADONNE_OPENSOURCE_URL;
+					BELLADONNA_OPENSOURCE_URL;
 			DialogSynchro(ICON_INFORMATION, "Belladonna reader", text, "OK", NULL, NULL);
 		}
 	};

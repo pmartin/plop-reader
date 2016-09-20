@@ -20,8 +20,8 @@ class WallabagApi
 public:
 	void setConfig(WallabagConfig conf);
 
-	void createOAuthToken();
-	void refreshOAuthToken();
+	void createOAuthToken(gui_update_progressbar progressbarUpdater);
+	void refreshOAuthToken(gui_update_progressbar progressbarUpdater);
 
 	void loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater);
 

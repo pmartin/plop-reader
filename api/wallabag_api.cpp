@@ -373,82 +373,47 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 
 void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 {
-	char enries_url[2048];
-
-	CURL *curl;
-	CURLcode res;
-
-	this->json_string_len = 0;
-	this->json_string = (char *)calloc(1, 1);
-
-	curl_global_init(CURL_GLOBAL_ALL);
-	curl = curl_easy_init();
-	if (curl) {
+	auto getUrl = [this, &entry] (CURL *curl) -> char * {
+		char *url = (char *)calloc(2048, sizeof(char));
 		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
-
-		snprintf(enries_url, sizeof(enries_url), "%sapi/entries/%s.json?access_token=%s",
+		snprintf(url, 2048, "%sapi/entries/%s.json?access_token=%s",
 				config.url.c_str(), entry.remote_id.c_str(), encoded_access_token);
+		return url;
+	};
 
-		DEBUG("URL: %s", enries_url);
+	auto getMethod = [this] (CURL *curl) -> char * {
+		char *method = (char *)malloc(strlen("PATCH") + 1);
+		strcpy(method, "PATCH");
+		return method;
+	};
 
-		curl_free(encoded_access_token);
+	auto getData = [this, &entry] (CURL *curl) -> char * {
+		char *postdata = (char *)malloc(2048);
+		snprintf(postdata, 2048, "archive=%d&starred=%d", entry.local_is_archived, entry.local_is_starred);
+		return postdata;
+	};
 
+	auto beforeRequest = [] (void) -> void {};
 
-		char postdata[2048];
-		snprintf(postdata, sizeof(postdata), "archive=%d&starred=%d", entry.local_is_archived, entry.local_is_starred);
-		DEBUG("  -> archive=%d starred=%d", entry.local_is_archived, entry.local_is_starred);
+	auto afterRequest = [] (void) -> void {};
 
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
+	auto onSuccess = [this, &repository, &entry] (CURLcode res, char *json_string) -> void {
+		json_object *item = json_tokener_parse(json_string);
+		Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 
+		DEBUG("Entry l#%d r#%s -> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
+		DEBUG(" * la=%d->%d ; ra=%d->%d", entry.local_is_archived, remoteEntry.local_is_archived, entry.remote_is_archived, remoteEntry.remote_is_archived);
+		DEBUG(" * l*=%d->%d ; r*=%d->%d", entry.local_is_starred, remoteEntry.local_is_starred, entry.remote_is_starred, remoteEntry.remote_is_starred);
 
-		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+		entry = this->entitiesFactory.mergeLocalAndRemoteEntries(entry, remoteEntry);
+		repository.persist(entry);
+	};
 
-		curl_easy_setopt(curl, CURLOPT_URL, enries_url);
+	auto onFailure = [this] (CURLcode res) -> void {
+		// TODO error-handling
+	};
 
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-
-		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
-			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
-			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
-		}
-
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-
-		res = curl_easy_perform(curl);
-		if (res != CURLE_OK) {
-
-			ERROR("Error %d : %s", res, curl_easy_strerror(res));
-
-			// TODO error-handling
-
-			goto end;
-		}
-		else {
-
-			json_object *item = json_tokener_parse(json_string);
-			Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
-
-			DEBUG("Entry l#%d r#%s -> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
-			DEBUG(" * la=%d->%d ; ra=%d->%d", entry.local_is_archived, remoteEntry.local_is_archived, entry.remote_is_archived, remoteEntry.remote_is_archived);
-			DEBUG(" * l*=%d->%d ; r*=%d->%d", entry.local_is_starred, remoteEntry.local_is_starred, entry.remote_is_starred, remoteEntry.remote_is_starred);
-
-			entry = this->entitiesFactory.mergeLocalAndRemoteEntries(entry, remoteEntry);
-			repository.persist(entry);
-		}
-
-		end:
-		curl_easy_cleanup(curl);
-	}
-
-	curl_global_cleanup();
-
-	free(this->json_string);
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
 }
 
 

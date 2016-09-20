@@ -157,81 +157,6 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 }
 
 
-
-CURLcode WallabagApi::doHttpRequest(
-	std::function<char * (CURL *curl)> getUrl,
-	std::function<char * (CURL *curl)> getMethod,
-	std::function<char * (CURL *curl)> getData,
-	std::function<void (void)> beforeRequest,
-	std::function<void (void)> afterRequest,
-	std::function<void (CURLcode res, char *json_string)> onSuccess,
-	std::function<void (CURLcode res)> onFailure
-)
-{
-	CURL *curl;
-	CURLcode res = CURLE_OK;
-
-	this->json_string_len = 0;
-	this->json_string = (char *)calloc(1, 1);
-
-	curl = curl_easy_init();
-	if (curl) {
-		char *url = getUrl(curl);
-		char *method = getMethod(curl);
-		char *data = getData(curl);
-
-		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
-
-		curl_easy_setopt(curl, CURLOPT_URL, url);
-
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-
-		if (data != NULL) {
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
-		}
-
-		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
-			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
-			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
-		}
-
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-
-		beforeRequest();
-
-		res = curl_easy_perform(curl);
-
-		afterRequest();
-
-
-		if (res != CURLE_OK) {
-			onFailure(res);
-		}
-		else {
-			onSuccess(res, json_string);
-		}
-
-		curl_easy_cleanup(curl);
-
-		free(url);
-		free(method);
-		if (data != NULL) {
-			free(data);
-		}
-	}
-
-	free(this->json_string);
-
-	return res;
-}
-
-
 void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
 {
 	this->refreshOAuthToken(progressbarUpdater);
@@ -417,3 +342,75 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 }
 
 
+CURLcode WallabagApi::doHttpRequest(
+	std::function<char * (CURL *curl)> getUrl,
+	std::function<char * (CURL *curl)> getMethod,
+	std::function<char * (CURL *curl)> getData,
+	std::function<void (void)> beforeRequest,
+	std::function<void (void)> afterRequest,
+	std::function<void (CURLcode res, char *json_string)> onSuccess,
+	std::function<void (CURLcode res)> onFailure
+)
+{
+	CURL *curl;
+	CURLcode res = CURLE_OK;
+
+	this->json_string_len = 0;
+	this->json_string = (char *)calloc(1, 1);
+
+	curl = curl_easy_init();
+	if (curl) {
+		char *url = getUrl(curl);
+		char *method = getMethod(curl);
+		char *data = getData(curl);
+
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
+
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+
+		if (data != NULL) {
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
+		}
+
+		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
+			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
+			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
+		}
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+
+		beforeRequest();
+
+		res = curl_easy_perform(curl);
+
+		afterRequest();
+
+
+		if (res != CURLE_OK) {
+			onFailure(res);
+		}
+		else {
+			onSuccess(res, json_string);
+		}
+
+		curl_easy_cleanup(curl);
+
+		free(url);
+		free(method);
+		if (data != NULL) {
+			free(data);
+		}
+	}
+
+	free(this->json_string);
+
+	return res;
+}

@@ -28,28 +28,27 @@ size_t WallabagApi::WallabagApi::_curlWriteCallback(char *ptr, size_t size, size
 
 void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 {
-	CURL *curl;
-	CURLcode res;
+	auto getUrl = [this] (CURL *curl) -> char * {
+		char *url = (char *)calloc(2048, sizeof(char));
+		snprintf(url, 2048, "%soauth/v2/token", config.url.c_str());
+		return url;
+	};
 
-	//char buffer[2048];
-	//log_message("Requesting OAuth token...");
+	auto getMethod = [this] (CURL *curl) -> char * {
+		char *method = (char *)malloc(strlen("POST") + 1);
+		strcpy(method, "POST");
+		return method;
+	};
 
-	this->json_string_len = 0;
-	this->json_string = (char *)calloc(1, 1);
+	auto getData = [this] (CURL *curl) -> char * {
+		char *postdata = (char *)malloc(2048);
 
-	char url[2048];
-	snprintf(url, sizeof(url), "%soauth/v2/token", config.url.c_str());
-
-	curl_global_init(CURL_GLOBAL_ALL);
-	curl = curl_easy_init();
-	if (curl) {
-		char postdata[2048];
 		char *encoded_client_id = curl_easy_escape(curl, this->config.client_id.c_str(), 0);
 		char *encoded_secret_key = curl_easy_escape(curl, this->config.secret_key.c_str(), 0);
 		char *encoded_login = curl_easy_escape(curl, this->config.login.c_str(), 0);
 		char *encoded_password = curl_easy_escape(curl, this->config.password.c_str(), 0);
 
-		snprintf(postdata, sizeof(postdata), "grant_type=password&client_id=%s&client_secret=%s&username=%s&password=%s",
+		snprintf(postdata, 2048, "grant_type=password&client_id=%s&client_secret=%s&username=%s&password=%s",
 				encoded_client_id, encoded_secret_key, encoded_login, encoded_password);
 
 		curl_free(encoded_client_id);
@@ -57,53 +56,34 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		curl_free(encoded_login);
 		curl_free(encoded_password);
 
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+		return postdata;
+	};
 
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+	auto beforeRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Création token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+	};
 
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+	auto afterRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Création token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
+	};
 
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
+	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
+		json_object *json_token = json_tokener_parse(json_string);
 
-		if (!this->config.http_login.empty() && !this->config.http_password.empty()) {
-			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-			curl_easy_setopt(curl, CURLOPT_USERNAME, this->config.http_login.c_str());
-			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
-		}
+		const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
+		int expires_in = json_object_get_int(json_object_object_get(json_token, "expires_in"));
+		const char *refresh_token = json_object_get_string(json_object_object_get(json_token, "refresh_token"));
 
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		this->oauthToken.access_token = access_token;
+		this->oauthToken.refresh_token = refresh_token;
+		this->oauthToken.expires_at = time(NULL) + expires_in;
+	};
 
-		res = curl_easy_perform(curl);
-		if (res != CURLE_OK) {
-			//snprintf(buffer, sizeof(buffer), "Error %d : %s", res, curl_easy_strerror(res));
-			//log_message(buffer);
+	auto onFailure = [this] (CURLcode res) -> void {
+		// TODO error-handling
+	};
 
-			// TODO error-handling
-
-			goto end;
-		}
-		else {
-			json_object *json_token = json_tokener_parse(json_string);
-
-			const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
-			int expires_in = json_object_get_int(json_object_object_get(json_token, "expires_in"));
-			const char *refresh_token = json_object_get_string(json_object_object_get(json_token, "refresh_token"));
-
-			this->oauthToken.access_token = access_token;
-			this->oauthToken.refresh_token = refresh_token;
-			this->oauthToken.expires_at = time(NULL) + expires_in;
-		}
-
-		end:
-		curl_easy_cleanup(curl);
-	}
-
-	curl_global_cleanup();
-
-	free(this->json_string);
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
 }
 
 

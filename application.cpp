@@ -16,6 +16,14 @@ void Application::init()
 	wallabag_api.setConfig(config);
 
 	gui.init();
+
+	curl_global_init(CURL_GLOBAL_ALL);
+}
+
+
+void Application::deinit()
+{
+	curl_global_cleanup();
 }
 
 

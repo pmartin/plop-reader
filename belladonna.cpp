@@ -55,6 +55,9 @@ static int main_handler(int event_type, int param_one, int param_two)
 		break;
 	case EVT_EXIT:
 		//log_close();
+
+		app.deinit();
+
 		result = 1;
 		break;
 	default:

@@ -16,9 +16,7 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto getMethod = [this] (CURL *curl) -> char * {
-		char *method = (char *)malloc(strlen("POST") + 1);
-		strcpy(method, "POST");
-		return method;
+		return (char *)strdup("POST");
 	};
 
 	auto getData = [this] (CURL *curl) -> char * {
@@ -88,9 +86,7 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto getMethod = [this] (CURL *curl) -> char * {
-		char *method = (char *)malloc(strlen("POST") + 1);
-		strcpy(method, "POST");
-		return method;
+		return (char *)strdup("POST");
 	};
 
 	auto getData = [this] (CURL *curl) -> char * {
@@ -160,9 +156,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	};
 
 	auto getMethod = [this] (CURL *curl) -> char * {
-		char *method = (char *)malloc(strlen("GET") + 1);
-		strcpy(method, "GET");
-		return method;
+		return (char *)strdup("GET");
 	};
 
 	auto getData = [this] (CURL *curl) -> char * {
@@ -288,9 +282,7 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 	};
 
 	auto getMethod = [this] (CURL *curl) -> char * {
-		char *method = (char *)malloc(strlen("PATCH") + 1);
-		strcpy(method, "PATCH");
-		return method;
+		return (char *)strdup("PATCH");
 	};
 
 	auto getData = [this, &entry] (CURL *curl) -> char * {

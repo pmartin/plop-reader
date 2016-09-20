@@ -7,25 +7,6 @@ void WallabagApi::setConfig(WallabagConfig conf)
 }
 
 
-size_t WallabagApi::WallabagApi::_curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
-{
-	WallabagApi *that = (WallabagApi *)userdata;
-
-	size_t data_size = size * nmemb;
-
-	that->json_string = (char *)realloc(that->json_string, that->json_string_len + data_size + 1);
-	if (that->json_string == NULL) {
-		// TODO error-handling
-	}
-
-	memcpy(that->json_string + that->json_string_len, ptr, data_size);
-	that->json_string_len += data_size;
-	that->json_string[that->json_string_len] = '\0';
-
-	return data_size;
-}
-
-
 void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 {
 	auto getUrl = [this] (CURL *curl) -> char * {
@@ -413,4 +394,23 @@ CURLcode WallabagApi::doHttpRequest(
 	free(this->json_string);
 
 	return res;
+}
+
+
+size_t WallabagApi::WallabagApi::_curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	WallabagApi *that = (WallabagApi *)userdata;
+
+	size_t data_size = size * nmemb;
+
+	that->json_string = (char *)realloc(that->json_string, that->json_string_len + data_size + 1);
+	if (that->json_string == NULL) {
+		// TODO error-handling
+	}
+
+	memcpy(that->json_string + that->json_string_len, ptr, data_size);
+	that->json_string_len += data_size;
+	that->json_string[that->json_string_len] = '\0';
+
+	return data_size;
 }

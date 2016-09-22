@@ -87,16 +87,16 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	SetFont(smallTitleFont, BLACK);
 
 	if (mode == 1) {
-		snprintf(buffer, sizeof(buffer), "Belladonna - entrées non lues");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées non lues");
 	}
 	else if (mode == 2) {
-		snprintf(buffer, sizeof(buffer), "Belladonna - entrées archivées");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées archivées");
 	}
 	else if (mode == 3) {
-		snprintf(buffer, sizeof(buffer), "Belladonna - entrées favorites");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées favorites");
 	}
 	else {
-		snprintf(buffer, sizeof(buffer), "Belladonna");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
 	}
 	DrawString(90, y, buffer);
 	y += 34;

@@ -60,5 +60,6 @@ clean:
 	rm -f api/*.o
 	rm -f database/*.o
 	rm -f entities/*.o
+	rm -f gui/*.o
 	rm -f repositories/*.o
 	rm -f plop-reader.app

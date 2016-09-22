@@ -1,4 +1,4 @@
-belladonna.app
+/*.app
 *.o
 
 /files/config.json

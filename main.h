@@ -1,5 +1,5 @@
-#ifndef BELLADONNA_H_
-#define BELLADONNA_H_
+#ifndef MAIN_H_
+#define MAIN_H_
 
 #include "inkview.h"
 
@@ -36,4 +36,4 @@ extern Application app;
 // log
 #include "log.h"
 
-#endif /* BELLADONNA_H_ */
+#endif /* MAIN_H_ */

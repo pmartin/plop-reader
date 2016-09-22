@@ -6,11 +6,11 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 # Site settings
-title: Belladonna Reader
+title: Plop! reader
 email: contact@pascal-martin.fr
 description: A Wallabag application for Pocketbook Touch Lux ereaders.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://belladonna-reader.org" # the base hostname & protocol for your site
+url: "http://plop-reader.pascal-martin.fr" # the base hostname & protocol for your site
 twitter_username: pascal_martin
 github_username:  pmartin
 

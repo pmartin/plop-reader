@@ -4,7 +4,7 @@ CC = $(PBSDK)/bin/arm-obreey-linux-gnueabi-g++
 CFLAGS = -g -gdwarf-3 -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializers -Wshadow -Wno-unused-parameter -Wno-unused-function
 #CFLAGS = -O3 -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializers -Wshadow -Wno-unused-parameter -Wno-unused-function
 
-all: plop-reader.app
+all: "Plop! reader.app"
 
 
 api/wallabag_api.o: main.h api/wallabag_api.h api/wallabag_api.cpp
@@ -51,8 +51,8 @@ log.o: main.h log.h log.cpp
 	$(CC) -c log.cpp $(CFLAGS) -o log.o
 
 
-plop-reader.app: api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o main.o log.o
-	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o main.o log.o -o plop-reader.app -linkview -lcurl -ljson-c -lsqlite3
+"Plop! reader.app": api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o main.o log.o
+	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o main.o log.o -o "Plop! reader.app" -linkview -lcurl -ljson-c -lsqlite3
 
 
 clean:

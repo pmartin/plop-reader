@@ -13,7 +13,7 @@ public:
 	WallabagConfig load(void);
 
 private:
-	const char *CONFIG_FILE = BELLADONNA_BASE_DIRECTORY "/config.json";
+	const char *CONFIG_FILE = PLOP_BASE_DIRECTORY "/config.json";
 };
 
 

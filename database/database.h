@@ -37,7 +37,7 @@ public:
 	sqlite3 *getDb() { return this->db; }
 
 private:
-	const char *DB_FILE = BELLADONNA_BASE_DIRECTORY "/belladonna.sqlite3";
+	const char *DB_FILE = PLOP_BASE_DIRECTORY "/belladonna.sqlite3";
 	sqlite3 *db;
 
 	void migration_001_createInternalsTable();

@@ -187,7 +187,7 @@ static imenu *menu;
 
 void Gui::displayMainMenu()
 {
-	const char *str0 = BELLADONNA_APPLICATION_FULLNAME;
+	const char *str0 = PLOP_APPLICATION_FULLNAME;
 	const char *str1 = "Mode = entrées non lues";
 	const char *str2 = "Mode = entrées archivées";
 	const char *str3 = "Mode = entrées starrées";
@@ -233,8 +233,8 @@ void Gui::displayMainMenu()
 			app.setMode(Application::MODE_STARRED);
 		}
 		else if (index == 4) {
-			const char *text = BELLADONNA_APPLICATION_FULLNAME " " BELLADONNA_VERSION_STR "\n"
-					BELLADONNA_WEBSITE_URL "\n"
+			const char *text = PLOP_APPLICATION_FULLNAME " " PLOP_VERSION_STR "\n"
+					PLOP_WEBSITE_URL "\n"
 					"\n"
 					"A Wallabag application for Pocketbook Touch Lux ereaders." "\n"
 					"\n"
@@ -243,7 +243,7 @@ void Gui::displayMainMenu()
 					"https://blog.pascal-martin.fr\n"
 					"\n"
 					"Contribute (GPL-3.0):" "\n"
-					BELLADONNA_OPENSOURCE_URL;
+					PLOP_OPENSOURCE_URL;
 			DialogSynchro(ICON_INFORMATION, "Belladonna reader", text, "OK", NULL, NULL);
 		}
 	};

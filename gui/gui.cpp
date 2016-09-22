@@ -244,7 +244,7 @@ void Gui::displayMainMenu()
 					"\n"
 					"Contribute (GPL-3.0):" "\n"
 					PLOP_OPENSOURCE_URL;
-			DialogSynchro(ICON_INFORMATION, "Belladonna reader", text, "OK", NULL, NULL);
+			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, text, "OK", NULL, NULL);
 		}
 	};
 

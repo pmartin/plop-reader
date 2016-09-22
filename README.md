@@ -8,7 +8,7 @@ early stage and still *work in progress*: it is definitely not ready for use!
 As long as the application doesn't have a screen to input some configuration informations,
 you have to write those in a JSON file, pushed to the ereader via USB to:
 ```
-/mnt/ext1/system/tmp/belladonna.json
+/mnt/ext1/system/share/plop-reader/config.json
 ```
 
 A template for this file is provided in `files/config-dist.json`

@@ -27,3 +27,19 @@ ${PBSDK}/arm-obreey-linux-gnueabi/sysroot/usr/include
 ${PBSDK}/arm-obreey-linux-gnueabi/sysroot/usr/local/include
 ${PBSDK}/arm-obreey-linux-gnueabi/include/c++/4.8.1
 ```
+
+
+# Disclaimer
+
+```
+#include <std/disclaimer.h>
+```
+
+Like *they* say:
+
+> The content of this application can be *deadly* to your ereader device!
+> In short, "If it breaks, you get to keep both pieces."
+
+This application is written by people just like you: not-quite-perfect. Which means there might be mistakes, errors, things we did not quite understand… In any case, especially if you want to fix something: PRs are welcome!
+
+Also please note that, even if the lead developer of this project works at [TEA, The Ebook Alternative](https://www.tea-ebook.com/), which sells Pocketbook ereader devices, this application is written using a **public SDK**, with **absolutely no *insider-knowledge* at all**. This is also a **personnal project**, not linked to any specific company.

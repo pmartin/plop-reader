@@ -21,4 +21,11 @@ public:
 };
 
 
+class ConfigFileInvalidException : public AbortApplication
+{
+public:
+	ConfigFileInvalidException(const std::string& message) : AbortApplication(message) { };
+};
+
+
 #endif /* EXCEPTIONS_H_ */

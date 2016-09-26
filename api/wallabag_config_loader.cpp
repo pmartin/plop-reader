@@ -45,8 +45,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 
 	if (obj == NULL) {
 		ERROR("Failed reading JSON from config file: %s", json_tokener_error_desc(error));
-
-		// TODO error-handling when JSON config file is not OK
+		throw ConfigFileInvalidException(std::string("Error while reading JSON config file: " + std::string(json_tokener_error_desc(error))));
 	}
 
 	const char *url = json_object_get_string(json_object_object_get(obj, "url"));

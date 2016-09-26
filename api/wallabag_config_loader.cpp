@@ -7,7 +7,7 @@ char *WallabagConfigLoader::readConfigFile(const char *path)
 	FILE *f = iv_fopen(path, "rb");
 	if (f == NULL) {
 		ERROR("Could not open file %s", path);
-		// TODO error handling
+		throw ConfigFileNotFoundException(std::string("The ") + std::string(CONFIG_FILE) + std::string(" configuration file  has not been found."));
 	}
 
 	// TODO error handling if malloc or realloc fails

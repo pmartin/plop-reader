@@ -7,6 +7,7 @@
 #include "wallabag_config.h"
 #include "../defines.h"
 #include "../log.h"
+#include "../exceptions.h"
 
 class WallabagConfigLoader
 {

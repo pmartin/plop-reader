@@ -16,7 +16,16 @@ static int main_handler(int event_type, int param_one, int param_two)
 		break;
 	case EVT_SHOW:
 
-		app.init();
+		try {
+			app.init();
+		}
+		catch (const AbortApplication &e) {
+			ERROR("Fatal Exception: %s => aborting application!", e.what());
+			DialogSynchro(ICON_ERROR, PLOP_APPLICATION_FULLNAME, e.what(), "Close the application", NULL, NULL);
+
+			app.deinit();
+			result = 1;
+		}
 		app.show();
 
 		app.debug("Welcome! Touch a post to read it, or use the buttons in the header.");

@@ -62,7 +62,11 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		// TODO error-handling
 	};
 
+	DEBUG("API: createOAuthToken()");
+
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
+
+	DEBUG("API: createOAuthToken(): done");
 }
 
 
@@ -130,7 +134,11 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 		// TODO error-handling
 	};
 
+	DEBUG("API: refreshOAuthToken()");
+
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
+
+	DEBUG("API: refreshOAuthToken(): done");
 }
 
 
@@ -224,7 +232,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		// TODO error-handling
 	};
 
+	DEBUG("API: loadRecentArticles()");
+
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
+
+	DEBUG("API: loadRecentArticles(): done");
 }
 
 
@@ -248,6 +260,8 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 	float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_UP_END - Gui::SYNC_PROGRESS_PERCENTAGE_UP_START);
 	float nextIncrement = incrementPercentageEvery;
 
+	DEBUG("API: syncEntriesToServer()");
+
 	for (unsigned int i=0 ; i<changedEntries.size() ; i++) {
 		Entry entry = changedEntries.at(i);
 
@@ -268,6 +282,8 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 	}
 
 	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_END, NULL);
+
+	DEBUG("API: syncEntriesToServer(): done");
 }
 
 
@@ -311,7 +327,11 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		// TODO error-handling
 	};
 
+	DEBUG("API: syncOneEntryToServer(%d)", entry.id);
+
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
+
+	DEBUG("API: syncOneEntryToServer(%d): done", entry.id);
 }
 
 

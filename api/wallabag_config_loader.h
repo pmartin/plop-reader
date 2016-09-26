@@ -6,6 +6,7 @@
 
 #include "wallabag_config.h"
 #include "../defines.h"
+#include "../log.h"
 
 class WallabagConfigLoader
 {

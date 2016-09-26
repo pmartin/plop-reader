@@ -15,6 +15,11 @@ WallabagConfig WallabagConfigLoader::load(void)
 	const char *url = json_object_get_string(json_object_object_get(obj, "url"));
 	config.url = url;
 
+	if (config.url.at(config.url.length() - 1) != '/') {
+		DEBUG("URL in config doesn't end with a '/' => adding one");
+		config.url.append("/");
+	}
+
 	const char *http_login = json_object_get_string(json_object_object_get(obj, "http_login"));
 	if (http_login) {
 		config.http_login = http_login;

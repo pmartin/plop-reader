@@ -31,18 +31,33 @@ void Gui::init()
 
 	titleFontSize = 52;
 	titleFont = OpenFont("LiberationSans", titleFontSize, 1);
+	if (titleFont == NULL) {
+		ERROR("%s titleFont is NULL", __PRETTY_FUNCTION__);
+	}
 
 	smallTitleFontSize = 28;
 	smallTitleFont = OpenFont("LiberationSans", smallTitleFontSize, 1);
+	if (smallTitleFont == NULL) {
+		ERROR("%s smallTitleFont is NULL", __PRETTY_FUNCTION__);
+	}
 
 	entryTitleFontSize = 32;
 	entryTitleFont = OpenFont("LiberationSans", entryTitleFontSize, 1);
+	if (entryTitleFont == NULL) {
+		ERROR("%s entryTitleFont is NULL", __PRETTY_FUNCTION__);
+	}
 
 	entryInfosFontSize = 24;
 	entryInfosFont = OpenFont("LiberationSans", entryInfosFontSize, 1);
+	if (entryInfosFont == NULL) {
+		ERROR("%s entryInfosFont is NULL", __PRETTY_FUNCTION__);
+	}
 
 	statusBarFontSize = 22;
 	statusBarFont = OpenFont("LiberationSans", statusBarFontSize, 1);
+	if (statusBarFont == NULL) {
+		ERROR("%s statusBarFont is NULL", __PRETTY_FUNCTION__);
+	}
 
 	screenWidth = ScreenWidth();
 	screenHeight = ScreenHeight();
@@ -187,6 +202,8 @@ static imenu *menu;
 
 void Gui::displayMainMenu()
 {
+	DEBUG("Opening main menu");
+
 	const char *str0 = PLOP_APPLICATION_FULLNAME;
 	const char *str1 = "Mode = entrées non lues";
 	const char *str2 = "Mode = entrées archivées";
@@ -233,6 +250,8 @@ void Gui::displayMainMenu()
 			app.setMode(Application::MODE_STARRED);
 		}
 		else if (index == 4) {
+			DEBUG("Opening About dialog");
+
 			const char *text = PLOP_APPLICATION_FULLNAME " " PLOP_VERSION_STR "\n"
 					PLOP_WEBSITE_URL "\n"
 					"\n"
@@ -245,12 +264,16 @@ void Gui::displayMainMenu()
 					"Contribute (GPL-3.0):" "\n"
 					PLOP_OPENSOURCE_URL;
 			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, text, "OK", NULL, NULL);
+
+			DEBUG("Opening About dialog - closed");
 		}
 	};
 
 	SetMenuFont(entryTitleFont);
 	irect rect = GetMenuRect(menu);
 	OpenMenu(menu, 0, (screenWidth-rect.w)/2, (screenHeight-rect.h)/3, callback);
+
+	DEBUG("Opening main menu: done");
 }
 
 

@@ -25,6 +25,8 @@ void Application::init()
 
 void Application::deinit()
 {
+	DEBUG("De-initializing the application")
+
 	curl_global_cleanup();
 }
 

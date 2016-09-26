@@ -182,9 +182,13 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
 		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
+		DEBUG("API: loadRecentArticles(): saving entries to local DB");
+
 		json_object *obj = json_tokener_parse(json_string);
 		array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 		int numberOfEntries = items->length;
+		DEBUG("API: loadRecentArticles(): number of entries fetched from server: %d", numberOfEntries);
+
 		float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START;
 		float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START);
 		float nextIncrement = incrementPercentageEvery;
@@ -209,12 +213,14 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 				// and save an updated version of the entry in local DB
 				Entry entry = this->entitiesFactory.mergeLocalAndRemoteEntries(localEntry, remoteEntry);
 				if (entry._isChanged) {
+					DEBUG("API: loadRecentArticles(): updating entry local_id=%d remote_id=%s", entry.id, entry.remote_id.c_str());
 					repository.persist(entry);
 				}
 			}
 			else {
 				// Entry does not already exist in local DB => just create it
 				Entry entry = remoteEntry;
+				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.id, entry.remote_id.c_str());
 				repository.persist(entry);
 			}
 

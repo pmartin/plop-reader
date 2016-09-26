@@ -15,6 +15,8 @@ public:
 
 private:
 	const char *CONFIG_FILE = PLOP_BASE_DIRECTORY "/config.json";
+
+	char *readConfigFile(const char *path);
 };
 
 

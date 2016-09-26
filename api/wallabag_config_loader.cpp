@@ -2,7 +2,7 @@
 
 
 
-static char *read_config_file(const char *path)
+char *WallabagConfigLoader::readConfigFile(const char *path)
 {
 	FILE *f = iv_fopen(path, "rb");
 	if (f == NULL) {
@@ -36,7 +36,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 {
 	WallabagConfig config;
 
-	char *json_string = read_config_file(CONFIG_FILE);
+	char *json_string = readConfigFile(CONFIG_FILE);
 
 	json_tokener_error error;
 	json_object *obj = json_tokener_parse_verbose(json_string, &error);

@@ -115,7 +115,7 @@ void Application::show()
 	int countEntries = countEntriesForCurrentMode();
 	int numberOfPages = ceil((float)countEntries / (float)numPerPage);
 
-	DEBUG("Showing entries: page:%d/%s (total:%d)", pageNum, numberOfPages, countEntries);
+	DEBUG("Showing entries: page:%d/%d (total:%d)", pageNum, numberOfPages, countEntries);
 	gui.show(pageNum, numberOfPages, countEntries, entries);
 }
 

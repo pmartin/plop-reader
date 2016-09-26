@@ -8,6 +8,7 @@
 
 #include "../entities/entry.h"
 #include "../defines.h"
+#include "../log.h"
 
 #include "gui_button.h"
 #include "gui_list_item_entry.h"

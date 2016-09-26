@@ -7,6 +7,7 @@
 #include "sqlite3.h"
 
 #include "../defines.h"
+#include "../log.h"
 
 extern void log_message(const char *msg);
 

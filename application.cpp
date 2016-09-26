@@ -4,6 +4,8 @@
 
 void Application::init()
 {
+	DEBUG("Initializing the application")
+
 	// Note: this is only left for debugging purposes, if one needs to
 	// empty the database easily
 	//db.drop();
@@ -23,6 +25,8 @@ void Application::init()
 
 void Application::deinit()
 {
+	DEBUG("De-initializing the application")
+
 	curl_global_cleanup();
 }
 
@@ -39,7 +43,7 @@ bool Application::connectToNetwork()
 	const char *network_name = NULL;
 	int result = NetConnect2(network_name, 1);
 	if (result != 0) {
-		// Failed to connect
+		WARN("Failed to connect to network");
 		return false;
 	}
 
@@ -49,15 +53,17 @@ bool Application::connectToNetwork()
 		return true;
 	}
 
-	// Connection failed, I don't know why
+	WARN("Failed to connect to network - not sure why");
 	return false;
 }
 
 
 void Application::loadRecentArticles()
 {
+	INFO("Starting synchronization process");
+
 	if (!connectToNetwork()) {
-		// No network connection... not going to be able to synchronize!
+		WARN("No network connection => cannot synchronize");
 		Message(ICON_ERROR, "Synchronization failed!", "No active network connection, no way to synchronize!", 3*1000);
 
 		return;
@@ -68,12 +74,13 @@ void Application::loadRecentArticles()
 
 	Internal lastSyncTimestampObj = db.selectInternal("sync.last-sync.timestamp");
 	time_t lastSyncTimestamp = lastSyncTimestampObj.isNull ? 0 : atoi(lastSyncTimestampObj.value.c_str());
+	DEBUG("Last sync TS = %ld", lastSyncTimestamp);
 
 	wallabag_api.loadRecentArticles(entryRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
 		app.gui.updateProgressBar(text, percent);
 	});
 
-		// Send changes to server, for entries marked as archived/starred recently on the device
+	// Send changes to server, for entries marked as archived/starred recently on the device
 	wallabag_api.syncEntriesToServer(entryRepository, [](const char *text, int percent, void *context) {
 		app.gui.updateProgressBar(text, percent);
 	});
@@ -84,6 +91,8 @@ void Application::loadRecentArticles()
 	gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
 	gui.closeProgressBar();
 
+	INFO("End of synchronization process");
+
 	show();
 }
 
@@ -93,6 +102,7 @@ void Application::setMode(int m)
 	mode = (entries_mode)m;
 	pageNum = 1;
 
+	DEBUG("Switching to mode %d", mode);
 	gui.setMode(mode);
 
 	show();
@@ -107,6 +117,7 @@ void Application::show()
 	int countEntries = countEntriesForCurrentMode();
 	int numberOfPages = ceil((float)countEntries / (float)numPerPage);
 
+	DEBUG("Showing entries: page:%d/%d (total:%d)", pageNum, numberOfPages, countEntries);
 	gui.show(pageNum, numberOfPages, countEntries, entries);
 }
 
@@ -174,6 +185,7 @@ void Application::read(Entry &entry)
 		// TODO no hard-coded path, and create this directory somewhere else and all...
 		iv_mkdir(PLOP_ENTRIES_CONTENT_DIRECTORY, 0755);
 
+		DEBUG("Creating local file %s for entry %d", entry.local_content_file_html.c_str(), entry.id);
 		FILE *fp = iv_fopen(filepath, "wb");
 
 		const char *str = R"html(
@@ -212,6 +224,7 @@ void Application::read(Entry &entry)
 
 	if (!entry.local_content_file_html.empty()) {
 		// We have an HTML file => open the reader and profit!
+		DEBUG("Opening reading application for %s", entry.local_content_file_html.c_str());
 		OpenBook(entry.local_content_file_html.c_str(), "r", 0);
 
 		isLastActionRead = true;

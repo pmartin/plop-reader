@@ -279,7 +279,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		if (response_code == 401) {
 			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
 		}
-		throw SyncOAuthException(ss.str());
+		throw SyncHttpException(ss.str());
 	};
 
 	DEBUG("API: loadRecentArticles()");
@@ -389,7 +389,7 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		if (response_code == 401) {
 			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
 		}
-		throw SyncOAuthException(ss.str());
+		throw SyncHttpException(ss.str());
 	};
 
 	DEBUG("API: syncOneEntryToServer(%d)", entry.id);

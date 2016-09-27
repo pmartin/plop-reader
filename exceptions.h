@@ -52,4 +52,10 @@ public:
 };
 
 
+class SyncHttpException : public SyncAbortAllOperations
+{
+public:
+	SyncHttpException(const std::string& message) : SyncAbortAllOperations(message) { };
+};
+
 #endif /* EXCEPTIONS_H_ */

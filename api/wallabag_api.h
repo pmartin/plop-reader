@@ -1,6 +1,8 @@
 #ifndef API_WALLABAG_API_H_
 #define API_WALLABAG_API_H_
 
+#include <sstream>
+#include <string>
 #include <functional>
 #include "curl/curl.h"
 
@@ -11,6 +13,7 @@
 #include "../repositories/entry_repository.h"
 
 #include "../log.h"
+#include "../exceptions.h"
 #include "../gui/gui.h"
 
 
@@ -38,7 +41,7 @@ private:
 		std::function<void (void)> beforeRequest,
 		std::function<void (void)> afterRequest,
 		std::function<void (CURLcode res, char *json_string)> onSuccess,
-		std::function<void (CURLcode res)> onFailure
+		std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
 	);
 
 	WallabagConfig config;

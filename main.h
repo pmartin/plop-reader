@@ -9,6 +9,7 @@
 
 
 #include "application.h"
+#include "exceptions.h"
 
 
 extern Application app;

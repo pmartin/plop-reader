@@ -76,19 +76,25 @@ void Application::loadRecentArticles()
 	time_t lastSyncTimestamp = lastSyncTimestampObj.isNull ? 0 : atoi(lastSyncTimestampObj.value.c_str());
 	DEBUG("Last sync TS = %ld", lastSyncTimestamp);
 
-	wallabag_api.loadRecentArticles(entryRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
-		app.gui.updateProgressBar(text, percent);
-	});
+	try {
+		wallabag_api.loadRecentArticles(entryRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
+			app.gui.updateProgressBar(text, percent);
+		});
 
-	// Send changes to server, for entries marked as archived/starred recently on the device
-	wallabag_api.syncEntriesToServer(entryRepository, [](const char *text, int percent, void *context) {
-		app.gui.updateProgressBar(text, percent);
-	});
+		// Send changes to server, for entries marked as archived/starred recently on the device
+		wallabag_api.syncEntriesToServer(entryRepository, [](const char *text, int percent, void *context) {
+			app.gui.updateProgressBar(text, percent);
+		});
 
-	db.saveInternal("sync.last-sync.timestamp", SSTR(time(NULL)));
-	DEBUG("Saving last sync TS = %ld", time(NULL));
+		db.saveInternal("sync.last-sync.timestamp", SSTR(time(NULL)));
+		DEBUG("Saving last sync TS = %ld", time(NULL));
 
-	gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
+		gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
+	}
+	catch (SyncAbortAllOperations &e) {
+		ERROR("Synchronization Exception: %s => aborting sync!", e.what());
+		DialogSynchro(ICON_ERROR, PLOP_APPLICATION_FULLNAME, e.what(), "Too bad ;-(", NULL, NULL);
+	}
 	gui.closeProgressBar();
 
 	INFO("End of synchronization process");

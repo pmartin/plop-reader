@@ -47,7 +47,12 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
-		json_object *json_token = json_tokener_parse(json_string);
+		json_tokener_error error;
+		json_object *json_token = json_tokener_parse_verbose(json_string, &error);
+		if (json_token == NULL) {
+			ERROR("Could not create OAuth token: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncOAuthException(std::string("Could not create OAuth token: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
 
 		const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
 		int expires_in = json_object_get_int(json_object_object_get(json_token, "expires_in"));
@@ -58,8 +63,17 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		this->oauthToken.expires_at = time(NULL) + expires_in;
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
-		// TODO error-handling
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: createOAuthToken(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not create OAuth token: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
+		throw SyncOAuthException(ss.str());
 	};
 
 	DEBUG("API: createOAuthToken()");
@@ -119,7 +133,12 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
-		json_object *json_token = json_tokener_parse(json_string);
+		json_tokener_error error;
+		json_object *json_token = json_tokener_parse_verbose(json_string, &error);
+		if (json_token == NULL) {
+			ERROR("Could not refresh OAuth token: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncOAuthException(std::string("Could not refresh OAuth token: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
 
 		const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
 		int expires_in = json_object_get_int(json_object_object_get(json_token, "expires_in"));
@@ -130,8 +149,17 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 		this->oauthToken.expires_at = time(NULL) + expires_in;
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
-		// TODO error-handling
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: refreshOAuthToken(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not refresh OAuth token: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
+		throw SyncOAuthException(ss.str());
 	};
 
 	DEBUG("API: refreshOAuthToken()");
@@ -180,11 +208,16 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	};
 
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
+		DEBUG("API: loadRecentArticles(): response fetched from server");
 		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
-		DEBUG("API: loadRecentArticles(): saving entries to local DB");
+		json_tokener_error error;
+		json_object *obj = json_tokener_parse_verbose(json_string, &error);
+		if (obj == NULL) {
+			ERROR("Could not decode entries: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncInvalidJsonException(std::string("Could not decode entries: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
 
-		json_object *obj = json_tokener_parse(json_string);
 		array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 		int numberOfEntries = items->length;
 		DEBUG("API: loadRecentArticles(): number of entries fetched from server: %d", numberOfEntries);
@@ -192,6 +225,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START;
 		float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START);
 		float nextIncrement = incrementPercentageEvery;
+
+		DEBUG("API: loadRecentArticles(): saving entries to local DB");
 		for (int i=0 ; i<numberOfEntries ; i++) {
 			json_object *item = (json_object *)array_list_get_idx(items, i);
 
@@ -234,8 +269,17 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
-		// TODO error-handling
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: loadRecentArticles(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not load entries from server: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
+		throw SyncHttpException(ss.str());
 	};
 
 	DEBUG("API: loadRecentArticles()");
@@ -318,7 +362,13 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 	auto afterRequest = [] (void) -> void {};
 
 	auto onSuccess = [this, &repository, &entry] (CURLcode res, char *json_string) -> void {
-		json_object *item = json_tokener_parse(json_string);
+		json_tokener_error error;
+		json_object *item = json_tokener_parse_verbose(json_string, &error);
+		if (item == NULL) {
+			ERROR("Could not decode synced entry: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncInvalidJsonException(std::string("Could not decode synced entry: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
+
 		Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 
 		DEBUG("Entry l#%d r#%s -> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
@@ -329,8 +379,17 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		repository.persist(entry);
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
-		// TODO error-handling
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: syncOneEntryToServer(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not sync entry to server: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
+		throw SyncHttpException(ss.str());
 	};
 
 	DEBUG("API: syncOneEntryToServer(%d)", entry.id);
@@ -348,17 +407,17 @@ CURLcode WallabagApi::doHttpRequest(
 	std::function<void (void)> beforeRequest,
 	std::function<void (void)> afterRequest,
 	std::function<void (CURLcode res, char *json_string)> onSuccess,
-	std::function<void (CURLcode res)> onFailure
+	std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
 )
 {
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 
-	this->json_string_len = 0;
-	this->json_string = (char *)calloc(1, 1);
-
 	curl = curl_easy_init();
 	if (curl) {
+		this->json_string_len = 0;
+		this->json_string = (char *)calloc(1, 1);
+
 		char *url = getUrl(curl);
 		char *method = getMethod(curl);
 		char *data = getData(curl);
@@ -392,24 +451,32 @@ CURLcode WallabagApi::doHttpRequest(
 
 		afterRequest();
 
-
-		if (res != CURLE_OK) {
-			onFailure(res);
-		}
-		else {
-			onSuccess(res, json_string);
-		}
-
-		curl_easy_cleanup(curl);
-
 		free(url);
 		free(method);
 		if (data != NULL) {
 			free(data);
 		}
-	}
 
-	free(this->json_string);
+		long response_code;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+		try {
+			if (res != CURLE_OK || response_code != 200) {
+				onFailure(res, response_code, curl);
+			}
+			else {
+				onSuccess(res, json_string);
+			}
+
+			free(this->json_string);
+			curl_easy_cleanup(curl);
+		}
+		catch (std::exception &e) {
+			free(this->json_string);
+			curl_easy_cleanup(curl);
+
+			throw;
+		}
+	}
 
 	return res;
 }

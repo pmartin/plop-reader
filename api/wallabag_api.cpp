@@ -70,6 +70,9 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		ss << "Could not create OAuth token: server returned a ";
 		ss << response_code;
 		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
 		throw SyncOAuthException(ss.str());
 	};
 
@@ -148,6 +151,9 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 		ss << "Could not refresh OAuth token: server returned a ";
 		ss << response_code;
 		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
 		throw SyncOAuthException(ss.str());
 	};
 
@@ -258,6 +264,9 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		ss << "Could not load entries from server: server returned a ";
 		ss << response_code;
 		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
 		throw SyncOAuthException(ss.str());
 	};
 
@@ -359,6 +368,9 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		ss << "Could not sync entry to server: server returned a ";
 		ss << response_code;
 		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
 		throw SyncOAuthException(ss.str());
 	};
 

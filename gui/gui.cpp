@@ -102,13 +102,13 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	SetFont(smallTitleFont, BLACK);
 
 	if (mode == 1) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées non lues");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - unread entries");
 	}
 	else if (mode == 2) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées archivées");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - archived entries");
 	}
 	else if (mode == 3) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées favorites");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - starred entries");
 	}
 	else {
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
@@ -116,7 +116,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	DrawString(90, y, buffer);
 	y += 34;
 
-	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entrées)", numPage, numberOfPages, countAllEntries);
+	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entries)", numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
 	y += 34;
 
@@ -205,10 +205,10 @@ void Gui::displayMainMenu()
 	DEBUG("Opening main menu");
 
 	const char *str0 = PLOP_APPLICATION_FULLNAME;
-	const char *str1 = "Mode = entrées non lues";
-	const char *str2 = "Mode = entrées archivées";
-	const char *str3 = "Mode = entrées starrées";
-	const char *str4 = "A propos";
+	const char *str1 = "Display unread entries";
+	const char *str2 = "Display archived entries";
+	const char *str3 = "Display starred entries";
+	const char *str4 = "About";
 
 	menu = (imenu *)calloc(6, sizeof(imenu));
 

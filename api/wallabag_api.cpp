@@ -39,11 +39,11 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Création token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+		progressbarUpdater("Creating OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Création token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
+		progressbarUpdater("Creating OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
@@ -125,11 +125,11 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+		progressbarUpdater("Refreshing OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Rafraichissement token OAuth", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
+		progressbarUpdater("Refreshing OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
@@ -200,16 +200,16 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+		progressbarUpdater("Fetching entries: HTTP request", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Envoi requête HTTP chargement entries", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+		progressbarUpdater("Fetching entries: HTTP request", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
 	};
 
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
 		DEBUG("API: loadRecentArticles(): response fetched from server");
-		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
+		progressbarUpdater("Saving entries to local database...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
 		json_tokener_error error;
 		json_object *obj = json_tokener_parse_verbose(json_string, &error);
@@ -262,11 +262,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 			if (i >= nextIncrement) {
 				nextIncrement += incrementPercentageEvery;
 				percentage += 1;
-				progressbarUpdater("Enregistrement des entries en local...", percentage, NULL);
+				progressbarUpdater("Saving entries to local database...", percentage, NULL);
 			}
 		}
 
-		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
+		progressbarUpdater("Saving entries to local database...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
 	};
 
 	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {

@@ -208,11 +208,16 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	};
 
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
+		DEBUG("API: loadRecentArticles(): response fetched from server");
 		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
-		DEBUG("API: loadRecentArticles(): saving entries to local DB");
+		json_tokener_error error;
+		json_object *obj = json_tokener_parse_verbose(json_string, &error);
+		if (obj == NULL) {
+			ERROR("Could not decode entries: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncOAuthException(std::string("Could not decode entries: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
 
-		json_object *obj = json_tokener_parse(json_string);
 		array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
 		int numberOfEntries = items->length;
 		DEBUG("API: loadRecentArticles(): number of entries fetched from server: %d", numberOfEntries);
@@ -220,6 +225,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START;
 		float incrementPercentageEvery = (float)numberOfEntries / (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START);
 		float nextIncrement = incrementPercentageEvery;
+
+		DEBUG("API: loadRecentArticles(): saving entries to local DB");
 		for (int i=0 ; i<numberOfEntries ; i++) {
 			json_object *item = (json_object *)array_list_get_idx(items, i);
 

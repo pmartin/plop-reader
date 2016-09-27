@@ -63,8 +63,14 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		this->oauthToken.expires_at = time(NULL) + expires_in;
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
-		// TODO error-handling
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: createOAuthToken(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not create OAuth token: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		throw SyncOAuthException(ss.str());
 	};
 
 	DEBUG("API: createOAuthToken()");
@@ -135,7 +141,7 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 		this->oauthToken.expires_at = time(NULL) + expires_in;
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
 		// TODO error-handling
 	};
 
@@ -239,7 +245,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		progressbarUpdater("Enregistrement des entries en local...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
 		// TODO error-handling
 	};
 
@@ -334,7 +340,7 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		repository.persist(entry);
 	};
 
-	auto onFailure = [this] (CURLcode res) -> void {
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
 		// TODO error-handling
 	};
 
@@ -353,7 +359,7 @@ CURLcode WallabagApi::doHttpRequest(
 	std::function<void (void)> beforeRequest,
 	std::function<void (void)> afterRequest,
 	std::function<void (CURLcode res, char *json_string)> onSuccess,
-	std::function<void (CURLcode res)> onFailure
+	std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
 )
 {
 	CURL *curl;
@@ -400,9 +406,12 @@ CURLcode WallabagApi::doHttpRequest(
 
 		afterRequest();
 
+		long response_code;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
 
-		if (res != CURLE_OK) {
-			onFailure(res);
+
+		if (res != CURLE_OK || response_code != 200) {
+			onFailure(res, response_code, curl);
 		}
 		else {
 			onSuccess(res, json_string);

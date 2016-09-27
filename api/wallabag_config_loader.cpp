@@ -49,7 +49,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *url = json_object_get_string(json_object_object_get(obj, "url"));
-	if (url) {
+	if (url && strlen(url) > 0) {
 		config.url = url;
 		if (config.url.at(config.url.length() - 1) != '/') {
 			DEBUG("URL in config doesn't end with a '/' => adding one");
@@ -61,7 +61,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *http_login = json_object_get_string(json_object_object_get(obj, "http_login"));
-	if (http_login) {
+	if (http_login && strlen(http_login) > 0) {
 		config.http_login = http_login;
 	}
 	else {
@@ -69,7 +69,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *http_password = json_object_get_string(json_object_object_get(obj, "http_password"));
-	if (http_password) {
+	if (http_password && strlen(http_password) > 0) {
 		config.http_password = http_password;
 	}
 	else {
@@ -77,7 +77,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *client_id = json_object_get_string(json_object_object_get(obj, "client_id"));
-	if (client_id) {
+	if (client_id && strlen(client_id) > 0) {
 		config.client_id = client_id;
 	}
 	else {
@@ -85,7 +85,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *secret_key = json_object_get_string(json_object_object_get(obj, "secret_key"));
-	if (secret_key) {
+	if (secret_key && strlen(secret_key) > 0) {
 		config.secret_key = secret_key;
 	}
 	else {
@@ -93,7 +93,7 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *login = json_object_get_string(json_object_object_get(obj, "login"));
-	if (login) {
+	if (login && strlen(login) > 0) {
 		config.login = login;
 	}
 	else {
@@ -101,15 +101,21 @@ WallabagConfig WallabagConfigLoader::load(void)
 	}
 
 	const char *password = json_object_get_string(json_object_object_get(obj, "password"));
-	if (password) {
+	if (password && strlen(password) > 0) {
 		config.password = password;
 	}
 	else {
 		ERROR("Entry 'password' not found in %s", CONFIG_FILE);
 	}
 
-	if (!url || !client_id || !secret_key || !login || !password) {
-		// TODO error handling: missing configuration element!
+	if (
+		(url == NULL || strlen(url) == 0)
+		|| (client_id == NULL || strlen(client_id) == 0)
+		|| (secret_key == NULL || strlen(secret_key) == 0)
+		|| (login == NULL || strlen(login) == 0 )
+		|| (password == NULL || strlen(password) == 0)
+		) {
+		throw ConfigFileMissingItemException("Some items are missing in your JSON config file. Check for 'url', 'client_id', 'secret_key', 'login' and 'password': they must be present and not empty.");
 	}
 
 	return config;

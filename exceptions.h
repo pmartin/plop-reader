@@ -28,4 +28,11 @@ public:
 };
 
 
+class ConfigFileMissingItemException : public AbortApplication
+{
+public:
+	ConfigFileMissingItemException(const std::string& message) : AbortApplication(message) { };
+};
+
+
 #endif /* EXCEPTIONS_H_ */

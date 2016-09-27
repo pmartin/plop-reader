@@ -11,6 +11,7 @@
 #include "../repositories/entry_repository.h"
 
 #include "../log.h"
+#include "../exceptions.h"
 #include "../gui/gui.h"
 
 

@@ -35,4 +35,21 @@ public:
 };
 
 
+
+
+class SyncAbortAllOperations : public std::runtime_error
+{
+public:
+	SyncAbortAllOperations(const std::string& message) : std::runtime_error(message + "\n\nThe synchronization cannot go on.") { };
+	SyncAbortAllOperations(void) : std::runtime_error("The synchronization cannot go on.") { };
+};
+
+
+class SyncOAuthException : public SyncAbortAllOperations
+{
+public:
+	SyncOAuthException(const std::string& message) : SyncAbortAllOperations(message) { };
+};
+
+
 #endif /* EXCEPTIONS_H_ */

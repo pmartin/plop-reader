@@ -47,7 +47,12 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
-		json_object *json_token = json_tokener_parse(json_string);
+		json_tokener_error error;
+		json_object *json_token = json_tokener_parse_verbose(json_string, &error);
+		if (json_token == NULL) {
+			ERROR("Could not create OAuth token: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncOAuthException(std::string("Could not create OAuth token: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
 
 		const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
 		int expires_in = json_object_get_int(json_object_object_get(json_token, "expires_in"));
@@ -356,6 +361,9 @@ CURLcode WallabagApi::doHttpRequest(
 
 	this->json_string_len = 0;
 	this->json_string = (char *)calloc(1, 1);
+
+	// TODO we should try/catch exceptions here, to free memory even if an exception has been thrown
+	// and then re-throw so upper layers can catch the exception themselves
 
 	curl = curl_easy_init();
 	if (curl) {

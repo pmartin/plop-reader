@@ -362,7 +362,13 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 	auto afterRequest = [] (void) -> void {};
 
 	auto onSuccess = [this, &repository, &entry] (CURLcode res, char *json_string) -> void {
-		json_object *item = json_tokener_parse(json_string);
+		json_tokener_error error;
+		json_object *item = json_tokener_parse_verbose(json_string, &error);
+		if (item == NULL) {
+			ERROR("Could not decode synced entry: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncOAuthException(std::string("Could not decode synced entry: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
+
 		Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);
 
 		DEBUG("Entry l#%d r#%s -> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());

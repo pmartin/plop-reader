@@ -383,14 +383,11 @@ CURLcode WallabagApi::doHttpRequest(
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 
-	this->json_string_len = 0;
-	this->json_string = (char *)calloc(1, 1);
-
-	// TODO we should try/catch exceptions here, to free memory even if an exception has been thrown
-	// and then re-throw so upper layers can catch the exception themselves
-
 	curl = curl_easy_init();
 	if (curl) {
+		this->json_string_len = 0;
+		this->json_string = (char *)calloc(1, 1);
+
 		char *url = getUrl(curl);
 		char *method = getMethod(curl);
 		char *data = getData(curl);
@@ -424,27 +421,32 @@ CURLcode WallabagApi::doHttpRequest(
 
 		afterRequest();
 
-		long response_code;
-		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
-
-
-		if (res != CURLE_OK || response_code != 200) {
-			onFailure(res, response_code, curl);
-		}
-		else {
-			onSuccess(res, json_string);
-		}
-
-		curl_easy_cleanup(curl);
-
 		free(url);
 		free(method);
 		if (data != NULL) {
 			free(data);
 		}
-	}
 
-	free(this->json_string);
+		long response_code;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+		try {
+			if (res != CURLE_OK || response_code != 200) {
+				onFailure(res, response_code, curl);
+			}
+			else {
+				onSuccess(res, json_string);
+			}
+
+			free(this->json_string);
+			curl_easy_cleanup(curl);
+		}
+		catch (std::exception &e) {
+			free(this->json_string);
+			curl_easy_cleanup(curl);
+
+			throw;
+		}
+	}
 
 	return res;
 }

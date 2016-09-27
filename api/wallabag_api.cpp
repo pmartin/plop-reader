@@ -252,7 +252,13 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	};
 
 	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
-		// TODO error-handling
+		ERROR("API: loadRecentArticles(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not load entries from server: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		throw SyncOAuthException(ss.str());
 	};
 
 	DEBUG("API: loadRecentArticles()");

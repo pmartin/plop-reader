@@ -58,4 +58,12 @@ public:
 	SyncHttpException(const std::string& message) : SyncAbortAllOperations(message) { };
 };
 
+
+class SyncInvalidJsonException : public SyncAbortAllOperations
+{
+public:
+	SyncInvalidJsonException(const std::string& message) : SyncAbortAllOperations(message) { };
+};
+
+
 #endif /* EXCEPTIONS_H_ */

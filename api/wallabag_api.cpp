@@ -215,7 +215,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		json_object *obj = json_tokener_parse_verbose(json_string, &error);
 		if (obj == NULL) {
 			ERROR("Could not decode entries: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
-			throw SyncOAuthException(std::string("Could not decode entries: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+			throw SyncInvalidJsonException(std::string("Could not decode entries: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
 		}
 
 		array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
@@ -366,7 +366,7 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		json_object *item = json_tokener_parse_verbose(json_string, &error);
 		if (item == NULL) {
 			ERROR("Could not decode synced entry: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
-			throw SyncOAuthException(std::string("Could not decode synced entry: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+			throw SyncInvalidJsonException(std::string("Could not decode synced entry: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
 		}
 
 		Entry remoteEntry = this->entitiesFactory.createEntryFromJson(item);

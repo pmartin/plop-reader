@@ -102,13 +102,13 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	SetFont(smallTitleFont, BLACK);
 
 	if (mode == 1) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées non lues");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - unread entries");
 	}
 	else if (mode == 2) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées archivées");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - archived entries");
 	}
 	else if (mode == 3) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - entrées favorites");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - starred entries");
 	}
 	else {
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
@@ -116,7 +116,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	DrawString(90, y, buffer);
 	y += 34;
 
-	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entrées)", numPage, numberOfPages, countAllEntries);
+	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entries)", numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
 	y += 34;
 

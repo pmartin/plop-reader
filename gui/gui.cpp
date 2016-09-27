@@ -205,10 +205,10 @@ void Gui::displayMainMenu()
 	DEBUG("Opening main menu");
 
 	const char *str0 = PLOP_APPLICATION_FULLNAME;
-	const char *str1 = "Mode = entrées non lues";
-	const char *str2 = "Mode = entrées archivées";
-	const char *str3 = "Mode = entrées starrées";
-	const char *str4 = "A propos";
+	const char *str1 = "Display unread entries";
+	const char *str2 = "Display archived entries";
+	const char *str3 = "Display starred entries";
+	const char *str4 = "About";
 
 	menu = (imenu *)calloc(6, sizeof(imenu));
 

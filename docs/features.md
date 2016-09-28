@@ -11,7 +11,7 @@ Current version of the app is **v0.1.0**.
 
 ## Implemented features
 
-Here's a quick short list of features that are currently implemented and should work in this v0.1.0 release:
+Here's a quick short list of features that are currently implemented and should work:
 
  * Fetching the 200 most recent entries from the Wallabag server and synchronizing them to the ereader.
  * Marking an entry as *archived* or *starred* on the ereader.

@@ -7,59 +7,59 @@ CFLAGS = -g -gdwarf-3 -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializ
 all: "Plop! reader.app"
 
 
-api/wallabag_api.o: main.h api/wallabag_api.h api/wallabag_api.cpp
-	$(CC) -c api/wallabag_api.cpp $(CFLAGS) -o api/wallabag_api.o
+src/api/wallabag_api.o: src/main.h src/api/wallabag_api.h src/api/wallabag_api.cpp
+	$(CC) -c src/api/wallabag_api.cpp $(CFLAGS) -o src/api/wallabag_api.o
 
-api/wallabag_config_loader.o: main.h api/wallabag_config_loader.h api/wallabag_config_loader.cpp
-	$(CC) -c api/wallabag_config_loader.cpp $(CFLAGS) -o api/wallabag_config_loader.o
+src/api/wallabag_config_loader.o: src/main.h src/api/wallabag_config_loader.h src/api/wallabag_config_loader.cpp
+	$(CC) -c src/api/wallabag_config_loader.cpp $(CFLAGS) -o src/api/wallabag_config_loader.o
 
-api/wallabag_config.o: main.h api/wallabag_config.h api/wallabag_config.cpp
-	$(CC) -c api/wallabag_config.cpp $(CFLAGS) -o api/wallabag_config.o
+src/api/wallabag_config.o: src/main.h src/api/wallabag_config.h src/api/wallabag_config.cpp
+	$(CC) -c src/api/wallabag_config.cpp $(CFLAGS) -o src/api/wallabag_config.o
 
-api/wallabag_entities_factory.o: main.h api/wallabag_entities_factory.h api/wallabag_entities_factory.cpp
-	$(CC) -c api/wallabag_entities_factory.cpp $(CFLAGS) -o api/wallabag_entities_factory.o
+src/api/wallabag_entities_factory.o: src/main.h src/api/wallabag_entities_factory.h src/api/wallabag_entities_factory.cpp
+	$(CC) -c src/api/wallabag_entities_factory.cpp $(CFLAGS) -o src/api/wallabag_entities_factory.o
 
-api/wallabag_oauth_token.o: main.h api/wallabag_oauth_token.h api/wallabag_oauth_token.cpp
-	$(CC) -c api/wallabag_oauth_token.cpp $(CFLAGS) -o api/wallabag_oauth_token.o
+src/api/wallabag_oauth_token.o: src/main.h src/api/wallabag_oauth_token.h src/api/wallabag_oauth_token.cpp
+	$(CC) -c src/api/wallabag_oauth_token.cpp $(CFLAGS) -o src/api/wallabag_oauth_token.o
 
-database/database.o: main.h database/database.h database/database.cpp
-	$(CC) -c database/database.cpp $(CFLAGS) -o database/database.o
+src/database/database.o: src/main.h src/database/database.h src/database/database.cpp
+	$(CC) -c src/database/database.cpp $(CFLAGS) -o src/database/database.o
 
-entities/entry.o: main.h entities/entry.h entities/entry.cpp
-	$(CC) -c entities/entry.cpp $(CFLAGS) -o entities/entry.o
+src/entities/entry.o: src/main.h src/entities/entry.h src/entities/entry.cpp
+	$(CC) -c src/entities/entry.cpp $(CFLAGS) -o src/entities/entry.o
 
-gui/gui_button.o: main.h gui/gui_button.h gui/gui_button.cpp
-	$(CC) -c gui/gui_button.cpp $(CFLAGS) -o gui/gui_button.o
+src/gui/gui_button.o: src/main.h src/gui/gui_button.h src/gui/gui_button.cpp
+	$(CC) -c src/gui/gui_button.cpp $(CFLAGS) -o src/gui/gui_button.o
 
-gui/gui_list_item_entry.o: main.h gui/gui_list_item_entry.h gui/gui_list_item_entry.cpp
-	$(CC) -c gui/gui_list_item_entry.cpp $(CFLAGS) -o gui/gui_list_item_entry.o
+src/gui/gui_list_item_entry.o: src/main.h src/gui/gui_list_item_entry.h src/gui/gui_list_item_entry.cpp
+	$(CC) -c src/gui/gui_list_item_entry.cpp $(CFLAGS) -o src/gui/gui_list_item_entry.o
 
-gui/gui.o: main.h gui/gui.h gui/gui.cpp
-	$(CC) -c gui/gui.cpp $(CFLAGS) -o gui/gui.o
+src/gui/gui.o: src/main.h src/gui/gui.h src/gui/gui.cpp
+	$(CC) -c src/gui/gui.cpp $(CFLAGS) -o src/gui/gui.o
 
-repositories/entry_repository.o: main.h repositories/entry_repository.h repositories/entry_repository.cpp
-	$(CC) -c repositories/entry_repository.cpp $(CFLAGS) -o repositories/entry_repository.o
-
-
-application.o: application.h application.cpp
-	$(CC) -c application.cpp $(CFLAGS) -o application.o
-
-main.o: main.h main.cpp
-	$(CC) -c main.cpp $(CFLAGS) -o main.o
-
-log.o: main.h log.h log.cpp
-	$(CC) -c log.cpp $(CFLAGS) -o log.o
+src/repositories/entry_repository.o: src/main.h src/repositories/entry_repository.h src/repositories/entry_repository.cpp
+	$(CC) -c src/repositories/entry_repository.cpp $(CFLAGS) -o src/repositories/entry_repository.o
 
 
-"Plop! reader.app": api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o main.o log.o
-	$(CC) api/wallabag_api.o api/wallabag_config_loader.o api/wallabag_config.o api/wallabag_entities_factory.o api/wallabag_oauth_token.o database/database.o entities/entry.o gui/gui_button.o gui/gui_list_item_entry.o gui/gui.o repositories/entry_repository.o application.o main.o log.o -o "Plop! reader.app" -linkview -lcurl -ljson-c -lsqlite3
+src/application.o: src/application.h src/application.cpp
+	$(CC) -c src/application.cpp $(CFLAGS) -o src/application.o
+
+src/main.o: src/main.h src/main.cpp
+	$(CC) -c src/main.cpp $(CFLAGS) -o src/main.o
+
+src/log.o: src/main.h src/log.h src/log.cpp
+	$(CC) -c src/log.cpp $(CFLAGS) -o src/log.o
+
+
+"Plop! reader.app": src/api/wallabag_api.o src/api/wallabag_config_loader.o src/api/wallabag_config.o src/api/wallabag_entities_factory.o src/api/wallabag_oauth_token.o src/database/database.o src/entities/entry.o src/gui/gui_button.o src/gui/gui_list_item_entry.o src/gui/gui.o src/repositories/entry_repository.o src/application.o src/main.o src/log.o
+	$(CC) src/api/wallabag_api.o src/api/wallabag_config_loader.o src/api/wallabag_config.o src/api/wallabag_entities_factory.o src/api/wallabag_oauth_token.o src/database/database.o src/entities/entry.o src/gui/gui_button.o src/gui/gui_list_item_entry.o src/gui/gui.o src/repositories/entry_repository.o src/application.o src/main.o src/log.o -o "Plop! reader.app" -linkview -lcurl -ljson-c -lsqlite3
 
 
 clean:
-	rm -f *.o
-	rm -f api/*.o
-	rm -f database/*.o
-	rm -f entities/*.o
-	rm -f gui/*.o
-	rm -f repositories/*.o
+	rm -f src/*.o
+	rm -f src/api/*.o
+	rm -f src/database/*.o
+	rm -f src/entities/*.o
+	rm -f src/gui/*.o
+	rm -f src/repositories/*.o
 	rm -f plop-reader.app

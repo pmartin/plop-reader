@@ -155,6 +155,21 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 		item.draw(false, true);
 	}
 
+	if (countAllEntries == 0) {
+		if (mode == 1) {
+			statusBarText("You don't have any unread entries. Use [SYNC] to fetch some from the server.");
+		}
+		else if (mode == 2) {
+			statusBarText("You don't have any archived entries. Use [MENU] to view unread entries.");
+		}
+		else if (mode == 3) {
+			statusBarText("You don't have any starred entries. Use [MENU] to view unread entries.");
+		}
+	}
+	else {
+		statusBarText("Use [<] and [>] keys to navigate. Touch an entry to read it.");
+	}
+
 	//FullUpdateHQ();
 }
 

@@ -155,6 +155,21 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 		item.draw(false, true);
 	}
 
+	if (countAllEntries == 0) {
+		if (mode == 1) {
+			statusBarText("You don't have any unread entries. Use [SYNC] to fetch some from the server.");
+		}
+		else if (mode == 2) {
+			statusBarText("You don't have any archived entries. Use [MENU] to view unread entries.");
+		}
+		else if (mode == 3) {
+			statusBarText("You don't have any starred entries. Use [MENU] to view unread entries.");
+		}
+	}
+	else {
+		statusBarText("Use [<] and [>] keys to navigate. Touch an entry to read it.");
+	}
+
 	//FullUpdateHQ();
 }
 
@@ -167,25 +182,19 @@ void Gui::touchStartEvent(int x, int y)
 
 	if (exitButton.hit(x, y)) {
 		exitButton.setPressed(true);
-		statusBarText("Touch START event at (%d;%d) => exit", x, y);
 	}
 	else if (syncButton.hit(x, y)) {
 		syncButton.setPressed(true);
-		statusBarText("Touch START event at (%d;%d) => sync", x, y);
 	}
 	else if (menuButton.hit(x, y)) {
 		menuButton.setPressed(true);
-		statusBarText("Touch START event at (%d;%d) => menu", x, y);
 	}
 	else {
 		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 			GuiListItemEntry item = entriesItems.at(i);
 			if (item.hit(x, y)) {
 				if (item.hasEntry()) {
-					statusBarText("Touch START event at (%d;%d) => entry#%d - %s", x, y, item.getEntry().id, item.getEntry().title.c_str());
-				}
-				else {
-					statusBarText("Touch START event at (%d;%d) => no entry", x, y);
+					// TODO highlight the curren item? see #33
 				}
 			}
 		}
@@ -265,9 +274,13 @@ void Gui::displayMainMenu()
 					PLOP_OPENSOURCE_URL;
 			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, text, "OK", NULL, NULL);
 
+			app.getGui().statusBarText("Feel free to contribute on %s ;-)", PLOP_OPENSOURCE_URL);
+
 			DEBUG("Opening About dialog - closed");
 		}
 	};
+
+	statusBarText("Choose an action in the menu, or close it...");
 
 	SetMenuFont(entryTitleFont);
 	irect rect = GetMenuRect(menu);
@@ -280,17 +293,17 @@ void Gui::displayMainMenu()
 void Gui::touchEndEvent(int x, int y)
 {
 	if (exitButton.hit(x, y)) {
-		statusBarText("Touch END event at (%d;%d) => exit", x, y);
+		statusBarText("Closing the application. Bye, see you soon ;-)");
 
 		CloseApp();
 	}
 	else if (syncButton.hit(x, y)) {
-		statusBarText("Touch END event at (%d;%d) => sync", x, y);
+		statusBarText("Launching synchronization with server...");
 
 		app.loadRecentArticles();
 	}
 	else if (menuButton.hit(x, y)) {
-		statusBarText("Touch END event at (%d;%d) => menu", x, y);
+		statusBarText("Opening the application's main menu...");
 
 		displayMainMenu();
 	}
@@ -299,12 +312,9 @@ void Gui::touchEndEvent(int x, int y)
 			GuiListItemEntry item = entriesItems.at(i);
 			if (item.hit(x, y)) {
 				if (item.hasEntry()) {
-					statusBarText("Touch END event at (%d;%d) => entry#%d - %s", x, y, item.getEntry().id, item.getEntry().title.c_str());
+					statusBarText("Loading reader app for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
 
 					app.read(item.getEntry());
-				}
-				else {
-					statusBarText("Touch END event at (%d;%d) => no entry", x, y);
 				}
 			}
 		}
@@ -322,21 +332,7 @@ void Gui::touchEndEvent(int x, int y)
 
 void Gui::keypressEvent(int key)
 {
-	if (key == KEY_PREV) {
-		statusBarText("Key pressed : %d -> previous", key);
-	}
-	else if (key == KEY_NEXT) {
-		statusBarText("Key pressed : %d -> next", key);
-	}
-	else if (key == KEY_MENU) {
-		statusBarText("Key pressed : %d -> menu", key);
-	}
-	else if (key == KEY_HOME) {
-		statusBarText("Key pressed : %d -> home", key);
-	}
-	else {
-		statusBarText("Key pressed : %d", key);
-	}
+
 }
 
 

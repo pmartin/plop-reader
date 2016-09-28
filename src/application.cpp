@@ -274,6 +274,7 @@ void Application::handleActionOnReadEntry(int entryId)
 
 	if (result == 3) {
 		// do nothing
+		gui.statusBarText("Thanks! You can read another entry, now ;-)");
 		return;
 	}
 
@@ -315,12 +316,15 @@ void Application::handleActionOnReadEntry(int entryId)
 
 	// One entry has changed => we must redraw the list
 	show();
+
+	gui.statusBarText("This change will be sent to the server next time you synchronize.");
 }
 
 
 void Application::foreground()
 {
 	if (isLastActionRead && lastReadEntryId != 0) {
+		gui.statusBarText("Choose what to do with the entry you've just read...");
 		handleActionOnReadEntry(lastReadEntryId);
 	}
 	isLastActionRead = false;

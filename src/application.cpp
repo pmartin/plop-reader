@@ -239,15 +239,6 @@ void Application::read(Entry &entry)
 }
 
 
-void Application::debug(const char *format...)
-{
-	va_list args;
-	va_start(args, format);
-	gui.statusBarText(format, args);
-	va_end(args);
-}
-
-
 void Application::handleActionOnReadEntry(int entryId)
 {
 	Entry entry = entryRepository.get(entryId);

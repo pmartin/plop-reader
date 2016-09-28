@@ -54,8 +54,6 @@ public:
 
 	void read(Entry &entry);
 
-	void debug(const char *format...);
-
 	void foreground();
 	void background();
 

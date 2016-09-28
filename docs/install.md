@@ -6,7 +6,7 @@ permalink: /install-and-configure.html
 
 This application allows you to read entries from your [Wallabag v2](https://www.wallabag.org/) instance, on your [Pocketbook Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3).
 
-Current version of the app is **v0.1.0**.
+**Download the current version of the application: [Plop! reader v0.1.0](/releases/v0.1.0/Plop! reader.app)**
 
 To use the application, you must follow **two steps** :
 

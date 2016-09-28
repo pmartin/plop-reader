@@ -4,12 +4,8 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
+**Plop! reader** is an application for your [Pocketbook Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3) ereader. With it, you can read the entries in your [Wallabag](https://www.wallabag.org/) instance.
 
-You can find the source code for the Jekyll new theme at:
-{% include icon-github.html username="jglovier" %} /
-[jekyll-new](https://github.com/jglovier/jekyll-new)
+This project is open-source, under GPL-3.0, you can [contribute on Github](https://github.com/pmartin/plop-reader): PR are welcome!
 
-You can find the source code for Jekyll at
-{% include icon-github.html username="jekyll" %} /
-[jekyll](https://github.com/jekyll/jekyll)
+The development is ungoing and no *stable* version has been released yet; only *testing* versions have been. You can take a look at the [current roadmap](/2016/09/23/roadmap-september-2016.html).

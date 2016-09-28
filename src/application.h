@@ -61,6 +61,10 @@ public:
 
 	void setMode(int m);
 
+	Gui &getGui() {
+		return gui;
+	}
+
 private:
 	Database db;
 	WallabagApi wallabag_api;

@@ -274,9 +274,13 @@ void Gui::displayMainMenu()
 					PLOP_OPENSOURCE_URL;
 			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, text, "OK", NULL, NULL);
 
+			app.getGui().statusBarText("Feel free to contribute on %s ;-)", PLOP_OPENSOURCE_URL);
+
 			DEBUG("Opening About dialog - closed");
 		}
 	};
+
+	statusBarText("Choose an action in the menu, or close it...");
 
 	SetMenuFont(entryTitleFont);
 	irect rect = GetMenuRect(menu);

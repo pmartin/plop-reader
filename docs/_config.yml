@@ -16,3 +16,5 @@ github_username:  pmartin
 
 # Build settings
 markdown: kramdown
+
+google_analytics: UA-85023225-1

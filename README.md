@@ -1,17 +1,10 @@
 
-This will be a Wallabag application for Pocketbook Touch Lux ereaders. For now, it is only in a very
-early stage and still *work in progress*: it is definitely not ready for use!
+This application allows you to read entries from your [Wallabag v2](https://www.wallabag.org/) instance, on your [Pocketbook Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3).
 
 
 # Usage
 
-As long as the application doesn't have a screen to input some configuration informations,
-you have to write those in a JSON file, pushed to the ereader via USB to:
-```
-/mnt/ext1/system/share/plop-reader/config.json
-```
-
-A template for this file is provided in `files/config-dist.json`
+To install and configure this application, read [Installation and configuration](http://plop-reader.pascal-martin.fr/install-and-configure.html).
 
 
 # Developping

@@ -255,7 +255,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 			else {
 				// Entry does not already exist in local DB => just create it
 				Entry entry = remoteEntry;
-				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.id, entry.remote_id.c_str());
+				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.remote_id.c_str());
 				repository.persist(entry);
 
 				// TODO download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)

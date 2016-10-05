@@ -173,9 +173,16 @@ static std::string replaceAll(std::string subject, const std::string& search, co
 
 void Application::read(Entry &entry)
 {
-	//char buffer[2048];
-	//snprintf(buffer, sizeof(buffer), "This should open entry li=%d / ri=%s\n-> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
-	//Message(ICON_INFORMATION, "Opening entry... One day!", buffer, 1*1000);
+	if (!entry.local_content_file_epub.empty()) {
+		// We have a local EPUB file for the entry, it's the best format to read on an ereader => use it \o/
+		DEBUG("Opening reading application for EPUB: %s", entry.local_content_file_epub.c_str());
+		OpenBook(entry.local_content_file_epub.c_str(), "r", 0);
+
+		isLastActionRead = true;
+		lastReadEntryId = entry.id;
+
+		return;
+	}
 
 	if (entry.local_content_file_html.empty()) {
 		// We don't have the HTML file for the entry yet

@@ -258,8 +258,10 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.remote_id.c_str());
 				repository.persist(entry);
 
-				// TODO download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
-				// TODO download the EPUB synchronously, with a queue; and several download threads?
+				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
+				// TODO download the EPUB synchronously, with a queue; and/or several download threads?
+				entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
+				downloadEpub(repository, entry, progressbarUpdater, percentage);
 			}
 
 			if (i >= nextIncrement) {
@@ -292,6 +294,89 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	DEBUG("API: loadRecentArticles(): done");
 }
 
+
+void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent)
+{
+	// TODO we might have to check if the oauth token is still valid; or renew it if necessary
+
+	DEBUG("API: downloadEpub(): Downloading EPUB for entry %d / %s", entry.id, entry.remote_id.c_str());
+
+	// TODO do not hard-code path
+	iv_mkdir("/mnt/ext1/system/share/plop-reader/entries-epub", 0777);
+
+	char tmp_filepath[1024];
+	// TODO do not hard-code path
+	snprintf(tmp_filepath, sizeof(tmp_filepath), "/mnt/ext1/system/share/plop-reader/entries-epub/tmp-%s.epub", entry.remote_id.c_str());
+	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
+
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
+	progressbarUpdater(buffer, percent, NULL);
+
+	auto getUrl = [this, &entry] (CURL *curl) -> char * {
+		char *url = (char *)calloc(2048, sizeof(char));
+
+		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
+		char *encoded_entry_id = curl_easy_escape(curl, entry.remote_id.c_str(), 0);
+
+		snprintf(url, 2048, "%sapi/entries/%s.epub?access_token=%s",
+				config.url.c_str(), encoded_entry_id, encoded_access_token);
+
+		curl_free(encoded_access_token);
+		curl_free(encoded_entry_id);
+
+		return url;
+	};
+
+	auto getMethod = [this] (CURL *curl) -> char * {
+		return (char *)strdup("GET");
+	};
+
+	auto getData = [this] (CURL *curl) -> char * {
+		return NULL;
+	};
+
+	auto beforeRequest = [progressbarUpdater] (void) -> void {
+
+	};
+
+	auto afterRequest = [progressbarUpdater] (void) -> void {
+
+	};
+
+	auto onSuccess = [&] (CURLcode res, char *data) -> void {
+		DEBUG("API: downloadEpub(): response fetched from server");
+
+		// The temporary file should be complete => close it, se we can work with it.
+		iv_fclose(tmpDestinationFile);
+
+		char filepath[1024];
+		// TODO do not hard-code path
+		snprintf(filepath, sizeof(filepath), "/mnt/ext1/system/share/plop-reader/entries-epub/%s.epub", entry.remote_id.c_str());
+
+		// TODO some checks on tmp_filepath (file exists ? not empty ? is a epub ? )
+
+		// move tmp_filepath to filepath
+		iv_rename(tmp_filepath, filepath);
+
+		// TODO update entry
+		DEBUG("Updating entry %d; setting epub path to %s", entry.id, filepath);
+		entry.local_content_file_epub = filepath;
+		repository.persist(entry);
+	};
+
+	auto onFailure = [this, &tmpDestinationFile] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: loadRecentArticles(): failure. HTTP response code = %ld", response_code);
+
+		iv_fclose(tmpDestinationFile);
+
+		// This doesn't abort sync !
+	};
+
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure, tmpDestinationFile);
+
+	DEBUG("API: downloadEpub(): Downloading EPUB for entry %d / %s: done", entry.id, entry.remote_id.c_str());
+}
 
 
 void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater)

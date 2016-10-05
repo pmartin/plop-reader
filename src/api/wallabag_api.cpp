@@ -410,7 +410,8 @@ CURLcode WallabagApi::doHttpRequest(
 	std::function<void (void)> beforeRequest,
 	std::function<void (void)> afterRequest,
 	std::function<void (CURLcode res, char *json_string)> onSuccess,
-	std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
+	std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure,
+	FILE *destinationFile
 )
 {
 	CURL *curl;
@@ -418,8 +419,10 @@ CURLcode WallabagApi::doHttpRequest(
 
 	curl = curl_easy_init();
 	if (curl) {
-		this->json_string_len = 0;
-		this->json_string = (char *)calloc(1, 1);
+		if (destinationFile == NULL) {
+			this->json_string_len = 0;
+			this->json_string = (char *)calloc(1, 1);
+		}
 
 		char *url = getUrl(curl);
 		char *method = getMethod(curl);
@@ -445,8 +448,13 @@ CURLcode WallabagApi::doHttpRequest(
 			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
 		}
 
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		if (destinationFile == NULL) {
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		}
+		else {
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, destinationFile);
+		}
 
 		beforeRequest();
 
@@ -470,11 +478,15 @@ CURLcode WallabagApi::doHttpRequest(
 				onSuccess(res, json_string);
 			}
 
-			free(this->json_string);
+			if (destinationFile == NULL) {
+				free(this->json_string);
+			}
 			curl_easy_cleanup(curl);
 		}
 		catch (std::exception &e) {
-			free(this->json_string);
+			if (destinationFile == NULL) {
+				free(this->json_string);
+			}
 			curl_easy_cleanup(curl);
 
 			throw;

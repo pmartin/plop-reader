@@ -41,7 +41,8 @@ private:
 		std::function<void (void)> beforeRequest,
 		std::function<void (void)> afterRequest,
 		std::function<void (CURLcode res, char *json_string)> onSuccess,
-		std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
+		std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure,
+		FILE *destinationFile = NULL
 	);
 
 	WallabagConfig config;

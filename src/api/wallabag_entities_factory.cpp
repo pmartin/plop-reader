@@ -53,7 +53,17 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	entry.reading_time = reading_time;
 	entry.preview_picture_url = preview_picture != NULL ? preview_picture : std::string();
 	entry.local_content_file_html = std::string();
-	entry.local_content_file_epub = std::string();
+
+	// TODO remove those hard-coded EPUB files, when download has been implemented ;-)
+	if (entry.remote_id == "2629") {
+		entry.local_content_file_epub = "/mnt/ext1/system/share/plop-reader/entries-epub/2629.epub";
+	}
+	else if (entry.remote_id == "2632") {
+		entry.local_content_file_epub = "/mnt/ext1/system/share/plop-reader/entries-epub/2632.epub";
+	}
+	else {
+		entry.local_content_file_epub = std::string();
+	}
 
 	return entry;
 }

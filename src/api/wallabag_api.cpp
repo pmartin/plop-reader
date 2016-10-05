@@ -582,7 +582,7 @@ CURLcode WallabagApi::doHttpRequest(
 }
 
 
-size_t WallabagApi::WallabagApi::_curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t WallabagApi::_curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	WallabagApi *that = (WallabagApi *)userdata;
 

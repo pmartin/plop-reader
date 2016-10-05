@@ -257,6 +257,9 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 				Entry entry = remoteEntry;
 				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.id, entry.remote_id.c_str());
 				repository.persist(entry);
+
+				// TODO download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
+				// TODO download the EPUB synchronously, with a queue; and several download threads?
 			}
 
 			if (i >= nextIncrement) {

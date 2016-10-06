@@ -307,7 +307,7 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 	iv_mkdir(PLOP_ENTRIES_EPUB_DIRECTORY, 0777);
 
 	char tmp_filepath[1024];
-	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/tmp-%s.epub", entry.remote_id.c_str());
+	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/tmp-%d.epub", entry.id);
 	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
 
 	char buffer[1024];
@@ -352,7 +352,7 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 		iv_fclose(tmpDestinationFile);
 
 		char filepath[1024];
-		snprintf(filepath, sizeof(filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/%s.epub", entry.remote_id.c_str());
+		snprintf(filepath, sizeof(filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/%d.epub", entry.id);
 
 		// TODO some checks on tmp_filepath (file exists ? not empty ? is a epub ? )
 

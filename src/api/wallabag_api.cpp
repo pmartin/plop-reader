@@ -259,10 +259,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 				repository.persist(entry);
 
 				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
-				// TODO only download the EPUB if the entry is unread (or starred ?)
-				// TODO download the EPUB synchronously, with a queue; and/or several download threads?
-				entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
-				downloadEpub(repository, entry, progressbarUpdater, percentage);
+				if (!entry.local_is_archived || entry.local_is_starred) {
+					// TODO download the EPUB synchronously, with a queue; and/or several download threads?
+					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
+					downloadEpub(repository, entry, progressbarUpdater, percentage);
+				}
 			}
 
 			if (i >= nextIncrement) {

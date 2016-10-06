@@ -299,7 +299,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 
 void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent)
 {
-	// TODO we might have to check if the oauth token is still valid; or renew it if necessary
+	this->refreshOAuthToken(progressbarUpdater);
 
 	DEBUG("API: downloadEpub(): Downloading EPUB for entry %d / %s", entry.id, entry.remote_id.c_str());
 

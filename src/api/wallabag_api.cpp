@@ -303,12 +303,11 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 
 	DEBUG("API: downloadEpub(): Downloading EPUB for entry %d / %s", entry.id, entry.remote_id.c_str());
 
-	// TODO do not hard-code path
-	iv_mkdir("/mnt/ext1/system/share/plop-reader/entries-epub", 0777);
+	// In case the storage directory didn't already exist
+	iv_mkdir(PLOP_ENTRIES_EPUB_DIRECTORY, 0777);
 
 	char tmp_filepath[1024];
-	// TODO do not hard-code path
-	snprintf(tmp_filepath, sizeof(tmp_filepath), "/mnt/ext1/system/share/plop-reader/entries-epub/tmp-%s.epub", entry.remote_id.c_str());
+	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/tmp-%s.epub", entry.remote_id.c_str());
 	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
 
 	char buffer[1024];
@@ -353,8 +352,7 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 		iv_fclose(tmpDestinationFile);
 
 		char filepath[1024];
-		// TODO do not hard-code path
-		snprintf(filepath, sizeof(filepath), "/mnt/ext1/system/share/plop-reader/entries-epub/%s.epub", entry.remote_id.c_str());
+		snprintf(filepath, sizeof(filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/%s.epub", entry.remote_id.c_str());
 
 		// TODO some checks on tmp_filepath (file exists ? not empty ? is a epub ? )
 

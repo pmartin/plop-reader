@@ -13,5 +13,6 @@
 // On a TL3: /mnt/ext1/system/usr/share/plop-reader
 #define PLOP_BASE_DIRECTORY USERDATA "/share/plop-reader"
 #define PLOP_ENTRIES_CONTENT_DIRECTORY PLOP_BASE_DIRECTORY "/entries"
+#define PLOP_ENTRIES_EPUB_DIRECTORY PLOP_BASE_DIRECTORY "/entries-epub"
 
 #endif /* DEFINES_H_ */

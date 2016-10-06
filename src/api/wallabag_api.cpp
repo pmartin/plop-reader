@@ -351,15 +351,24 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 		// The temporary file should be complete => close it, se we can work with it.
 		iv_fclose(tmpDestinationFile);
 
+		// Let's check if the temporary file seems OK, before actually using it ;-)
+		struct stat st;
+		int statResult = iv_stat(tmp_filepath, &st);
+		if (statResult != 0 || st.st_size == 0) {
+			DEBUG("Temporary EPUB file %s for entry %d / %s doesn't seem OK: stat=%d and size=%ld => we cannot use it",
+					tmp_filepath, entry.id, entry.remote_id.c_str(), statResult, st.st_size);
+
+			iv_unlink(tmp_filepath);
+			return;
+		}
+
 		char filepath[1024];
 		snprintf(filepath, sizeof(filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/%d.epub", entry.id);
-
-		// TODO some checks on tmp_filepath (file exists ? not empty ? is a epub ? )
 
 		// move tmp_filepath to filepath
 		iv_rename(tmp_filepath, filepath);
 
-		// TODO update entry
+		// Update the entry so it references the EPUB file
 		DEBUG("Updating entry %d; setting epub path to %s", entry.id, filepath);
 		entry.local_content_file_epub = filepath;
 		repository.persist(entry);

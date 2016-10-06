@@ -374,7 +374,7 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 		repository.persist(entry);
 	};
 
-	auto onFailure = [this, &tmpDestinationFile] (CURLcode res, long response_code, CURL *curl) -> void {
+	auto onFailure = [this, &tmpDestinationFile, tmp_filepath] (CURLcode res, long response_code, CURL *curl) -> void {
 		ERROR("API: loadRecentArticles(): failure. HTTP response code = %ld", response_code);
 
 		iv_fclose(tmpDestinationFile);

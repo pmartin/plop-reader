@@ -379,6 +379,9 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 
 		iv_fclose(tmpDestinationFile);
 
+		// We remove the temporary file, as it's useless and we don't want to pollute the device with temporary files ;-)
+		iv_unlink(tmp_filepath);
+
 		// This doesn't abort sync !
 	};
 

@@ -185,7 +185,33 @@ void Application::read(Entry &entry)
 
 			// We have a local EPUB file for the entry, it's the best format to read on an ereader => use it \o/
 			DEBUG("Opening reading application for EPUB: %s", entry.local_content_file_epub.c_str());
-			OpenBook(entry.local_content_file_epub.c_str(), "r", 0);
+			int openBookResult = OpenBook(entry.local_content_file_epub.c_str(), "r", 0);
+			DEBUG("Result from OpenBook() = %d", openBookResult);
+
+			/*
+			// I was hoping I could get some info about the reader application, especially if opening the EPUB
+			// worked... But this code doesn't seem to do anything :-(
+			// => I'm letting it here, commented-out, for a while
+			iv_wait_task_activation(5000);
+
+			int taskId, subtaskId;
+			int resultFindTask = FindTaskByBook(entry.local_content_file_epub.c_str(), &taskId, &subtaskId);
+			DEBUG("FindTaskByBook() = %d ; task=%d ; subtask=%d", resultFindTask, taskId, subtaskId);
+
+			if (resultFindTask != 0) {
+				taskinfo *info = GetTaskInfo(taskId);
+				DEBUG("Info: task=%d flags=%d appname=%s rsv_1=%d rsv_2=%d rsv_3=%d rsv_4=%d",
+						info->task, info->flags, info->appname,
+						info->rsv_1, info->rsv_2, info->rsv_3, info->rsv_3);
+
+				for (int i=0 ; i<info->nsubtasks ; i++) {
+					subtaskinfo subtask = info->subtasks[i];
+					DEBUG("Subtask %d: id=%d ; name=%s ; book=%d ; fgindex=%d ; order=%d ; rsv_1s=%d",
+							i, subtask.id, subtask.name, subtask.book,
+							subtask.fgindex, subtask.order, subtask.rsv_1s);
+				}
+			}
+			*/
 
 			isLastActionRead = true;
 			lastReadEntryId = entry.id;

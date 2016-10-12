@@ -174,6 +174,20 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 {
 	this->refreshOAuthToken(progressbarUpdater);
 
+	bool canDownloadEpub = false;
+	if (serverVersion.empty()) {
+		fetchServerVersion(progressbarUpdater);
+
+		if (strverscmp(serverVersion.c_str(), "2.2") < 0) {
+			DEBUG("Server version (%s) is older than 2.2 => we will not attempt to download EPUB version of entries", serverVersion.c_str());
+			canDownloadEpub = false;
+		}
+		else {
+			DEBUG("Server version (%s) is greater than 2.2 => we will attempt to download EPUB version of entries", serverVersion.c_str());
+			canDownloadEpub = true;
+		}
+	}
+
 	auto getUrl = [this] (CURL *curl) -> char * {
 		char *entries_url = (char *)calloc(2048, sizeof(char));
 
@@ -259,7 +273,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 				repository.persist(entry);
 
 				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
-				if (!entry.local_is_archived || entry.local_is_starred) {
+				if (canDownloadEpub && (!entry.local_is_archived || entry.local_is_starred)) {
 					// TODO download the EPUB synchronously, with a queue; and/or several download threads?
 					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
 					downloadEpub(repository, entry, progressbarUpdater, percentage);

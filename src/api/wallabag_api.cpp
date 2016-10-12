@@ -181,6 +181,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 		if (strverscmp(serverVersion.c_str(), "2.2") < 0) {
 			DEBUG("Server version (%s) is older than 2.2 => we will not attempt to download EPUB version of entries", serverVersion.c_str());
 			canDownloadEpub = false;
+
+#ifdef PLOP_FORCE_EPUB_DOWNLOAD_EVEN_IF_OLD_SERVER
+			DEBUG("WARNING: #define PLOP_FORCE_EPUB_DOWNLOAD_EVEN_IF_OLD_SERVER is set => WE WILL ATTEMPT TO DOWNLOAD EPUB version of entries anyway!");
+			canDownloadEpub = true;
+#endif
 		}
 		else {
 			DEBUG("Server version (%s) is greater than 2.2 => we will attempt to download EPUB version of entries", serverVersion.c_str());

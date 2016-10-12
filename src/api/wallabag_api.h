@@ -32,6 +32,8 @@ public:
 
 	void downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent);
 
+	void fetchServerVersion(gui_update_progressbar progressbarUpdater);
+
 private:
 	void syncOneEntryToServer(EntryRepository repository, Entry &entry);
 	static size_t _curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
@@ -56,6 +58,8 @@ private:
 	// For loadRecentArticles
 	int json_string_len;
 	char *json_string;
+
+	std::string serverVersion;
 };
 
 

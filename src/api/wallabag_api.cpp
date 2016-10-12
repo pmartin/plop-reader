@@ -500,6 +500,72 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 }
 
 
+void WallabagApi::fetchServerVersion(gui_update_progressbar progressbarUpdater)
+{
+	auto getUrl = [this] (CURL *curl) -> char * {
+		char *url = (char *)calloc(2048, sizeof(char));
+
+		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
+
+		snprintf(url, 2048, "%sapi/version.json?access_token=%s", config.url.c_str(), encoded_access_token);
+
+		curl_free(encoded_access_token);
+
+		return url;
+	};
+
+	auto getMethod = [this] (CURL *curl) -> char * {
+		return (char *)strdup("GET");
+	};
+
+	auto getData = [this] (CURL *curl) -> char * {
+		return NULL;
+	};
+
+	auto beforeRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+	};
+
+	auto afterRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+	};
+
+	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
+		json_tokener_error error;
+		json_object *obj = json_tokener_parse_verbose(json_string, &error);
+		if (obj == NULL) {
+			ERROR("Could not decode response: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncInvalidJsonException(std::string("Could not decode response: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
+
+		const char *version_string = json_object_get_string(obj);
+
+		DEBUG("API: fetchServerVersion(): response fetched from server -> %s", version_string);
+		serverVersion = version_string;
+	};
+
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: fetchServerVersion(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not load entries from server: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
+		throw SyncHttpException(ss.str());
+	};
+
+
+	DEBUG("API: fetchServerVersion()");
+
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
+
+	DEBUG("API: fetchServerVersion(): done");
+}
+
+
 CURLcode WallabagApi::doHttpRequest(
 	std::function<char * (CURL *curl)> getUrl,
 	std::function<char * (CURL *curl)> getMethod,

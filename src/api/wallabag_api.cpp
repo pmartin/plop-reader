@@ -320,7 +320,7 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
 		char *encoded_entry_id = curl_easy_escape(curl, entry.remote_id.c_str(), 0);
 
-		snprintf(url, 2048, "%sapi/entries/%s.epub?access_token=%s",
+		snprintf(url, 2048, "%sapi/entries/%s/export.epub?access_token=%s",
 				config.url.c_str(), encoded_entry_id, encoded_access_token);
 
 		curl_free(encoded_access_token);

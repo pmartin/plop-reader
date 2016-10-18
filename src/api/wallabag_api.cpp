@@ -499,6 +499,19 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 	};
 
 	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		if (response_code == 404) {
+			// Sync TO server occurs after we created an OAuth token and fetched recent entries,
+			// which means a 404 error is not likely caused by a wrong URL.
+			// Chances are pretty high a 404 here is caused by an entry that's been deleted on the server,
+			// but updated locally.
+			// => We do not consider this as an error and do not abort sync
+			INFO("API: syncOneEntryToServer(): we got a 404 error, but we consider this is OK (probably caused by an error that's been deleted on the server)");
+
+			// TODO flag local entry in some sort of way? At least so we don't try syncing it to the server again and again (and fail each time)
+
+			return;
+		}
+
 		ERROR("API: syncOneEntryToServer(): failure. HTTP response code = %ld", response_code);
 
 		std::ostringstream ss;

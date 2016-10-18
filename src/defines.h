@@ -15,7 +15,4 @@
 #define PLOP_ENTRIES_CONTENT_DIRECTORY PLOP_BASE_DIRECTORY "/entries"
 #define PLOP_ENTRIES_EPUB_DIRECTORY PLOP_BASE_DIRECTORY "/entries-epub"
 
-// WARNING: Only define this to true if you have backported a patch to add 'export' to the API -- or if your wallabag instance's version is >= 2.2
-#define PLOP_FORCE_EPUB_DOWNLOAD_EVEN_IF_OLD_SERVER
-
 #endif /* DEFINES_H_ */

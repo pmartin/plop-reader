@@ -12,6 +12,7 @@ public:
 	std::string client_id;
 	std::string secret_key;
 	std::string login, password;
+	bool force_download_epub;
 };
 
 

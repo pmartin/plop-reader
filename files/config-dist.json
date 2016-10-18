@@ -6,4 +6,5 @@
     "secret_key": "",
     "login": "",
     "password": "",
+    "force_download_epub": false
 }

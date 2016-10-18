@@ -108,6 +108,8 @@ WallabagConfig WallabagConfigLoader::load(void)
 		ERROR("Entry 'password' not found in %s", CONFIG_FILE);
 	}
 
+	config.force_download_epub = json_object_get_boolean(json_object_object_get(obj, "force_download_epub"));
+
 	if (
 		(url == NULL || strlen(url) == 0)
 		|| (client_id == NULL || strlen(client_id) == 0)

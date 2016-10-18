@@ -173,9 +173,30 @@ static std::string replaceAll(std::string subject, const std::string& search, co
 
 void Application::read(Entry &entry)
 {
-	//char buffer[2048];
-	//snprintf(buffer, sizeof(buffer), "This should open entry li=%d / ri=%s\n-> %s", entry.id, entry.remote_id.c_str(), entry.title.c_str());
-	//Message(ICON_INFORMATION, "Opening entry... One day!", buffer, 1*1000);
+	DEBUG("Trying to read entry %d / %s", entry.id, entry.remote_id.c_str());
+
+	if (!entry.local_content_file_epub.empty()) {
+		// We have a path to a local EPUB file
+		int statResult;
+		struct stat st;
+		if ((statResult = iv_stat(entry.local_content_file_epub.c_str(), &st)) == 0 && st.st_size > 0) {
+			// And the file exists and is not empty => it could be OK ;-)
+			DEBUG("EPUB file %s : stat=%d and size=%ld", entry.local_content_file_epub.c_str(), statResult, st.st_size);
+
+			// We have a local EPUB file for the entry, it's the best format to read on an ereader => use it \o/
+			DEBUG("Opening reading application for EPUB: %s", entry.local_content_file_epub.c_str());
+			OpenBook(entry.local_content_file_epub.c_str(), "r", 0);
+
+			isLastActionRead = true;
+			lastReadEntryId = entry.id;
+
+			return;
+		}
+		else {
+			// The local file doesn't exist or is empty => we cannot use it => we'll fallback on the HTML content
+			DEBUG("EPUB file %s : stat=%d and size=%ld => try to fallback on HTML content", entry.local_content_file_epub.c_str(), statResult, st.st_size);
+		}
+	}
 
 	if (entry.local_content_file_html.empty()) {
 		// We don't have the HTML file for the entry yet

@@ -30,6 +30,10 @@ public:
 
 	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 
+	void downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent);
+
+	void fetchServerVersion(gui_update_progressbar progressbarUpdater);
+
 private:
 	void syncOneEntryToServer(EntryRepository repository, Entry &entry);
 	static size_t _curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);
@@ -41,7 +45,8 @@ private:
 		std::function<void (void)> beforeRequest,
 		std::function<void (void)> afterRequest,
 		std::function<void (CURLcode res, char *json_string)> onSuccess,
-		std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
+		std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure,
+		FILE *destinationFile = NULL
 	);
 
 	WallabagConfig config;
@@ -53,6 +58,8 @@ private:
 	// For loadRecentArticles
 	int json_string_len;
 	char *json_string;
+
+	std::string serverVersion;
 };
 
 

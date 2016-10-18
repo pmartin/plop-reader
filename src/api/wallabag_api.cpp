@@ -174,6 +174,25 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 {
 	this->refreshOAuthToken(progressbarUpdater);
 
+	bool canDownloadEpub = false;
+	if (serverVersion.empty()) {
+		fetchServerVersion(progressbarUpdater);
+
+		if (strverscmp(serverVersion.c_str(), "2.2") < 0) {
+			DEBUG("Server version (%s) is older than 2.2 => we will not attempt to download EPUB version of entries", serverVersion.c_str());
+			canDownloadEpub = false;
+
+			if (config.force_download_epub) {
+				DEBUG("WARNING: 'force_download_epub' is set in configuration => WE WILL ATTEMPT TO DOWNLOAD EPUB version of entries anyway!");
+				canDownloadEpub = true;
+			}
+		}
+		else {
+			DEBUG("Server version (%s) is greater than 2.2 => we will attempt to download EPUB version of entries", serverVersion.c_str());
+			canDownloadEpub = true;
+		}
+	}
+
 	auto getUrl = [this] (CURL *curl) -> char * {
 		char *entries_url = (char *)calloc(2048, sizeof(char));
 
@@ -255,8 +274,15 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 			else {
 				// Entry does not already exist in local DB => just create it
 				Entry entry = remoteEntry;
-				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.id, entry.remote_id.c_str());
+				DEBUG("API: loadRecentArticles(): creating entry for remote_id=%s", entry.remote_id.c_str());
 				repository.persist(entry);
+
+				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
+				if (canDownloadEpub && (!entry.local_is_archived || entry.local_is_starred)) {
+					// TODO download the EPUB synchronously, with a queue; and/or several download threads?
+					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
+					downloadEpub(repository, entry, progressbarUpdater, percentage);
+				}
 			}
 
 			if (i >= nextIncrement) {
@@ -289,6 +315,99 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	DEBUG("API: loadRecentArticles(): done");
 }
 
+
+void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent)
+{
+	this->refreshOAuthToken(progressbarUpdater);
+
+	DEBUG("API: downloadEpub(): Downloading EPUB for entry %d / %s", entry.id, entry.remote_id.c_str());
+
+	// In case the storage directory didn't already exist
+	iv_mkdir(PLOP_ENTRIES_EPUB_DIRECTORY, 0777);
+
+	char tmp_filepath[1024];
+	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/tmp-%d.epub", entry.id);
+	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
+
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
+	progressbarUpdater(buffer, percent, NULL);
+
+	auto getUrl = [this, &entry] (CURL *curl) -> char * {
+		char *url = (char *)calloc(2048, sizeof(char));
+
+		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
+		char *encoded_entry_id = curl_easy_escape(curl, entry.remote_id.c_str(), 0);
+
+		snprintf(url, 2048, "%sapi/entries/%s/export.epub?access_token=%s",
+				config.url.c_str(), encoded_entry_id, encoded_access_token);
+
+		curl_free(encoded_access_token);
+		curl_free(encoded_entry_id);
+
+		return url;
+	};
+
+	auto getMethod = [this] (CURL *curl) -> char * {
+		return (char *)strdup("GET");
+	};
+
+	auto getData = [this] (CURL *curl) -> char * {
+		return NULL;
+	};
+
+	auto beforeRequest = [progressbarUpdater] (void) -> void {
+
+	};
+
+	auto afterRequest = [progressbarUpdater] (void) -> void {
+
+	};
+
+	auto onSuccess = [&] (CURLcode res, char *data) -> void {
+		DEBUG("API: downloadEpub(): response fetched from server");
+
+		// The temporary file should be complete => close it, se we can work with it.
+		iv_fclose(tmpDestinationFile);
+
+		// Let's check if the temporary file seems OK, before actually using it ;-)
+		struct stat st;
+		int statResult = iv_stat(tmp_filepath, &st);
+		if (statResult != 0 || st.st_size == 0) {
+			DEBUG("Temporary EPUB file %s for entry %d / %s doesn't seem OK: stat=%d and size=%ld => we cannot use it",
+					tmp_filepath, entry.id, entry.remote_id.c_str(), statResult, st.st_size);
+
+			iv_unlink(tmp_filepath);
+			return;
+		}
+
+		char filepath[1024];
+		snprintf(filepath, sizeof(filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/%d.epub", entry.id);
+
+		// move tmp_filepath to filepath
+		iv_rename(tmp_filepath, filepath);
+
+		// Update the entry so it references the EPUB file
+		DEBUG("Updating entry %d; setting epub path to %s", entry.id, filepath);
+		entry.local_content_file_epub = filepath;
+		repository.persist(entry);
+	};
+
+	auto onFailure = [this, &tmpDestinationFile, tmp_filepath] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: loadRecentArticles(): failure. HTTP response code = %ld", response_code);
+
+		iv_fclose(tmpDestinationFile);
+
+		// We remove the temporary file, as it's useless and we don't want to pollute the device with temporary files ;-)
+		iv_unlink(tmp_filepath);
+
+		// This doesn't abort sync !
+	};
+
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure, tmpDestinationFile);
+
+	DEBUG("API: downloadEpub(): Downloading EPUB for entry %d / %s: done", entry.id, entry.remote_id.c_str());
+}
 
 
 void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater)
@@ -400,6 +519,72 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 }
 
 
+void WallabagApi::fetchServerVersion(gui_update_progressbar progressbarUpdater)
+{
+	auto getUrl = [this] (CURL *curl) -> char * {
+		char *url = (char *)calloc(2048, sizeof(char));
+
+		char *encoded_access_token = curl_easy_escape(curl, this->oauthToken.access_token.c_str(), 0);
+
+		snprintf(url, 2048, "%sapi/version.json?access_token=%s", config.url.c_str(), encoded_access_token);
+
+		curl_free(encoded_access_token);
+
+		return url;
+	};
+
+	auto getMethod = [this] (CURL *curl) -> char * {
+		return (char *)strdup("GET");
+	};
+
+	auto getData = [this] (CURL *curl) -> char * {
+		return NULL;
+	};
+
+	auto beforeRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+	};
+
+	auto afterRequest = [progressbarUpdater] (void) -> void {
+		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+	};
+
+	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
+		json_tokener_error error;
+		json_object *obj = json_tokener_parse_verbose(json_string, &error);
+		if (obj == NULL) {
+			ERROR("Could not decode response: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
+			throw SyncInvalidJsonException(std::string("Could not decode response: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+		}
+
+		const char *version_string = json_object_get_string(obj);
+
+		DEBUG("API: fetchServerVersion(): response fetched from server -> %s", version_string);
+		serverVersion = version_string;
+	};
+
+	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: fetchServerVersion(): failure. HTTP response code = %ld", response_code);
+
+		std::ostringstream ss;
+		ss << "Could not load entries from server: server returned a ";
+		ss << response_code;
+		ss << " status code.";
+		if (response_code == 401) {
+			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+		}
+		throw SyncHttpException(ss.str());
+	};
+
+
+	DEBUG("API: fetchServerVersion()");
+
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
+
+	DEBUG("API: fetchServerVersion(): done");
+}
+
+
 CURLcode WallabagApi::doHttpRequest(
 	std::function<char * (CURL *curl)> getUrl,
 	std::function<char * (CURL *curl)> getMethod,
@@ -407,7 +592,8 @@ CURLcode WallabagApi::doHttpRequest(
 	std::function<void (void)> beforeRequest,
 	std::function<void (void)> afterRequest,
 	std::function<void (CURLcode res, char *json_string)> onSuccess,
-	std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure
+	std::function<void (CURLcode res, long response_code, CURL *curl)> onFailure,
+	FILE *destinationFile
 )
 {
 	CURL *curl;
@@ -415,8 +601,10 @@ CURLcode WallabagApi::doHttpRequest(
 
 	curl = curl_easy_init();
 	if (curl) {
-		this->json_string_len = 0;
-		this->json_string = (char *)calloc(1, 1);
+		if (destinationFile == NULL) {
+			this->json_string_len = 0;
+			this->json_string = (char *)calloc(1, 1);
+		}
 
 		char *url = getUrl(curl);
 		char *method = getMethod(curl);
@@ -442,8 +630,13 @@ CURLcode WallabagApi::doHttpRequest(
 			curl_easy_setopt(curl, CURLOPT_PASSWORD, this->config.http_password.c_str());
 		}
 
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		if (destinationFile == NULL) {
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WallabagApi::_curlWriteCallback);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		}
+		else {
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, destinationFile);
+		}
 
 		beforeRequest();
 
@@ -467,11 +660,15 @@ CURLcode WallabagApi::doHttpRequest(
 				onSuccess(res, json_string);
 			}
 
-			free(this->json_string);
+			if (destinationFile == NULL) {
+				free(this->json_string);
+			}
 			curl_easy_cleanup(curl);
 		}
 		catch (std::exception &e) {
-			free(this->json_string);
+			if (destinationFile == NULL) {
+				free(this->json_string);
+			}
 			curl_easy_cleanup(curl);
 
 			throw;
@@ -482,7 +679,7 @@ CURLcode WallabagApi::doHttpRequest(
 }
 
 
-size_t WallabagApi::WallabagApi::_curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t WallabagApi::_curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	WallabagApi *that = (WallabagApi *)userdata;
 

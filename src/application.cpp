@@ -142,6 +142,11 @@ void Application::touchEndEvent(int x, int y)
 	gui.touchEndEvent(x, y);
 }
 
+void Application::touchLong(int x, int y)
+{
+	gui.touchLong(x, y);
+}
+
 
 void Application::keypressEvent(int key)
 {

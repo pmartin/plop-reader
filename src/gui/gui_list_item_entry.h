@@ -58,11 +58,11 @@ public:
 		;
 	}
 
+	int x, y;
+
 private:
 	bool _hasEntry;
 	Entry entry;
-
-	int x, y;
 
 	int screenWidth, screenHeight;
 

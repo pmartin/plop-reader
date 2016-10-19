@@ -171,11 +171,11 @@ static std::string replaceAll(std::string subject, const std::string& search, co
 	return subject;
 }
 
-void Application::read(Entry &entry)
+void Application::read(Entry &entry, reading_format format)
 {
 	DEBUG("Trying to read entry %d / %s", entry.id, entry.remote_id.c_str());
 
-	if (!entry.local_content_file_epub.empty()) {
+	if (format == FORMAT_EPUB && !entry.local_content_file_epub.empty()) {
 		// We have a path to a local EPUB file
 		int statResult;
 		struct stat st;

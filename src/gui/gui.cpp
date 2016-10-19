@@ -330,6 +330,21 @@ void Gui::touchEndEvent(int x, int y)
 }
 
 
+void Gui::touchLong(int x, int y)
+{
+	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
+		GuiListItemEntry item = entriesItems.at(i);
+		if (item.hit(x, y)) {
+			if (item.hasEntry()) {
+				statusBarText("Opening context menu for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
+
+				displayContextMenuOnEntry(item, x, y);
+			}
+		}
+	}
+}
+
+
 static icontext_menu *contextMenu;
 static Entry contextMenuEntry;
 

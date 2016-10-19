@@ -35,6 +35,7 @@ public:
 
 	void touchStartEvent(int x, int y);
 	void touchEndEvent(int x, int y);
+	void touchLong(int x, int y);
 
 	void keypressEvent(int key);
 

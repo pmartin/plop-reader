@@ -330,6 +330,84 @@ void Gui::touchEndEvent(int x, int y)
 }
 
 
+static icontext_menu *contextMenu;
+static Entry contextMenuEntry;
+
+static void contextEntryOnMenuHandler(int index)
+{
+	free(menu);
+	CloseContextMenu(contextMenu);
+
+	if (index == 1) {
+		app.getGui().statusBarText("Loading reader app for entry#%d (HTML) - %s...", contextMenuEntry.id, contextMenuEntry.title.c_str());
+		app.read(contextMenuEntry, Application::FORMAT_HTML);
+	}
+	else if (index == 2) {
+		app.getGui().statusBarText("Loading reader app for entry#%d (EPUB) - %s...", contextMenuEntry.id, contextMenuEntry.title.c_str());
+		app.read(contextMenuEntry, Application::FORMAT_EPUB);
+	}
+
+	DEBUG("Closing context menu: done");
+}
+
+void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTouch)
+{
+	Entry entry = item.getEntry();
+	contextMenuEntry = entry;
+
+	DEBUG("Opening context menu on entry %d", entry.id);
+
+	const char *id = "context-menu";
+	contextMenu = CreateContextMenu(id);
+
+	const char *str0 = entry.title.c_str();
+	const char *str1 = "Read HTML content";
+	const char *str2 = "Read EPUB version";
+
+	menu = (imenu *)calloc(4, sizeof(imenu));
+
+	int menu_idx = 0;
+	menu[menu_idx].type = 1;
+	menu[menu_idx].index = 0;
+	menu[menu_idx].text = (char *)str0;
+	menu[menu_idx].submenu = &menu[menu_idx+1];
+
+	menu_idx++;
+	menu[menu_idx].type = 2;
+	menu[menu_idx].index = 1;
+	menu[menu_idx].text = (char *)str1;
+	menu[menu_idx].submenu = &menu[menu_idx+1];
+
+	if (!entry.local_content_file_epub.empty()) {
+		// We have a path to a local EPUB file => we can offer to open it
+		menu_idx++;
+		menu[menu_idx].type = 2;
+		menu[menu_idx].index = 2;
+		menu[menu_idx].text = (char *)str2;
+		menu[menu_idx].submenu = &menu[menu_idx+1];
+	}
+
+	menu[menu_idx].submenu = NULL;
+	contextMenu->menu = menu;
+
+	contextMenu->hproc = contextEntryOnMenuHandler;
+
+	// if flag == 0 => the marker is on the right side of the menu
+	// if flag == 1 => the marker is on the left side of the menu
+	// if h == 0 => automatic height to fit the content of the menu
+	// if w == 0 => width is 100% of the screen
+	irect_s post_menu = {x: xTouch, y: yTouch, w: screenWidth / 2 + 100, h: 0, flags: 0};
+	contextMenu->pos_menu = post_menu;
+
+	// To highlight the entry the context menu applies to
+	irect_s pos_selected_item = {x: item.x, y: item.y, w: screenWidth, h: item.getHeight(), flags: 0};
+	contextMenu->pos_selected_item = pos_selected_item;
+
+	OpenContextMenu(contextMenu);
+	DEBUG("Opening context menu: done");
+}
+
+
 void Gui::keypressEvent(int key)
 {
 

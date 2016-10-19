@@ -42,6 +42,7 @@ public:
 	void statusBarText(const char *format...);
 
 	void displayMainMenu();
+	void displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTouch);
 
 	void setMode(int m) {
 		mode = m;

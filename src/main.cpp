@@ -60,6 +60,11 @@ static int main_handler(int event_type, int param_one, int param_two)
 		}
 		result = 1;
 		break;
+	case EVT_POINTERLONG:
+		touch_info = GetTouchInfo();
+		app.touchLong(touch_info->x, touch_info->y);
+		result = 1;
+		break;
 	case EVT_EXIT:
 		//log_close();
 

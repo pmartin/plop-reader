@@ -35,6 +35,7 @@ public:
 
 	void touchStartEvent(int x, int y);
 	void touchEndEvent(int x, int y);
+	void touchLong(int x, int y);
 
 	void keypressEvent(int key);
 
@@ -42,6 +43,7 @@ public:
 	void statusBarText(const char *format...);
 
 	void displayMainMenu();
+	void displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTouch);
 
 	void setMode(int m) {
 		mode = m;

@@ -25,6 +25,7 @@ class Application
 {
 public:
 	enum entries_mode {MODE_UNREAD=1, MODE_ARCHIVED, MODE_STARRED};
+	enum reading_format {FORMAT_HTML=1, FORMAT_EPUB};
 
 	Application() : entryRepository(db), gui(*this) {
 		db.open();
@@ -49,10 +50,11 @@ public:
 
 	void touchStartEvent(int x, int y);
 	void touchEndEvent(int x, int y);
+	void touchLong(int x, int y);
 
 	void keypressEvent(int key);
 
-	void read(Entry &entry);
+	void read(Entry &entry, reading_format format=FORMAT_EPUB);
 
 	void foreground();
 	void background();

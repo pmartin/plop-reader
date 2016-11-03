@@ -23,7 +23,7 @@ void Database::open(void)
 
 void Database::runMigrations(void)
 {
-	const std::string currentVersion = "3";
+	const std::string currentVersion = "4";
 
 	Internal migrationVersion = this->selectInternal("db.migration_version");
 	if (migrationVersion.isNull) {
@@ -38,6 +38,9 @@ void Database::runMigrations(void)
 	}
 	if (migrationVersion.value < "3") {
 		this->migration_003_createIndexesOnEntries();
+	}
+	if (migrationVersion.value < "4") {
+		this->migration_004_createEpubDownloadQueueTable();
 	}
 
 	this->saveInternal("db.migration_version", currentVersion);
@@ -119,6 +122,26 @@ create index idx_entries_local_updated_at on entries (local_updated_at desc);
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
 		ERROR("Failed creating indexes on entries: %s", err_msg);
+
+		// TODO error-handling
+	}
+}
+
+void Database::migration_004_createEpubDownloadQueueTable()
+{
+	INFO("Running migration 004: create epub_download_queue table");
+
+	char *err_msg;
+	const char *sql = R"sql(
+create table epub_download_queue (
+	entry_id integer not null primary key,
+    downloading_at integer null,
+    downloaded_at integer null,
+    created_at integer not null
+)
+)sql";
+	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
+		ERROR("Failed creating table epub_download_queue: %s", err_msg);
 
 		// TODO error-handling
 	}

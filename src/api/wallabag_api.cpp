@@ -170,7 +170,7 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 }
 
 
-void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
+void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQueueRepository epubDownloadQueueRepository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
 {
 	this->refreshOAuthToken(progressbarUpdater);
 
@@ -279,9 +279,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 
 				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
 				if (canDownloadEpub && (!entry.local_is_archived || entry.local_is_starred)) {
-					// TODO download the EPUB synchronously, with a queue; and/or several download threads?
 					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
-					downloadEpub(repository, entry, progressbarUpdater, percentage);
+					enqueueEpubDownload(repository, entry, epubDownloadQueueRepository, progressbarUpdater, percentage);
 				}
 			}
 

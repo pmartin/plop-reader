@@ -27,7 +27,7 @@ public:
 	void createOAuthToken(gui_update_progressbar progressbarUpdater);
 	void refreshOAuthToken(gui_update_progressbar progressbarUpdater);
 
-	void loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater);
+	void loadRecentArticles(EntryRepository repository, EpubDownloadQueueRepository epubDownloadQueueRepository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater);
 
 	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 

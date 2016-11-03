@@ -21,6 +21,13 @@ ${PBSDK}/arm-obreey-linux-gnueabi/sysroot/usr/local/include
 ${PBSDK}/arm-obreey-linux-gnueabi/include/c++/4.8.1
 ```
 
+# Used libraries
+
+This project uses the following libraries:
+
+ * Lib Inkview, bundled with Pocketbook SDK
+ * [Pithikos/C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool), MIT
+
 
 # Disclaimer
 

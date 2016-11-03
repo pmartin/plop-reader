@@ -55,9 +55,11 @@ src/main.o: src/main.h src/main.cpp
 src/log.o: src/main.h src/log.h src/log.cpp
 	$(CC) -c src/log.cpp $(CFLAGS) -o src/log.o
 
+src/libs/thpool/thpool.o: src/libs/thpool/thpool.h src/libs/thpool/thpool.c
+	$(CC) -c src/libs/thpool/thpool.c $(CFLAGS) -fpermissive -o src/libs/thpool/thpool.o
 
-"Plop! reader.app": src/api/wallabag_api.o src/api/wallabag_config_loader.o src/api/wallabag_config.o src/api/wallabag_entities_factory.o src/api/wallabag_oauth_token.o src/database/database.o src/entities/entry.o src/entities/epub_download.o src/gui/gui_button.o src/gui/gui_list_item_entry.o src/gui/gui.o src/repositories/entry_repository.o src/repositories/epub_download_queue_repository.o src/application.o src/main.o src/log.o
-	$(CC) src/api/wallabag_api.o src/api/wallabag_config_loader.o src/api/wallabag_config.o src/api/wallabag_entities_factory.o src/api/wallabag_oauth_token.o src/database/database.o src/entities/entry.o src/entities/epub_download.o src/gui/gui_button.o src/gui/gui_list_item_entry.o src/gui/gui.o src/repositories/entry_repository.o src/repositories/epub_download_queue_repository.o src/application.o src/main.o src/log.o -o "Plop! reader.app" -linkview -lcurl -ljson-c -lsqlite3
+"Plop! reader.app": src/api/wallabag_api.o src/api/wallabag_config_loader.o src/api/wallabag_config.o src/api/wallabag_entities_factory.o src/api/wallabag_oauth_token.o src/database/database.o src/entities/entry.o src/entities/epub_download.o src/gui/gui_button.o src/gui/gui_list_item_entry.o src/gui/gui.o src/repositories/entry_repository.o src/repositories/epub_download_queue_repository.o src/application.o src/main.o src/log.o src/libs/thpool/thpool.o
+	$(CC) src/api/wallabag_api.o src/api/wallabag_config_loader.o src/api/wallabag_config.o src/api/wallabag_entities_factory.o src/api/wallabag_oauth_token.o src/database/database.o src/entities/entry.o src/entities/epub_download.o src/gui/gui_button.o src/gui/gui_list_item_entry.o src/gui/gui.o src/repositories/entry_repository.o src/repositories/epub_download_queue_repository.o src/application.o src/main.o src/log.o src/libs/thpool/thpool.o -o "Plop! reader.app" -linkview -lcurl -ljson-c -lsqlite3 -lpthread
 
 
 clean:
@@ -67,4 +69,5 @@ clean:
 	rm -f src/entities/*.o
 	rm -f src/gui/*.o
 	rm -f src/repositories/*.o
+	rm -f src/libs/thpool/*.o
 	rm -f plop-reader.app

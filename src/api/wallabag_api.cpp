@@ -170,7 +170,7 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 }
 
 
-void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
+void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQueueRepository epubDownloadQueueRepository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater)
 {
 	this->refreshOAuthToken(progressbarUpdater);
 
@@ -279,9 +279,8 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 
 				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
 				if (canDownloadEpub && (!entry.local_is_archived || entry.local_is_starred)) {
-					// TODO download the EPUB synchronously, with a queue; and/or several download threads?
 					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
-					downloadEpub(repository, entry, progressbarUpdater, percentage);
+					enqueueEpubDownload(repository, entry, epubDownloadQueueRepository, progressbarUpdater, percentage);
 				}
 			}
 
@@ -313,6 +312,28 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
 
 	DEBUG("API: loadRecentArticles(): done");
+
+	startBackgroundDownloads(repository, epubDownloadQueueRepository);
+}
+
+
+void WallabagApi::enqueueEpubDownload(EntryRepository &repository, Entry &entry, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater, int percent)
+{
+	DEBUG("API: enqueueEpubDownload(): Enqueuing EPUB download for entry %d / %s", entry.id, entry.remote_id.c_str());
+
+	epubDownloadQueueRepository.enqueueDownloadForEntry(entry);
+
+	DEBUG("API: enqueueEpubDownload(): Enqueuing EPUB download for entry %d / %s: done", entry.id, entry.remote_id.c_str());
+}
+
+
+void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository)
+{
+	DEBUG("-> Starting downloading EPUB files in the background");
+
+	// TODO actually download EPUB files in the background + save them + update the corresponding entries ;-)
+
+	DEBUG("<- Done downloading EPUB files in the background");
 }
 
 

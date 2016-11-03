@@ -13,6 +13,7 @@
 #include "gui/gui.h"
 
 #include "repositories/entry_repository.h"
+#include "repositories/epub_download_queue_repository.h"
 
 
 #include <sstream>
@@ -27,7 +28,7 @@ public:
 	enum entries_mode {MODE_UNREAD=1, MODE_ARCHIVED, MODE_STARRED};
 	enum reading_format {FORMAT_HTML=1, FORMAT_EPUB};
 
-	Application() : entryRepository(db), gui(*this) {
+	Application() : entryRepository(db), epubDownloadQueueRepository(db), gui(*this) {
 		db.open();
 		pageNum = 1;
 		numPerPage = 8;
@@ -71,6 +72,7 @@ private:
 	Database db;
 	WallabagApi wallabag_api;
 	EntryRepository entryRepository;
+	EpubDownloadQueueRepository epubDownloadQueueRepository;
 	Gui gui;
 
 	entries_mode mode;

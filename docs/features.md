@@ -20,6 +20,7 @@ Here's a quick short list of features that are currently implemented and should 
  * Three distinct lists: unread, archived, starred; and *menu* button to switch between lists.
  * Uses the internal ereader's reading application to open contents, which means you have all the usual *reading* features and options.
  * Logs (current builds are quite verbose, as they are early versions) to `plop-reader-log.html` at the root the device; which means this log can be read from the library and you can get it via USB.
+ * Fetching EPUB version of new entries from the server -- requires wallabag >= 2.2
 
 
 ## Known limitations of the current version
@@ -32,7 +33,6 @@ Known limitations of the current version of the application:
  * At first launch, when no sync has been ever done, the screen is a bit empty.
  * Not much help included.
  * Far from perfect UI.
- * Only reads HTML content of the entries -- which means no images (they are remote and not fetched) and some encoding problems for special characters.
  * Much code-rework is needed.
 
 This is to be considered a **beta version**, to collect useful feedback from implicated power-users.

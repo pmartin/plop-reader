@@ -313,6 +313,28 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, time_t lastSync
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
 
 	DEBUG("API: loadRecentArticles(): done");
+
+	startBackgroundDownloads(repository, epubDownloadQueueRepository);
+}
+
+
+void WallabagApi::enqueueEpubDownload(EntryRepository &repository, Entry &entry, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater, int percent)
+{
+	DEBUG("API: enqueueEpubDownload(): Enqueuing EPUB download for entry %d / %s", entry.id, entry.remote_id.c_str());
+
+	epubDownloadQueueRepository.enqueueDownloadForEntry(entry);
+
+	DEBUG("API: enqueueEpubDownload(): Enqueuing EPUB download for entry %d / %s: done", entry.id, entry.remote_id.c_str());
+}
+
+
+void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository)
+{
+	DEBUG("-> Starting downloading EPUB files in the background");
+
+	// TODO actually download EPUB files in the background + save them + update the corresponding entries ;-)
+
+	DEBUG("<- Done downloading EPUB files in the background");
 }
 
 

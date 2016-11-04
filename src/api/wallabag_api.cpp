@@ -174,6 +174,10 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 {
 	this->refreshOAuthToken(progressbarUpdater);
 
+	// TODO supprimer ça ;-)
+	//startBackgroundDownloads(repository, epubDownloadQueueRepository);
+	//return;
+
 	bool canDownloadEpub = false;
 	if (serverVersion.empty()) {
 		fetchServerVersion(progressbarUpdater);
@@ -328,13 +332,24 @@ void WallabagApi::enqueueEpubDownload(EntryRepository &repository, Entry &entry,
 
 
 
+static EntryRepository *entryRepository;
+static WallabagApi *api;
+
 static void do_download_epub_from_queue(void *data)
 {
 	int entry_id = *((int *)data);
-
-	DEBUG("[background] Downloading entry %d on thread %u", entry_id, (int)pthread_self());
-
 	free(data);
+
+	DEBUG("[background] -> Downloading entry %d on thread %u", entry_id, (int)pthread_self());
+
+
+	Entry entry = entryRepository->get(entry_id);
+
+	// TODO use a specific method for background download, without progressbar and all!
+	api->downloadEpub(*entryRepository, entry, NULL, -1);
+
+
+	DEBUG("[background] <- Done downloading entry %d on thread %u", entry_id, (int)pthread_self());
 }
 
 
@@ -347,17 +362,26 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 	DEBUG("Creating thread pool");
 	threadpool thpool = thpool_init(1);
 
+	// TODO do not do this... this is so ugly.
+	entryRepository = &repository;
+	api = this;
+
 	int *data;
 
-	DEBUG("Adding work to thread pool -> 498");
-	data = (int *)malloc(sizeof(int));
-	*data = 498;
-	thpool_add_work(thpool, do_download_epub_from_queue, data);
+	// List the entry_id of all fetches that must be done
+	// and add one job to the thread pool for each of those
 
-	DEBUG("Adding work to thread pool -> 499");
-	data = (int *)malloc(sizeof(int));
-	*data = 499;
-	thpool_add_work(thpool, do_download_epub_from_queue, data);
+	std::vector<int> ids;
+	epubDownloadQueueRepository.listEntryIdsToDownload(ids, 100, 0);
+
+	DEBUG("Number of EPUB files to download: %d", ids.size());
+
+	for (unsigned int i=0 ; i<ids.size() ; i++) {
+		DEBUG("Adding work to thread pool -> %d", ids.at(i));
+		data = (int *)malloc(sizeof(int));
+		*data = ids.at(i);
+		thpool_add_work(thpool, do_download_epub_from_queue, data);
+	}
 
 	DEBUG("Waiting for thread pool to finish working");
 	thpool_wait(thpool);
@@ -382,9 +406,11 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/tmp-%d.epub", entry.id);
 	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
 
-	char buffer[1024];
-	snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
-	progressbarUpdater(buffer, percent, NULL);
+	if (percent > -1) {
+		char buffer[1024];
+		snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
+		progressbarUpdater(buffer, percent, NULL);
+	}
 
 	auto getUrl = [this, &entry] (CURL *curl) -> char * {
 		char *url = (char *)calloc(2048, sizeof(char));
@@ -442,8 +468,8 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 
 		// Update the entry so it references the EPUB file
 		DEBUG("Updating entry %d; setting epub path to %s", entry.id, filepath);
-		entry.local_content_file_epub = filepath;
-		repository.persist(entry);
+		//entry.local_content_file_epub = filepath;
+		//repository.persist(entry);
 	};
 
 	auto onFailure = [this, &tmpDestinationFile, tmp_filepath] (CURLcode res, long response_code, CURL *curl) -> void {

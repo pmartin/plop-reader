@@ -327,11 +327,43 @@ void WallabagApi::enqueueEpubDownload(EntryRepository &repository, Entry &entry,
 }
 
 
+
+static void do_download_epub_from_queue(void *data)
+{
+	int entry_id = *((int *)data);
+
+	DEBUG("[background] Downloading entry %d on thread %u", entry_id, (int)pthread_self());
+
+	free(data);
+}
+
+
 void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository)
 {
 	DEBUG("-> Starting downloading EPUB files in the background");
 
 	// TODO actually download EPUB files in the background + save them + update the corresponding entries ;-)
+
+	DEBUG("Creating thread pool");
+	threadpool thpool = thpool_init(1);
+
+	int *data;
+
+	DEBUG("Adding work to thread pool -> 498");
+	data = (int *)malloc(sizeof(int));
+	*data = 498;
+	thpool_add_work(thpool, do_download_epub_from_queue, data);
+
+	DEBUG("Adding work to thread pool -> 499");
+	data = (int *)malloc(sizeof(int));
+	*data = 499;
+	thpool_add_work(thpool, do_download_epub_from_queue, data);
+
+	DEBUG("Waiting for thread pool to finish working");
+	thpool_wait(thpool);
+
+	DEBUG("Destroying thread pool");
+	thpool_destroy(thpool);
 
 	DEBUG("<- Done downloading EPUB files in the background");
 }

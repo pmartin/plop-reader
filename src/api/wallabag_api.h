@@ -17,6 +17,8 @@
 #include "../exceptions.h"
 #include "../gui/gui.h"
 
+#include "../libs/thpool/thpool.h"
+
 
 class WallabagApi
 {

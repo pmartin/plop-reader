@@ -175,7 +175,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 	this->refreshOAuthToken(progressbarUpdater);
 
 	// TODO supprimer ça ;-)
-	//startBackgroundDownloads(repository, epubDownloadQueueRepository);
+	//startBackgroundDownloads(repository, epubDownloadQueueRepository, progressbarUpdater);
 	//return;
 
 	bool canDownloadEpub = false;
@@ -317,7 +317,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 
 	DEBUG("API: loadRecentArticles(): done");
 
-	startBackgroundDownloads(repository, epubDownloadQueueRepository);
+	startBackgroundDownloads(repository, epubDownloadQueueRepository, progressbarUpdater);
 }
 
 
@@ -353,7 +353,7 @@ static void do_download_epub_from_queue(void *data)
 }
 
 
-void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository)
+void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater)
 {
 	DEBUG("-> Starting downloading EPUB files in the background");
 

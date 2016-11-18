@@ -34,7 +34,7 @@ public:
 	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
 
 	void enqueueEpubDownload(EntryRepository &repository, Entry &entry, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater, int percent);
-	void startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository);
+	void startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater);
 
 	void downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent);
 

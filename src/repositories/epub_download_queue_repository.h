@@ -18,6 +18,9 @@ public:
 
 	void enqueueDownloadForEntry(Entry &entry);
 
+	void markEntryAsDownloading(int entry_id);
+	void markEntryAsDownloaded(int entry_id);
+
 	void listEntryIdsToDownload(std::vector<int> &ids, int limit, int offset);
 
 

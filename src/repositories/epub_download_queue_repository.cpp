@@ -38,6 +38,56 @@ void EpubDownloadQueueRepository::enqueueDownloadForEntry(Entry &entry)
 }
 
 
+void EpubDownloadQueueRepository::markEntryAsDownloading(int entry_id)
+{
+	const char *sql = "update epub_download_queue set downloading_at = strftime('%s','now') where entry_id = :entry_id";
+
+	sqlite3_stmt *stmt;
+	const char *tail;
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing (insert): %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":entry_id"), entry_id) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding entry_id : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		//snprintf(buffer, sizeof(buffer), "Fail saving : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+	sqlite3_finalize(stmt);
+}
+
+
+void EpubDownloadQueueRepository::markEntryAsDownloaded(int entry_id)
+{
+	const char *sql = "update epub_download_queue set downloading_at = NULL, downloaded_at = strftime('%s','now') where entry_id = :entry_id";
+
+	sqlite3_stmt *stmt;
+	const char *tail;
+
+	if (sqlite3_prepare(this->db.getDb(), sql, -1, &stmt, &tail) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail preparing (insert): %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":entry_id"), entry_id) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding entry_id : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (sqlite3_step(stmt) != SQLITE_DONE) {
+		//snprintf(buffer, sizeof(buffer), "Fail saving : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+	sqlite3_finalize(stmt);
+}
+
+
 void EpubDownloadQueueRepository::listEntryIdsToDownload(std::vector<int> &ids, int limit, int offset)
 {
 	const char *sql = "select entry_id from epub_download_queue where downloading_at is NULL and downloaded_at is NULL order by created_at limit :limit offset :offset";

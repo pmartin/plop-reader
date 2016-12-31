@@ -80,7 +80,7 @@ You have 3 buttons in the header:
  * On the left of the right half the screen, the *sync* button: use it to fetch entries from the server and to send local statuses to the server.
  * On the far right of the screen, the *menu* button.
 
-Touching the *sync* button runs a synchronization between your ereader and the server:
+Touching the *sync* button runs a synchronization between your ereader and the server (the application firstly downloads the 200 first articles) :
 
 ![Synchronization in progress](/images/v0.1.0/screenshot-06-sync.png) ![Synchronization in progress](/images/v0.1.0/screenshot-07-sync.png)
 

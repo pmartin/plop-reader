@@ -68,6 +68,10 @@ public:
 		return gui;
 	}
 
+	EntryRepository &getEntryRepository() {
+		return entryRepository;
+	}
+
 private:
 	Database db;
 	WallabagApi wallabag_api;

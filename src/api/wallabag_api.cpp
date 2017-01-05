@@ -174,6 +174,10 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 {
 	this->refreshOAuthToken(progressbarUpdater);
 
+	// TODO supprimer ça ;-)
+	//startBackgroundDownloads(repository, epubDownloadQueueRepository, progressbarUpdater);
+	//return;
+
 	bool canDownloadEpub = false;
 	if (serverVersion.empty()) {
 		fetchServerVersion(progressbarUpdater);
@@ -313,7 +317,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 
 	DEBUG("API: loadRecentArticles(): done");
 
-	startBackgroundDownloads(repository, epubDownloadQueueRepository);
+	startBackgroundDownloads(repository, epubDownloadQueueRepository, progressbarUpdater);
 }
 
 
@@ -328,42 +332,84 @@ void WallabagApi::enqueueEpubDownload(EntryRepository &repository, Entry &entry,
 
 
 
+static EntryRepository *entryRepository;
+static EpubDownloadQueueRepository *_epubDownloadQueueRepository;
+static WallabagApi *api;
+
 static void do_download_epub_from_queue(void *data)
 {
 	int entry_id = *((int *)data);
-
-	DEBUG("[background] Downloading entry %d on thread %u", entry_id, (int)pthread_self());
-
 	free(data);
+
+	DEBUG("[background] -> Downloading entry %d on thread %u", entry_id, (int)pthread_self());
+
+
+	Entry entry = entryRepository->get(entry_id);
+
+	// TODO use a specific method for background download, without progressbar and all!
+	api->downloadEpub(*entryRepository, entry, NULL, -1);
+
+
+	DEBUG("[background] -> Marking entry %d as downloaded", entry_id);
+	_epubDownloadQueueRepository->markEntryAsDownloaded(entry_id);
+
+
+	// TODO if the entry is displayed on the screen, it should be re-drawn (a file is now there and the corresponding flag should be updated)
+
+
+	DEBUG("[background] <- Done downloading entry %d on thread %u", entry_id, (int)pthread_self());
 }
 
 
-void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository)
+void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater)
 {
 	DEBUG("-> Starting downloading EPUB files in the background");
+
+	int percent = Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_START;
+	progressbarUpdater("Downloading EPUB files...", percent, NULL);
 
 	// TODO actually download EPUB files in the background + save them + update the corresponding entries ;-)
 
 	DEBUG("Creating thread pool");
-	threadpool thpool = thpool_init(1);
+	threadpool thpool = thpool_init(4);
+
+	// TODO do not do this... this is so ugly.
+	entryRepository = &repository;
+	_epubDownloadQueueRepository = &epubDownloadQueueRepository;
+	api = this;
 
 	int *data;
 
-	DEBUG("Adding work to thread pool -> 498");
-	data = (int *)malloc(sizeof(int));
-	*data = 498;
-	thpool_add_work(thpool, do_download_epub_from_queue, data);
+	// List the entry_id of all fetches that must be done
+	// and add one job to the thread pool for each of those
 
-	DEBUG("Adding work to thread pool -> 499");
-	data = (int *)malloc(sizeof(int));
-	*data = 499;
-	thpool_add_work(thpool, do_download_epub_from_queue, data);
+	std::vector<int> ids;
+	epubDownloadQueueRepository.listEntryIdsToDownload(ids, 100, 0);
+
+	DEBUG("Number of EPUB files to download: %d", ids.size());
+
+	// TODO supprimer la limite du nombre d'entrées à télécharger
+	unsigned int MAX_ENTRIES_TO_DOWNLOAD = 200;
+	for (unsigned int i=0 ; i<ids.size() && i<MAX_ENTRIES_TO_DOWNLOAD ; i++) {
+		DEBUG("Adding work to thread pool -> %d", ids.at(i));
+		data = (int *)malloc(sizeof(int));
+		int entry_id = ids.at(i);
+		*data = entry_id;
+
+		DEBUG("Marking entry %d as downloading", entry_id);
+		epubDownloadQueueRepository.markEntryAsDownloading(entry_id);
+
+		thpool_add_work(thpool, do_download_epub_from_queue, data);
+	}
 
 	DEBUG("Waiting for thread pool to finish working");
 	thpool_wait(thpool);
 
 	DEBUG("Destroying thread pool");
 	thpool_destroy(thpool);
+
+	percent = Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_END;
+	progressbarUpdater("Downloading EPUB files: done.", percent, NULL);
 
 	DEBUG("<- Done downloading EPUB files in the background");
 }
@@ -382,9 +428,11 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_EPUB_DIRECTORY "/tmp-%d.epub", entry.id);
 	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
 
-	char buffer[1024];
-	snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
-	progressbarUpdater(buffer, percent, NULL);
+	if (percent > -1) {
+		char buffer[1024];
+		snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
+		progressbarUpdater(buffer, percent, NULL);
+	}
 
 	auto getUrl = [this, &entry] (CURL *curl) -> char * {
 		char *url = (char *)calloc(2048, sizeof(char));

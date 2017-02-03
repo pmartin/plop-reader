@@ -67,6 +67,8 @@ public:
 		return gui;
 	}
 
+	void deleteAllLocalData();
+
 private:
 	Database db;
 	WallabagApi wallabag_api;

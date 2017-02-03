@@ -217,9 +217,10 @@ void Gui::displayMainMenu()
 	const char *str1 = "Display unread entries";
 	const char *str2 = "Display archived entries";
 	const char *str3 = "Display starred entries";
+	const char *str_reset = "Delete all local data";
 	const char *str4 = "About";
 
-	menu = (imenu *)calloc(6, sizeof(imenu));
+	menu = (imenu *)calloc(7, sizeof(imenu));
 
 	menu[0].type = 1;
 	menu[0].index = 0;
@@ -242,9 +243,14 @@ void Gui::displayMainMenu()
 	menu[3].submenu = &menu[4];
 
 	menu[4].type = 2;
-	menu[4].index = 4;
-	menu[4].text = (char *)str4;
+	menu[4].index = 5;
+	menu[4].text = (char *)str_reset;
 	menu[4].submenu = NULL;
+
+	menu[5].type = 2;
+	menu[5].index = 4;
+	menu[5].text = (char *)str4;
+	menu[5].submenu = NULL;
 
 	auto callback = [](int index) {
 		free(menu);
@@ -277,6 +283,19 @@ void Gui::displayMainMenu()
 			app.getGui().statusBarText("Feel free to contribute on %s ;-)", PLOP_OPENSOURCE_URL);
 
 			DEBUG("Opening About dialog - closed");
+		}
+		else if (index == 5) {
+			int result = DialogSynchro(ICON_QUESTION, "Delete all local data?", "Do you really want to delete all local data?\nYou will need to sync from server to fetch new data.\nData updated locally and not already synced to server will be lost.", "Delete local data", "Cancel", NULL);
+			if (result == 1) {
+				DEBUG("Deleting all local data...");
+				app.deleteAllLocalData();
+				DEBUG("Deleting all local data: done");
+
+				app.getGui().statusBarText("Local data deleted. You should now run a sync to fetch data from server ;-)");
+			}
+			else if (result == 2) {
+				app.getGui().statusBarText("Local data has been left untouched.");
+			}
 		}
 	};
 

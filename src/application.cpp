@@ -76,6 +76,9 @@ void Application::loadRecentArticles()
 	time_t lastSyncTimestamp = lastSyncTimestampObj.isNull ? 0 : atoi(lastSyncTimestampObj.value.c_str());
 	DEBUG("Last sync TS = %ld", lastSyncTimestamp);
 
+	db.saveInternal("sync.last-sync.timestamp", SSTR(time(NULL)));
+	DEBUG("Saving last sync TS = %ld", time(NULL));
+
 	try {
 		wallabag_api.loadRecentArticles(entryRepository, epubDownloadQueueRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
 			app.gui.updateProgressBar(text, percent);
@@ -85,9 +88,6 @@ void Application::loadRecentArticles()
 		wallabag_api.syncEntriesToServer(entryRepository, [](const char *text, int percent, void *context) {
 			app.gui.updateProgressBar(text, percent);
 		});
-
-		db.saveInternal("sync.last-sync.timestamp", SSTR(time(NULL)));
-		DEBUG("Saving last sync TS = %ld", time(NULL));
 
 		gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
 	}

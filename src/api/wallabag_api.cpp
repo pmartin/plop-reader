@@ -388,9 +388,7 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 
 	DEBUG("Number of EPUB files to download: %d", ids.size());
 
-	// TODO supprimer la limite du nombre d'entrées à télécharger
-	unsigned int MAX_ENTRIES_TO_DOWNLOAD = 200;
-	for (unsigned int i=0 ; i<ids.size() && i<MAX_ENTRIES_TO_DOWNLOAD ; i++) {
+	for (unsigned int i=0 ; i<ids.size() ; i++) {
 		DEBUG("Adding work to thread pool -> %d", ids.at(i));
 		data = (int *)malloc(sizeof(int));
 		int entry_id = ids.at(i);

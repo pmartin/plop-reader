@@ -654,11 +654,11 @@ void WallabagApi::fetchServerVersion(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_FETCH_SERVER_VERSION_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_FETCH_SERVER_VERSION_END, NULL);
 	};
 
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {

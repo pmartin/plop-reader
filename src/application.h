@@ -72,6 +72,8 @@ public:
 		return entryRepository;
 	}
 
+	void deleteAllLocalData();
+
 private:
 	Database db;
 	WallabagApi wallabag_api;

@@ -392,3 +392,53 @@ void Application::listEntriesForCurrentMode(std::vector<Entry> &entries)
 	}
 }
 
+
+// Delete all local data, which means next sync will be "from scratch"
+//   -> local database
+//   -> local HTML entries
+//   -> local EPUB entries
+//   -> log file ?
+// Note: we do not delete the config file ;-)
+void Application::deleteAllLocalData()
+{
+	DIR *dir;
+	struct dirent *entry;
+
+	DEBUG("Dropping database");
+	db.drop();
+	DEBUG("Running migrations to rebuild the database");
+	db.runMigrations();
+
+	// Delete all EPUB entries
+	dir = iv_opendir(PLOP_ENTRIES_EPUB_DIRECTORY);
+	if (dir) {
+		while ((entry = iv_readdir(dir))) {
+			if (iv_strcmp(entry->d_name, ".") == 0 || iv_strcmp(entry->d_name, "..") == 0) {
+				continue;
+			}
+			DEBUG("Delete: %s", entry->d_name);
+			iv_unlink(entry->d_name);
+		}
+		iv_closedir(dir);
+
+		iv_rmdir(PLOP_ENTRIES_EPUB_DIRECTORY);
+	}
+
+	// Delete all HTML entries
+	dir = iv_opendir(PLOP_ENTRIES_CONTENT_DIRECTORY);
+	if (dir) {
+		while ((entry = iv_readdir(dir))) {
+			if (iv_strcmp(entry->d_name, ".") == 0 || iv_strcmp(entry->d_name, "..") == 0) {
+				continue;
+			}
+			DEBUG("Delete: %s", entry->d_name);
+			iv_unlink(entry->d_name);
+		}
+		iv_closedir(dir);
+
+		iv_rmdir(PLOP_ENTRIES_CONTENT_DIRECTORY);
+	}
+
+	app.show();
+}
+

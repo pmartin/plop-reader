@@ -77,7 +77,7 @@ void Application::loadRecentArticles()
 	DEBUG("Last sync TS = %ld", lastSyncTimestamp);
 
 	try {
-		wallabag_api.loadRecentArticles(entryRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
+		wallabag_api.loadRecentArticles(entryRepository, epubDownloadQueueRepository, lastSyncTimestamp, [](const char *text, int percent, void *context) {
 			app.gui.updateProgressBar(text, percent);
 		});
 

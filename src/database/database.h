@@ -44,6 +44,7 @@ private:
 	void migration_001_createInternalsTable();
 	void migration_002_createEntriesTable();
 	void migration_003_createIndexesOnEntries();
+	void migration_004_createEpubDownloadQueueTable();
 
 	void insertInternal(std::string key, std::string value);
 	void updateInternal(std::string key, std::string value);

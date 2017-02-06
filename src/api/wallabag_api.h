@@ -11,10 +11,13 @@
 #include "wallabag_oauth_token.h"
 
 #include "../repositories/entry_repository.h"
+#include "../repositories/epub_download_queue_repository.h"
 
 #include "../log.h"
 #include "../exceptions.h"
 #include "../gui/gui.h"
+
+#include "../libs/thpool/thpool.h"
 
 
 class WallabagApi
@@ -26,9 +29,12 @@ public:
 	void createOAuthToken(gui_update_progressbar progressbarUpdater);
 	void refreshOAuthToken(gui_update_progressbar progressbarUpdater);
 
-	void loadRecentArticles(EntryRepository repository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater);
+	void loadRecentArticles(EntryRepository repository, EpubDownloadQueueRepository epubDownloadQueueRepository, time_t lastSyncTimestamp, gui_update_progressbar progressbarUpdater);
 
 	void syncEntriesToServer(EntryRepository repository, gui_update_progressbar progressbarUpdater);
+
+	void enqueueEpubDownload(EntryRepository &repository, Entry &entry, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater, int percent);
+	void startBackgroundDownloads(EntryRepository &repository, EpubDownloadQueueRepository &epubDownloadQueueRepository, gui_update_progressbar progressbarUpdater);
 
 	void downloadEpub(EntryRepository &repository, Entry &entry, gui_update_progressbar progressbarUpdater, int percent);
 

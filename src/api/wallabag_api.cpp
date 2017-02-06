@@ -336,6 +336,12 @@ static EntryRepository *entryRepository;
 static EpubDownloadQueueRepository *_epubDownloadQueueRepository;
 static WallabagApi *api;
 
+static gui_update_progressbar *_progressbarUpdater;
+
+static pthread_mutex_t mutex_download_progress;
+static int count_total_downloads;
+static int count_remaining_downloads;
+
 static void do_download_epub_from_queue(void *data)
 {
 	int entry_id = *((int *)data);
@@ -357,6 +363,17 @@ static void do_download_epub_from_queue(void *data)
 	// TODO if the entry is displayed on the screen, it should be re-drawn (a file is now there and the corresponding flag should be updated)
 
 
+	float incrementPerDownload = (float)(Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_END - Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_START) / (float)count_total_downloads;
+
+	pthread_mutex_lock(&mutex_download_progress);
+	count_remaining_downloads -= 1;
+
+	float currentIncrement = incrementPerDownload * ((float)count_total_downloads - (float)count_remaining_downloads);
+	float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_START + currentIncrement;
+
+	(*_progressbarUpdater)("Downloading EPUB files...", percentage, NULL);
+	pthread_mutex_unlock(&mutex_download_progress);
+
 	DEBUG("[background] <- Done downloading entry %d on thread %u", entry_id, (int)pthread_self());
 }
 
@@ -377,6 +394,7 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 	entryRepository = &repository;
 	_epubDownloadQueueRepository = &epubDownloadQueueRepository;
 	api = this;
+	_progressbarUpdater = &progressbarUpdater;
 
 	int *data;
 
@@ -388,6 +406,10 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 
 	DEBUG("Number of EPUB files to download: %d", ids.size());
 
+	mutex_download_progress = PTHREAD_MUTEX_INITIALIZER;
+	count_total_downloads = 0;
+	count_remaining_downloads = 0;
+
 	for (unsigned int i=0 ; i<ids.size() ; i++) {
 		DEBUG("Adding work to thread pool -> %d", ids.at(i));
 		data = (int *)malloc(sizeof(int));
@@ -396,6 +418,11 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 
 		DEBUG("Marking entry %d as downloading", entry_id);
 		epubDownloadQueueRepository.markEntryAsDownloading(entry_id);
+
+		pthread_mutex_lock(&mutex_download_progress);
+		count_total_downloads += 1;
+		count_remaining_downloads += 1;
+		pthread_mutex_unlock(&mutex_download_progress);
 
 		thpool_add_work(thpool, do_download_epub_from_queue, data);
 	}
@@ -408,6 +435,8 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 
 	percent = Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_END;
 	progressbarUpdater("Downloading EPUB files: done.", percent, NULL);
+
+	pthread_mutex_destroy(&mutex_download_progress);
 
 	DEBUG("<- Done downloading EPUB files in the background");
 }

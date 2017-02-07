@@ -205,7 +205,7 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 		char *encoded_order = curl_easy_escape(curl, "desc", 0);
 
 		snprintf(entries_url, 2048, "%sapi/entries.json?access_token=%s&sort=%s&order=%s&page=%d&perPage=%d",
-				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, 200);
+				config.url.c_str(), encoded_access_token, encoded_sort, encoded_order, 1, PLOP_MAX_NUMBER_OF_ENTRIES_TO_FETCH_FROM_SERVER);
 
 		curl_free(encoded_access_token);
 		curl_free(encoded_sort);

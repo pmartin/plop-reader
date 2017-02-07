@@ -192,16 +192,6 @@ void Gui::touchStartEvent(int x, int y)
 	else if (menuButton.hit(x, y)) {
 		menuButton.setPressed(true);
 	}
-	else {
-		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
-			GuiListItemEntry item = entriesItems.at(i);
-			if (item.hit(x, y)) {
-				if (item.hasEntry()) {
-					// TODO highlight the curren item? see #33
-				}
-			}
-		}
-	}
 
 	exitButton.draw(true);
 	syncButton.draw(true);

@@ -6,14 +6,18 @@ int GuiListItemEntry::getHeight() {
 	return 115;
 }
 
-void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen)
+void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highlight)
 {
 	char buffer[2048];
 	int yy = y;
 	int initialY = y;
 
-	if (clearBeforeDraw) {
+	if (clearBeforeDraw && !highlight) {
 		FillArea(x, initialY, screenWidth, getHeight(), WHITE);
+	}
+
+	if (highlight) {
+		FillArea(x, initialY, screenWidth, getHeight(), LGRAY);
 	}
 
 	if (_hasEntry == false) {

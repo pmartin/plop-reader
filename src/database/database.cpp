@@ -23,7 +23,7 @@ void Database::open(void)
 
 void Database::runMigrations(void)
 {
-	const std::string currentVersion = "4";
+	const std::string currentVersion = "5";
 
 	Internal migrationVersion = this->selectInternal("db.migration_version");
 	if (migrationVersion.isNull) {
@@ -41,6 +41,9 @@ void Database::runMigrations(void)
 	}
 	if (migrationVersion.value < "4") {
 		this->migration_004_createEpubDownloadQueueTable();
+	}
+	if (migrationVersion.value < "5") {
+		this->migration_005_addIsEmptyFieldOnEntries();
 	}
 
 	this->saveInternal("db.migration_version", currentVersion);
@@ -142,6 +145,22 @@ create table epub_download_queue (
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
 		ERROR("Failed creating table epub_download_queue: %s", err_msg);
+
+		// TODO error-handling
+	}
+}
+
+void Database::migration_005_addIsEmptyFieldOnEntries()
+{
+	INFO("Running migration 005: add entries.is_empty field");
+
+	char *err_msg;
+	const char *sql = R"sql(
+alter table entries
+    add column is_empty integer not null default 0;
+)sql";
+	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
+		ERROR("Failed creating indexes on entries: %s", err_msg);
 
 		// TODO error-handling
 	}

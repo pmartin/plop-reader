@@ -12,7 +12,7 @@
 class GuiListItemEntry
 {
 public:
-	GuiListItemEntry() {
+	GuiListItemEntry() : x(0), y(0), _hasEntry(false), screenWidth(0), screenHeight(0), titleFont(NULL), infosFont(NULL) {
 		GuiListItemEntry(NULL, NULL);
 	}
 

@@ -324,6 +324,8 @@ void Gui::touchEndEvent(int x, int y)
 			GuiListItemEntry item = entriesItems.at(i);
 			if (item.hit(x, y)) {
 				if (item.hasEntry()) {
+					item.draw(false, true, true);
+
 					statusBarText("Loading reader app for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
 
 					app.read(item.getEntry());

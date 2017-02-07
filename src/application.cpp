@@ -300,6 +300,7 @@ void Application::handleActionOnReadEntry(int entryId)
 
 	if (result == 3) {
 		// do nothing
+		show();
 		gui.statusBarText("Thanks! You can read another entry, now ;-)");
 		return;
 	}

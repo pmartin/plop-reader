@@ -192,16 +192,6 @@ void Gui::touchStartEvent(int x, int y)
 	else if (menuButton.hit(x, y)) {
 		menuButton.setPressed(true);
 	}
-	else {
-		for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
-			GuiListItemEntry item = entriesItems.at(i);
-			if (item.hit(x, y)) {
-				if (item.hasEntry()) {
-					// TODO highlight the curren item? see #33
-				}
-			}
-		}
-	}
 
 	exitButton.draw(true);
 	syncButton.draw(true);
@@ -334,6 +324,8 @@ void Gui::touchEndEvent(int x, int y)
 			GuiListItemEntry item = entriesItems.at(i);
 			if (item.hit(x, y)) {
 				if (item.hasEntry()) {
+					item.draw(false, true, true);
+
 					statusBarText("Loading reader app for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
 
 					app.read(item.getEntry());
@@ -358,6 +350,8 @@ void Gui::touchLong(int x, int y)
 		GuiListItemEntry item = entriesItems.at(i);
 		if (item.hit(x, y)) {
 			if (item.hasEntry()) {
+				item.draw(false, true, true);
+
 				statusBarText("Opening context menu for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
 
 				displayContextMenuOnEntry(item, x, y);
@@ -385,6 +379,8 @@ static void contextEntryOnMenuHandler(int index)
 	}
 
 	DEBUG("Closing context menu: done");
+
+	app.show();
 }
 
 void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTouch)

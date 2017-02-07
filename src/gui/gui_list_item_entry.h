@@ -12,7 +12,7 @@
 class GuiListItemEntry
 {
 public:
-	GuiListItemEntry() {
+	GuiListItemEntry() : x(0), y(0), _hasEntry(false), screenWidth(0), screenHeight(0), titleFont(NULL), infosFont(NULL) {
 		GuiListItemEntry(NULL, NULL);
 	}
 
@@ -33,7 +33,7 @@ public:
 		y = yy;
 	}
 
-	void draw(bool clearBeforeDraw, bool updateScreen);
+	void draw(bool clearBeforeDraw, bool updateScreen, bool highlight = false);
 
 	void setEntry(Entry &e) {
 		_hasEntry = true;

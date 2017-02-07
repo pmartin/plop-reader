@@ -26,6 +26,9 @@ void Gui::init()
 	OpenScreen();
 	iv_fullscreen();
 
+	// Force a black-flash, to fully redraw the screen -- so we don't see Home screen anymore
+	FullUpdate();
+
 	// Allows to effectively be full-screen, even when redrawing
 	SetCurrentApplicationAttribute(APPLICATION_READER, 1);
 

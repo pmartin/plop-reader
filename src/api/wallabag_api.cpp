@@ -282,7 +282,11 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 				repository.persist(entry);
 
 				// Download the EPUB for this entry -- as a first step, we can start by only downloading it when creating the local entry (and not when updating it)
-				if (canDownloadEpub && (!entry.local_is_archived || entry.local_is_starred)) {
+				if (
+					canDownloadEpub
+					&& (!entry.local_is_archived || entry.local_is_starred)
+					&& !entry.is_empty
+				) {
 					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
 					enqueueEpubDownload(repository, entry, epubDownloadQueueRepository, progressbarUpdater, percentage);
 				}

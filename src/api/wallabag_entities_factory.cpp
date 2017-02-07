@@ -55,6 +55,12 @@ Entry WallabagEntitiesFactory::createEntryFromJson(json_object *item)
 	entry.local_content_file_html = std::string();
 	entry.local_content_file_epub = std::string();
 
+	if (entry.title == "No title found" && entry.reading_time <= 0) {
+		entry.is_empty = true;
+	} else {
+		entry.is_empty = false;
+	}
+
 	return entry;
 }
 

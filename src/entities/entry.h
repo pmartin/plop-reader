@@ -35,6 +35,8 @@ public:
 	std::string local_content_file_html;
 	std::string local_content_file_epub;
 
+	bool is_empty;
+
 	bool _isChanged;
 };
 

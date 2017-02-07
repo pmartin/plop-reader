@@ -350,6 +350,8 @@ void Gui::touchLong(int x, int y)
 		GuiListItemEntry item = entriesItems.at(i);
 		if (item.hit(x, y)) {
 			if (item.hasEntry()) {
+				item.draw(false, true, true);
+
 				statusBarText("Opening context menu for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
 
 				displayContextMenuOnEntry(item, x, y);
@@ -377,6 +379,8 @@ static void contextEntryOnMenuHandler(int index)
 	}
 
 	DEBUG("Closing context menu: done");
+
+	app.show();
 }
 
 void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTouch)

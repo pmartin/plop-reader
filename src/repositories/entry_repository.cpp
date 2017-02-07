@@ -21,7 +21,8 @@ insert into entries (
 	remote_created_at, remote_updated_at,
 	local_created_at, local_updated_at,
 	reading_time, preview_picture_url,
-    local_content_file_html, local_content_file_epub
+    local_content_file_html, local_content_file_epub,
+    is_empty
 )
 values (
 	:remote_id, 
@@ -31,7 +32,8 @@ values (
 	:remote_created_at, :remote_updated_at,
 	:local_created_at, :local_updated_at,
 	:reading_time, :preview_picture_url,
-    :local_content_file_html, :local_content_file_epub
+    :local_content_file_html, :local_content_file_epub,
+    :is_empty
 )
 )sql";
 
@@ -53,7 +55,8 @@ set
 	reading_time = :reading_time, 
     preview_picture_url = :preview_picture_url,
     local_content_file_html = :local_content_file_html, 
-    local_content_file_epub = :local_content_file_epub
+    local_content_file_epub = :local_content_file_epub,
+    is_empty = :is_empty
 where
     local_id = :local_id
 )sql";
@@ -156,6 +159,11 @@ where
 		//log_message(buffer);
 	}
 
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":is_empty"), entry.is_empty) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding is_empty : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
 	if (sqlite3_step(stmt) != SQLITE_DONE) {
 		//snprintf(buffer, sizeof(buffer), "Fail saving : %s", sqlite3_errmsg(this->db.getDb()));
 		//log_message(buffer);
@@ -223,6 +231,8 @@ void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset,
 		conditions.push_back("local_is_starred = 1");
 	}
 
+	//conditions.push_back("is_empty = 0");
+
 	const char *sqlTemplate = R"sql(
 select 
     local_id, 
@@ -243,7 +253,8 @@ select
     preview_picture_type,
     preview_picture_path,
     local_content_file_html,
-    local_content_file_epub
+    local_content_file_epub,
+    is_empty
 from entries 
 %s
 order by remote_created_at desc 
@@ -308,6 +319,7 @@ offset :offset
 		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
 		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
 		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
+		entry.is_empty = sqlite3_column_int(stmt, 19);
 
 		entries.push_back(entry);
 	}
@@ -438,7 +450,8 @@ select
 	preview_picture_type,
 	preview_picture_path,
 	local_content_file_html,
-	local_content_file_epub
+	local_content_file_epub,
+    is_empty
 from entries 
 where local_id = :id
 )sql";
@@ -478,6 +491,7 @@ where local_id = :id
 		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
 		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
 		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
+		entry.is_empty = sqlite3_column_int(stmt, 19);
 	}
 	sqlite3_finalize(stmt);
 
@@ -511,7 +525,8 @@ select
 	preview_picture_type,
 	preview_picture_path,
 	local_content_file_html,
-	local_content_file_epub
+	local_content_file_epub,
+    is_empty
 from entries 
 where remote_id = :remote_id
 )sql";
@@ -554,6 +569,7 @@ where remote_id = :remote_id
 		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
 		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
 		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
+		entry.is_empty = sqlite3_column_int(stmt, 19);
 	}
 	sqlite3_finalize(stmt);
 
@@ -585,7 +601,8 @@ select
 	preview_picture_type,
 	preview_picture_path,
 	local_content_file_html,
-	local_content_file_epub
+	local_content_file_epub,
+    is_empty
 from entries 
 where
     local_updated_at > remote_updated_at
@@ -629,6 +646,7 @@ where
 		entry.preview_picture_path = ((tmp = (const char *)sqlite3_column_text(stmt, 16))) ? tmp : std::string();
 		entry.local_content_file_html = ((tmp = (const char *)sqlite3_column_text(stmt, 17))) ? tmp : std::string();
 		entry.local_content_file_epub = ((tmp = (const char *)sqlite3_column_text(stmt, 18))) ? tmp : std::string();
+		entry.is_empty = sqlite3_column_int(stmt, 19);
 
 		entries.push_back(entry);
 	}

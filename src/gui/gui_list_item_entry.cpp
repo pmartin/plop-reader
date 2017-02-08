@@ -12,7 +12,7 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highli
 	}
 
 	if (highlight) {
-		FillArea(x, initialY, screenWidth, getHeight(), LGRAY);
+		FillArea(x, initialY - 1, screenWidth, getHeight(), LGRAY);
 	}
 
 	if (_hasEntry == false) {

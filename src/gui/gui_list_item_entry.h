@@ -48,7 +48,9 @@ public:
 		return _hasEntry;
 	}
 
-	int getHeight();
+	int getHeight() {
+		return 114;
+	}
 
 	bool hit(int xx, int yy) {
 		return xx >= x

@@ -457,8 +457,8 @@ void Gui::statusBarText(const char *format, va_list args)
 	char buffer[2048];
 	vsnprintf(buffer, sizeof(buffer), format, args);
 
-	FillArea(0, screenHeight - 35, screenWidth, 35, WHITE);
-	DrawLine(0, screenHeight - 35, screenWidth, screenHeight - 35, BLACK);
+	FillArea(0, screenHeight - 33, screenWidth, 33, WHITE);
+	DrawLine(0, screenHeight - 34, screenWidth, screenHeight - 34, BLACK);
 
 	SetFont(statusBarFont, DGRAY);
 	DrawString(0, screenHeight - 34, buffer);

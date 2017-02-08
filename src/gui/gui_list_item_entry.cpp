@@ -45,6 +45,6 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool mustUpdateScreen, bool hi
 
 void GuiListItemEntry::updateScreen()
 {
-	PartialUpdate(x, y, screenWidth, getHeight());
+	PartialUpdate(x, y, screenWidth, getHeight()-1);
 }
 

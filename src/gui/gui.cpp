@@ -117,13 +117,13 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
 	}
 	DrawString(90, y, buffer);
-	y += 34;
+	y += 35;
 
 	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entries)", numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
-	y += 34;
+	y += 35;
 
-	y += 4;
+	y += 5;
 
 	DrawLine(0, y, screenWidth, y, BLACK);
 	DrawLine(0, y + 1, screenWidth, y +1, BLACK);

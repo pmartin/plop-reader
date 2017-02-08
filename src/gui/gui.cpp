@@ -65,15 +65,15 @@ void Gui::init()
 	screenWidth = ScreenWidth();
 	screenHeight = ScreenHeight();
 
-	exitButton.setCoordinates(5, 5, 55, 60);
+	exitButton.setCoordinates(5, 5+2, 55, 60+2);
 	exitButton.setFont(titleFont);
 	exitButton.setSymbol(ARROW_LEFT);
 
-	syncButton.setCoordinates(screenWidth-135, 5, 55, 60);
+	syncButton.setCoordinates(screenWidth-135, 5+2, 55, 60+2);
 	syncButton.setFont(titleFont);
 	syncButton.setSymbol(ARROW_UPDOWN);
 
-	menuButton.setCoordinates(screenWidth-60, 5, 55, 60);
+	menuButton.setCoordinates(screenWidth-60, 5+2, 55, 60+2);
 	menuButton.setFont(titleFont);
 	menuButton.setSymbol(SYMBOL_MENU);
 }

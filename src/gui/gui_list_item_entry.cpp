@@ -1,7 +1,7 @@
 #include "gui_list_item_entry.h"
 
 
-void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highlight)
+void GuiListItemEntry::draw(bool clearBeforeDraw, bool mustUpdateScreen, bool highlight)
 {
 	char buffer[2048];
 	int yy = y;
@@ -16,7 +16,7 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highli
 	}
 
 	if (_hasEntry == false) {
-		if (updateScreen) {
+		if (mustUpdateScreen) {
 			PartialUpdate(x, initialY, screenWidth, getHeight());
 		}
 		return;
@@ -38,8 +38,13 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highli
 	DrawString(90, yy, buffer);
 	yy += infosFont->height;
 
-	if (updateScreen) {
-		PartialUpdate(x, initialY, screenWidth, getHeight());
+	if (mustUpdateScreen) {
+		updateScreen();
 	}
+}
+
+void GuiListItemEntry::updateScreen()
+{
+	PartialUpdate(x, y, screenWidth, getHeight());
 }
 

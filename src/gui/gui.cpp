@@ -149,15 +149,17 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 		}
 		entriesItems[i] = item;
 
-		item.draw(false, true, false);
+		item.draw(false, false, false);
 
-		if (i < entriesItems.size()-1) {
+		if (i < entriesItems.size()-1 && i < entries.size()) {
 			// Draw separator at the bottom of the entry, except for the last one (the status bar has its own separator at the top)
 			const int heightSeparator = 2;
 			const int ySeparator = y + i*item.getHeight() + item.getHeight()-heightSeparator;
 			DrawLine(0, ySeparator, screenWidth, ySeparator, LGRAY);
-			PartialUpdate(0, ySeparator, screenWidth, heightSeparator);
+			//PartialUpdate(0, ySeparator, screenWidth, heightSeparator);
 		}
+
+		item.updateScreen();
 	}
 
 

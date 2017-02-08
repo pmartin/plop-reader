@@ -33,7 +33,8 @@ public:
 		y = yy;
 	}
 
-	void draw(bool clearBeforeDraw, bool updateScreen, bool highlight = false);
+	void draw(bool clearBeforeDraw, bool mustUpdateScreen, bool highlight = false);
+	void updateScreen();
 
 	void setEntry(Entry &e) {
 		_hasEntry = true;

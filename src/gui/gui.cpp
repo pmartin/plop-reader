@@ -44,14 +44,14 @@ void Gui::init()
 		ERROR("%s smallTitleFont is NULL", __PRETTY_FUNCTION__);
 	}
 
-	entryTitleFontSize = 32;
+	entryTitleFontSize = 34;
 	entryTitleFont = OpenFont("LiberationSans", entryTitleFontSize, 1);
 	if (entryTitleFont == NULL) {
 		ERROR("%s entryTitleFont is NULL", __PRETTY_FUNCTION__);
 	}
 
 	entryInfosFontSize = 24;
-	entryInfosFont = OpenFont("LiberationSans", entryInfosFontSize, 1);
+	entryInfosFont = OpenFont("LiberationMono", entryInfosFontSize, 1);
 	if (entryInfosFont == NULL) {
 		ERROR("%s entryInfosFont is NULL", __PRETTY_FUNCTION__);
 	}
@@ -65,15 +65,15 @@ void Gui::init()
 	screenWidth = ScreenWidth();
 	screenHeight = ScreenHeight();
 
-	exitButton.setCoordinates(5, 5, 55, 60);
+	exitButton.setCoordinates(5, 5+2, 55, 60+2);
 	exitButton.setFont(titleFont);
 	exitButton.setSymbol(ARROW_LEFT);
 
-	syncButton.setCoordinates(screenWidth-135, 5, 55, 60);
+	syncButton.setCoordinates(screenWidth-135, 5+2, 55, 60+2);
 	syncButton.setFont(titleFont);
 	syncButton.setSymbol(ARROW_UPDOWN);
 
-	menuButton.setCoordinates(screenWidth-60, 5, 55, 60);
+	menuButton.setCoordinates(screenWidth-60, 5+2, 55, 60+2);
 	menuButton.setFont(titleFont);
 	menuButton.setSymbol(SYMBOL_MENU);
 }
@@ -117,13 +117,13 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
 	}
 	DrawString(90, y, buffer);
-	y += 34;
+	y += 35;
 
 	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entries)", numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
-	y += 34;
+	y += 35;
 
-	y += 4;
+	y += 5;
 
 	DrawLine(0, y, screenWidth, y, BLACK);
 	DrawLine(0, y + 1, screenWidth, y +1, BLACK);
@@ -141,22 +141,27 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 		GuiListItemEntry item(entryTitleFont, entryInfosFont);
 
-		item.setCoordinates(0, y);
+		item.setCoordinates(0, y + i*114);
+
 		if (i < entries.size()) {
 			Entry entry = entries.at(i);
 			item.setEntry(entry);
 		}
-
 		entriesItems[i] = item;
 
-		y += item.getHeight();
+		item.draw(false, false, false);
+
+		if (i < entriesItems.size()-1 && i < entries.size()) {
+			// Draw separator at the bottom of the entry, except for the last one (the status bar has its own separator at the top)
+			const int heightSeparator = 2;
+			const int ySeparator = y + i*item.getHeight() + item.getHeight()-heightSeparator;
+			DrawLine(0, ySeparator, screenWidth, ySeparator, LGRAY);
+			//PartialUpdate(0, ySeparator, screenWidth, heightSeparator);
+		}
+
+		item.updateScreen();
 	}
 
-
-	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
-		GuiListItemEntry item = entriesItems.at(i);
-		item.draw(false, true);
-	}
 
 	if (countAllEntries == 0) {
 		if (mode == 1) {
@@ -452,11 +457,13 @@ void Gui::statusBarText(const char *format, va_list args)
 	char buffer[2048];
 	vsnprintf(buffer, sizeof(buffer), format, args);
 
-	FillArea(0, screenHeight - 32, screenWidth, 32, WHITE);
+	FillArea(0, screenHeight - 33, screenWidth, 33, WHITE);
+	DrawLine(0, screenHeight - 34, screenWidth, screenHeight - 34, BLACK);
 
 	SetFont(statusBarFont, DGRAY);
 	DrawString(0, screenHeight - 34, buffer);
-	PartialUpdate(0, screenHeight - 32, screenWidth, 32);
+
+	PartialUpdate(0, screenHeight - 35, screenWidth, 35);
 }
 
 void Gui::statusBarText(const char *format...)

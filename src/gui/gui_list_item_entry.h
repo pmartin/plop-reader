@@ -33,7 +33,8 @@ public:
 		y = yy;
 	}
 
-	void draw(bool clearBeforeDraw, bool updateScreen, bool highlight = false);
+	void draw(bool clearBeforeDraw, bool mustUpdateScreen, bool highlight = false);
+	void updateScreen();
 
 	void setEntry(Entry &e) {
 		_hasEntry = true;
@@ -48,7 +49,9 @@ public:
 		return _hasEntry;
 	}
 
-	int getHeight();
+	int getHeight() {
+		return 114;
+	}
 
 	bool hit(int xx, int yy) {
 		return xx >= x

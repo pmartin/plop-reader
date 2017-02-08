@@ -1,12 +1,7 @@
 #include "gui_list_item_entry.h"
 
 
-int GuiListItemEntry::getHeight() {
-	//return titleFont->height + infosFont->height*2 + 2;
-	return 115;
-}
-
-void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highlight)
+void GuiListItemEntry::draw(bool clearBeforeDraw, bool mustUpdateScreen, bool highlight)
 {
 	char buffer[2048];
 	int yy = y;
@@ -17,11 +12,11 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highli
 	}
 
 	if (highlight) {
-		FillArea(x, initialY, screenWidth, getHeight(), LGRAY);
+		FillArea(x, initialY - 1, screenWidth, getHeight(), LGRAY);
 	}
 
 	if (_hasEntry == false) {
-		if (updateScreen) {
+		if (mustUpdateScreen) {
 			PartialUpdate(x, initialY, screenWidth, getHeight());
 		}
 		return;
@@ -43,11 +38,13 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highli
 	DrawString(90, yy, buffer);
 	yy += infosFont->height;
 
-	DrawLine(0, yy, screenWidth, yy, LGRAY);
-	yy += 2;
-
-	if (updateScreen) {
-		PartialUpdate(x, initialY, screenWidth, getHeight());
+	if (mustUpdateScreen) {
+		updateScreen();
 	}
+}
+
+void GuiListItemEntry::updateScreen()
+{
+	PartialUpdate(x, y, screenWidth, getHeight()-1);
 }
 

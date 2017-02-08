@@ -44,14 +44,14 @@ void Gui::init()
 		ERROR("%s smallTitleFont is NULL", __PRETTY_FUNCTION__);
 	}
 
-	entryTitleFontSize = 32;
+	entryTitleFontSize = 34;
 	entryTitleFont = OpenFont("LiberationSans", entryTitleFontSize, 1);
 	if (entryTitleFont == NULL) {
 		ERROR("%s entryTitleFont is NULL", __PRETTY_FUNCTION__);
 	}
 
 	entryInfosFontSize = 24;
-	entryInfosFont = OpenFont("LiberationSans", entryInfosFontSize, 1);
+	entryInfosFont = OpenFont("LiberationMono", entryInfosFontSize, 1);
 	if (entryInfosFont == NULL) {
 		ERROR("%s entryInfosFont is NULL", __PRETTY_FUNCTION__);
 	}

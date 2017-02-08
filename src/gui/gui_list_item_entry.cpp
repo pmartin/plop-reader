@@ -38,9 +38,6 @@ void GuiListItemEntry::draw(bool clearBeforeDraw, bool updateScreen, bool highli
 	DrawString(90, yy, buffer);
 	yy += infosFont->height;
 
-	DrawLine(0, yy, screenWidth, yy, LGRAY);
-	yy += 2;
-
 	if (updateScreen) {
 		PartialUpdate(x, initialY, screenWidth, getHeight());
 	}

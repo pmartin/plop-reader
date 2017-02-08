@@ -141,22 +141,25 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 		GuiListItemEntry item(entryTitleFont, entryInfosFont);
 
-		item.setCoordinates(0, y);
+		item.setCoordinates(0, y + i*114);
+
 		if (i < entries.size()) {
 			Entry entry = entries.at(i);
 			item.setEntry(entry);
 		}
-
 		entriesItems[i] = item;
 
-		y += item.getHeight();
+		item.draw(false, true, false);
+
+		if (i < entriesItems.size()-1) {
+			// Draw separator at the bottom of the entry, except for the last one (the status bar has its own separator at the top)
+			const int heightSeparator = 2;
+			const int ySeparator = y + i*item.getHeight() + item.getHeight()-heightSeparator;
+			DrawLine(0, ySeparator, screenWidth, ySeparator, LGRAY);
+			PartialUpdate(0, ySeparator, screenWidth, heightSeparator);
+		}
 	}
 
-
-	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
-		GuiListItemEntry item = entriesItems.at(i);
-		item.draw(false, true);
-	}
 
 	if (countAllEntries == 0) {
 		if (mode == 1) {

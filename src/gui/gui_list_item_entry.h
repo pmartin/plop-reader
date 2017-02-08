@@ -49,7 +49,7 @@ public:
 		return _hasEntry;
 	}
 
-	int getHeight() {
+	static int getHeight() {
 		return 114;
 	}
 

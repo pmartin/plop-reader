@@ -7,6 +7,7 @@
 
 
 #include "../entities/entry.h"
+#include "../defines.h"
 
 
 class GuiListItemEntry

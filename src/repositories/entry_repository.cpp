@@ -21,6 +21,7 @@ insert into entries (
 	remote_created_at, remote_updated_at,
 	local_created_at, local_updated_at,
 	reading_time, preview_picture_url,
+    preview_picture_type, preview_picture_path,
     local_content_file_html, local_content_file_epub,
     is_empty
 )
@@ -32,6 +33,7 @@ values (
 	:remote_created_at, :remote_updated_at,
 	:local_created_at, :local_updated_at,
 	:reading_time, :preview_picture_url,
+    :preview_picture_type, :preview_picture_path,
     :local_content_file_html, :local_content_file_epub,
     :is_empty
 )
@@ -54,6 +56,8 @@ set
     local_updated_at = :local_updated_at,
 	reading_time = :reading_time, 
     preview_picture_url = :preview_picture_url,
+    preview_picture_type = :preview_picture_type,
+    preview_picture_path = :preview_picture_path,
     local_content_file_html = :local_content_file_html, 
     local_content_file_epub = :local_content_file_epub,
     is_empty = :is_empty
@@ -146,6 +150,24 @@ where
 	else {
 		if (sqlite3_bind_null(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_url")) != SQLITE_OK) {
 			//snprintf(buffer, sizeof(buffer), "Fail binding preview_picture_url : %s", sqlite3_errmsg(this->db.getDb()));
+			//log_message(buffer);
+		}
+	}
+
+	if (sqlite3_bind_int(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_type"), entry.preview_picture_type) != SQLITE_OK) {
+		//snprintf(buffer, sizeof(buffer), "Fail binding preview_picture_type : %s", sqlite3_errmsg(this->db.getDb()));
+		//log_message(buffer);
+	}
+
+	if (entry.preview_picture_path.length() > 0) {
+		if (sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_path"), entry.preview_picture_path.c_str(), entry.preview_picture_path.length(), SQLITE_STATIC) != SQLITE_OK) {
+			//snprintf(buffer, sizeof(buffer), "Fail binding preview_picture_path : %s", sqlite3_errmsg(this->db.getDb()));
+			//log_message(buffer);
+		}
+	}
+	else {
+		if (sqlite3_bind_null(stmt, sqlite3_bind_parameter_index(stmt, ":preview_picture_path")) != SQLITE_OK) {
+			//snprintf(buffer, sizeof(buffer), "Fail binding preview_picture_path : %s", sqlite3_errmsg(this->db.getDb()));
 			//log_message(buffer);
 		}
 	}

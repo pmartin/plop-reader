@@ -40,6 +40,8 @@ public:
 
 	void fetchServerVersion(gui_update_progressbar progressbarUpdater);
 
+	void downloadImage(EntryRepository &repository, Entry &entry);
+
 private:
 	void syncOneEntryToServer(EntryRepository repository, Entry &entry);
 	static size_t _curlWriteCallback(char *ptr, size_t size, size_t nmemb, void *userdata);

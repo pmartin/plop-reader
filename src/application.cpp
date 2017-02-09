@@ -440,6 +440,21 @@ void Application::deleteAllLocalData()
 		iv_rmdir(PLOP_ENTRIES_CONTENT_DIRECTORY);
 	}
 
+	// Delete all images (entries thumbnails)
+	dir = iv_opendir(PLOP_ENTRIES_IMAGES_DIRECTORY);
+	if (dir) {
+		while ((entry = iv_readdir(dir))) {
+			if (iv_strcmp(entry->d_name, ".") == 0 || iv_strcmp(entry->d_name, "..") == 0) {
+				continue;
+			}
+			DEBUG("Delete: %s", entry->d_name);
+			iv_unlink(entry->d_name);
+		}
+		iv_closedir(dir);
+
+		iv_rmdir(PLOP_ENTRIES_IMAGES_DIRECTORY);
+	}
+
 	app.show();
 }
 

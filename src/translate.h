@@ -1,7 +1,12 @@
 #ifndef SRC_TRANSLATE_H_
 #define SRC_TRANSLATE_H_
 
-#define IS_LANG_FR (true)
+#define LANG_EN 0
+#define LANG_FR 1
+
+extern int global_lang;
+
+#define IS_LANG_FR (global_lang == LANG_FR)
 
 #define LBL_HEADER_UNREAD_ENTRIES (IS_LANG_FR \
 	? "entrées non lues" \

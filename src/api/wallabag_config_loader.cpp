@@ -110,6 +110,12 @@ WallabagConfig WallabagConfigLoader::load(void)
 
 	config.force_download_epub = json_object_get_boolean(json_object_object_get(obj, "force_download_epub"));
 
+	// TODO the language config should not be in "wallabag config" (but, for now, the config.json file is parsed here... )
+	const char *lang = json_object_get_string(json_object_object_get(obj, "lang"));
+	if (lang && strcmp(lang, "fr") == 0) {
+		global_lang = LANG_FR;
+	}
+
 	if (
 		(url == NULL || strlen(url) == 0)
 		|| (client_id == NULL || strlen(client_id) == 0)

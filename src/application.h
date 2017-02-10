@@ -62,7 +62,7 @@ public:
 
 	void handleActionOnReadEntry(int entryId);
 
-	void setMode(int m);
+	void setMode(int m, int forcePageNum = -1);
 
 	Gui &getGui() {
 		return gui;
@@ -94,6 +94,8 @@ private:
 	int countEntriesForCurrentMode();
 	void listEntriesForCurrentMode(std::vector<Entry> &entries);
 
+	void saveModeAndPage();
+	void restoreModeAndPage();
 };
 
 

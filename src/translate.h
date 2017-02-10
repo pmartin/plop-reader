@@ -163,4 +163,64 @@
 	: "Loading reader app for entry#%1$d (%3$s) - %2$s..." \
 )
 
+#define LBL_AFTERREAD_ACTIONONENTRY_WHAT_TO_DO_WITH_ENTRY_CONTENT (IS_LANG_FR \
+	? "Que voulez-vous faire de #%d?\n%.128s?" \
+	: "What do you want to do with entry #%d?\n%.128s?" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_WHAT_TO_DO_WITH_ENTRY_TITLE (IS_LANG_FR \
+	? "Et maintenant ?" \
+	: "What now with this entry?" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_ARCHIVE (IS_LANG_FR \
+	? "Archiver" \
+	: "Archive" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_ARCHIVE_STAR (IS_LANG_FR \
+	? "Archiver + Étoiler" \
+	: "Archive + Star" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_ARCHIVE_UNSTAR (IS_LANG_FR \
+	? "Archiver + Dés-étoiler" \
+	: "Archive + Un-star" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_UNARCHIVE (IS_LANG_FR \
+	? "Dés-archiver" \
+	: "Un-archive" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_UNARCHIVE_STAR (IS_LANG_FR \
+	? "Dés-archiver + Étoiler" \
+	: "Un-archive + Star" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_UNARCHIVE_UNSTAR (IS_LANG_FR \
+	? "Dés-archiver + Dés-étoiler" \
+	: "Un-archive + Un-star" \
+)
+
+#define LBL_AFTERREAD_ACTIONONENTRY_BUTTON_DONOTHING (IS_LANG_FR \
+	? "Ne rien faire" \
+	: "Do nothing" \
+)
+
+#define LBL_STATUSBAR_AFTERREAD_THANKS_READ_ANOTHER (IS_LANG_FR \
+	? "Merci ! Vous pouvez maintenant lire une autre entrée ;-)" \
+	: "Thanks! You can read another entry, now ;-)" \
+)
+
+#define LBL_STATUSBAR_AFTERREAD_CHANGE_SENT_ON_NEXT_SYNC (IS_LANG_FR \
+	? "Ce changement sera envoyé au serveur à la prochaine synchronisation." \
+	: "This change will be sent to the server next time you synchronize." \
+)
+
+#define LBL_STATUSBAR_AFTERREAD_WHAT_TO_DO_WITH_ENTRY (IS_LANG_FR \
+	? "Choisissez quoi faire de l'entrée que vous venez de lire..." \
+	: "Choose what to do with the entry you've just read..." \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

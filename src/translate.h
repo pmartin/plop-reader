@@ -43,4 +43,29 @@
 	: "Use [<] and [>] keys to navigate. Touch an entry to read it." \
 )
 
+#define LBL_MAINMENU_MODE_UNREAD_ENTRIES (IS_LANG_FR \
+	? "Afficher les entrées non lues" \
+	: "Display unread entries" \
+)
+
+#define LBL_MAINMENU_MODE_ARCHIVED_ENTRIES (IS_LANG_FR \
+	? "Afficher les entrées archivées" \
+	: "Display archived entries" \
+)
+
+#define LBL_MAINMENU_MODE_STARRED_ENTRIES (IS_LANG_FR \
+	? "Afficher les entrées étoilées" \
+	: "Display starred entries" \
+)
+
+#define LBL_MAINMENU_DELETE_ALL_LOCAL_DATA (IS_LANG_FR \
+	? "Supprimer toutes les données locales" \
+	: "Delete all local data" \
+)
+
+#define LBL_MAINMENU_ABOUT (IS_LANG_FR \
+	? "À propos" \
+	: "About" \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

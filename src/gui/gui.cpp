@@ -217,11 +217,11 @@ void Gui::displayMainMenu()
 	DEBUG("Opening main menu");
 
 	const char *str0 = PLOP_APPLICATION_FULLNAME;
-	const char *str1 = "Display unread entries";
-	const char *str2 = "Display archived entries";
-	const char *str3 = "Display starred entries";
-	const char *str_reset = "Delete all local data";
-	const char *str4 = "About";
+	const char *str1 = LBL_MAINMENU_MODE_UNREAD_ENTRIES;
+	const char *str2 = LBL_MAINMENU_MODE_ARCHIVED_ENTRIES;
+	const char *str3 = LBL_MAINMENU_MODE_STARRED_ENTRIES;
+	const char *str_reset = LBL_MAINMENU_DELETE_ALL_LOCAL_DATA;
+	const char *str4 = LBL_MAINMENU_ABOUT;
 
 	menu = (imenu *)calloc(7, sizeof(imenu));
 

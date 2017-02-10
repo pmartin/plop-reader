@@ -73,4 +73,24 @@
 	: "Choose an action in the menu, or close it..." \
 )
 
+#define LBL_ABOUT_MAIN_DESCRIPTION (IS_LANG_FR \
+	? "Une application Wallabag pour liseuses Pocketbook Touch Lux." \
+	: "A Wallabag application for Pocketbook Touch Lux ereaders." \
+)
+
+#define LBL_ABOUT_DEVELOPED_BY_PM (IS_LANG_FR \
+	? "Développé par Pascal MARTIN." \
+	: "Developed by Pascal MARTIN." \
+)
+
+#define LBL_ABOUT_CONTRIBUTE (IS_LANG_FR \
+	? "Contribuer (GPL-3.0) :" \
+	: "Contribute (GPL-3.0):" \
+)
+
+#define LBL_STATUSBAR_FEEL_FREE_TO_CONTRIBUTE (IS_LANG_FR \
+	? "N'hésitez pas à contribuer sur %s ;-)" \
+	: "Feel free to contribute on %s ;-)" \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

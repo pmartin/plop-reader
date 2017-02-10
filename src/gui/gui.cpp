@@ -273,17 +273,25 @@ void Gui::displayMainMenu()
 			const char *text = PLOP_APPLICATION_FULLNAME " " PLOP_VERSION_STR "\n"
 					PLOP_WEBSITE_URL "\n"
 					"\n"
-					"A Wallabag application for Pocketbook Touch Lux ereaders." "\n"
+					"%1$s\n"
 					"\n"
-					"Developed by Pascal MARTIN.\n"
+					"%2$s\n"
 					"@pascal_martin\n"
 					"https://blog.pascal-martin.fr\n"
 					"\n"
-					"Contribute (GPL-3.0):" "\n"
+					"%3$s\n"
 					PLOP_OPENSOURCE_URL;
-			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, text, "OK", NULL, NULL);
 
-			app.getGui().statusBarText("Feel free to contribute on %s ;-)", PLOP_OPENSOURCE_URL);
+			char buffer[2048];
+			snprintf(buffer, sizeof(buffer), text,
+				LBL_ABOUT_MAIN_DESCRIPTION,
+				LBL_ABOUT_DEVELOPED_BY_PM,
+				LBL_ABOUT_CONTRIBUTE
+			);
+
+			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, buffer, "OK", NULL, NULL);
+
+			app.getGui().statusBarText(LBL_STATUSBAR_FEEL_FREE_TO_CONTRIBUTE, PLOP_OPENSOURCE_URL);
 
 			DEBUG("Opening About dialog - closed");
 		}

@@ -13,6 +13,7 @@
 #include "gui_button.h"
 #include "gui_list_item_entry.h"
 
+#include "../translate.h"
 
 class Application;
 extern Application app;

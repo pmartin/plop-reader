@@ -105,13 +105,13 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	SetFont(smallTitleFont, BLACK);
 
 	if (mode == 1) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - unread entries");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_UNREAD_ENTRIES);
 	}
 	else if (mode == 2) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - archived entries");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_ARCHIVED_ENTRIES);
 	}
 	else if (mode == 3) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - starred entries");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_STARRED_ENTRIES);
 	}
 	else {
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
@@ -119,7 +119,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	DrawString(90, y, buffer);
 	y += 35;
 
-	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entries)", numPage, numberOfPages, countAllEntries);
+	snprintf(buffer, sizeof(buffer), LBL_HEADER_PAGE_NUM, numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
 	y += 35;
 
@@ -170,17 +170,17 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 	if (countAllEntries == 0) {
 		if (mode == 1) {
-			statusBarText("You don't have any unread entries. Use [SYNC] to fetch some from the server.");
+			statusBarText(LBL_STATUSBAR_NO_UNREAD_ENTRIES_USE_SYNC);
 		}
 		else if (mode == 2) {
-			statusBarText("You don't have any archived entries. Use [MENU] to view unread entries.");
+			statusBarText(LBL_STATUSBAR_NO_ARCHIVED_ENTRIES_USE_MENU);
 		}
 		else if (mode == 3) {
-			statusBarText("You don't have any starred entries. Use [MENU] to view unread entries.");
+			statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
 		}
 	}
 	else {
-		statusBarText("Use [<] and [>] keys to navigate. Touch an entry to read it.");
+		statusBarText(LBL_STATUSBAR_USE_KEYS_OR_TOUCH);
 	}
 
 	//FullUpdateHQ();

@@ -323,17 +323,17 @@ void Gui::displayMainMenu()
 void Gui::touchEndEvent(int x, int y)
 {
 	if (exitButton.hit(x, y)) {
-		statusBarText("Closing the application. Bye, see you soon ;-)");
+		statusBarText(LBL_STATUSBAR_CLOSING_APPLICATION_BYE);
 
 		CloseApp();
 	}
 	else if (syncButton.hit(x, y)) {
-		statusBarText("Launching synchronization with server...");
+		statusBarText(LBL_STATUSBAR_LAUNCHING_SYNC);
 
 		app.loadRecentArticles();
 	}
 	else if (menuButton.hit(x, y)) {
-		statusBarText("Opening the application's main menu...");
+		statusBarText(LBL_STATUSBAR_OPENING_MAIN_MENU);
 
 		displayMainMenu();
 	}
@@ -344,7 +344,7 @@ void Gui::touchEndEvent(int x, int y)
 				if (item.hasEntry()) {
 					item.draw(false, true, true);
 
-					statusBarText("Loading reader app for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
+					statusBarText(LBL_STATUSBAR_LOADING_READER_FOR_ENTRY, item.getEntry().id, item.getEntry().title.c_str());
 
 					app.read(item.getEntry());
 				}

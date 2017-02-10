@@ -123,4 +123,24 @@
 	: "Local data has been left untouched." \
 )
 
+#define LBL_STATUSBAR_CLOSING_APPLICATION_BYE (IS_LANG_FR \
+	? "Fermeture de l'application. À bientôt ;-)" \
+	: "Closing the application. Bye, see you soon ;-)" \
+)
+
+#define LBL_STATUSBAR_LAUNCHING_SYNC (IS_LANG_FR \
+	? "Lancement de la synchronisation avec le serveur..." \
+	: "Launching synchronization with server..." \
+)
+
+#define LBL_STATUSBAR_OPENING_MAIN_MENU (IS_LANG_FR \
+	? "Ouverture du menu principal de l'application..." \
+	: "Opening the application's main menu..." \
+)
+
+#define LBL_STATUSBAR_LOADING_READER_FOR_ENTRY (IS_LANG_FR \
+	? "Chargement de l'appli de lecture pour #%1$d - %2$s..." \
+	: "Loading reader app for entry#%1$d - %2$s..." \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

@@ -370,7 +370,7 @@ void Gui::touchLong(int x, int y)
 			if (item.hasEntry()) {
 				item.draw(false, true, true);
 
-				statusBarText("Opening context menu for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
+				statusBarText(LBL_STATUSBAR_OPENING_CONTEXTMENU_FOR_ENTRY, item.getEntry().id, item.getEntry().title.c_str());
 
 				displayContextMenuOnEntry(item, x, y);
 			}

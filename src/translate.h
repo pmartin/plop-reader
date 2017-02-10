@@ -143,4 +143,9 @@
 	: "Loading reader app for entry#%1$d - %2$s..." \
 )
 
+#define LBL_STATUSBAR_OPENING_CONTEXTMENU_FOR_ENTRY (IS_LANG_FR \
+	? "Ouverture du menu contextuel pour #%1$d - %2$s..." \
+	: "Opening context menu for entry#%1$d - %2$s..." \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

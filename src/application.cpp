@@ -116,6 +116,9 @@ void Application::loadRecentArticles()
 
 	INFO("End of synchronization process");
 
+	// Syncing changes the number of entries (it can add or remove entries in each mode) => go back to page one
+	pageNum = 1;
+
 	show();
 }
 

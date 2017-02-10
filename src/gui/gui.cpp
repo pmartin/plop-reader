@@ -302,7 +302,7 @@ void Gui::displayMainMenu()
 		}
 	};
 
-	statusBarText("Choose an action in the menu, or close it...");
+	statusBarText(LBL_STATUSBAR_MAINMENU);
 
 	SetMenuFont(entryTitleFont);
 	irect rect = GetMenuRect(menu);

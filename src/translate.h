@@ -68,4 +68,9 @@
 	: "About" \
 )
 
+#define LBL_STATUSBAR_MAINMENU (IS_LANG_FR \
+	? "Choisissez une action dans le menu, ou fermez-le..." \
+	: "Choose an action in the menu, or close it..." \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

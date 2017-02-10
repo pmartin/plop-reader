@@ -93,4 +93,34 @@
 	: "Feel free to contribute on %s ;-)" \
 )
 
+#define LBL_DELETEALL_DIALOG_TITLE (IS_LANG_FR \
+	? "Supprimer toutes les données locales ?" \
+	: "Delete all local data?" \
+)
+
+#define LBL_DELETEALL_DIALOG_CONTENT (IS_LANG_FR \
+	? "Voulez-vous vraiment supprimer toutes les données locales ?\nVous devrez synchroniser depuis le serveur pour obtenir de nouvelles données.\nLes données modifiées localement et non synchronisées vers le serveur seront perdues.." \
+	: "Do you really want to delete all local data?\nYou will need to sync from server to fetch new data.\nData updated locally and not already synced to server will be lost." \
+)
+
+#define LBL_DELETEALL_DIALOG_BTN_OK (IS_LANG_FR \
+	? "Supprimer les données" \
+	: "Delete local data" \
+)
+
+#define LBL_DELETEALL_DIALOG_BTN_CANCEL (IS_LANG_FR \
+	? "Annuler" \
+	: "Cancel" \
+)
+
+#define LBL_STATUSBAR_DELETEALL_DONE (IS_LANG_FR \
+	? "Données locales supprimées. Lance une synchro pour obtenir des données depuis le serveur ;-)" \
+	: "Local data deleted. You should now run a sync to fetch data from server ;-)" \
+)
+
+#define LBL_STATUSBAR_DELETEALL_CANCELED (IS_LANG_FR \
+	? "Données locales non modifiées." \
+	: "Local data has been left untouched." \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

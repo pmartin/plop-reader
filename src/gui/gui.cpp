@@ -296,16 +296,16 @@ void Gui::displayMainMenu()
 			DEBUG("Opening About dialog - closed");
 		}
 		else if (index == 5) {
-			int result = DialogSynchro(ICON_QUESTION, "Delete all local data?", "Do you really want to delete all local data?\nYou will need to sync from server to fetch new data.\nData updated locally and not already synced to server will be lost.", "Delete local data", "Cancel", NULL);
+			int result = DialogSynchro(ICON_QUESTION, LBL_DELETEALL_DIALOG_TITLE, LBL_DELETEALL_DIALOG_CONTENT, LBL_DELETEALL_DIALOG_BTN_OK, LBL_DELETEALL_DIALOG_BTN_CANCEL, NULL);
 			if (result == 1) {
 				DEBUG("Deleting all local data...");
 				app.deleteAllLocalData();
 				DEBUG("Deleting all local data: done");
 
-				app.getGui().statusBarText("Local data deleted. You should now run a sync to fetch data from server ;-)");
+				app.getGui().statusBarText(LBL_STATUSBAR_DELETEALL_DONE);
 			}
 			else if (result == 2) {
-				app.getGui().statusBarText("Local data has been left untouched.");
+				app.getGui().statusBarText(LBL_STATUSBAR_DELETEALL_CANCELED);
 			}
 		}
 	};

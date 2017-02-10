@@ -290,6 +290,9 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 					entry = repository.findByRemoteId(atoi(entry.remote_id.c_str()));
 					enqueueEpubDownload(repository, entry, epubDownloadQueueRepository, progressbarUpdater, percentage);
 				}
+
+				// For now, thumbnail is only downloaded when the entry is fetched from the server for the first time
+				downloadImage(repository, entry);
 			}
 
 			if (i >= nextIncrement) {
@@ -727,6 +730,113 @@ void WallabagApi::fetchServerVersion(gui_update_progressbar progressbarUpdater)
 	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure);
 
 	DEBUG("API: fetchServerVersion(): done");
+}
+
+
+
+void WallabagApi::downloadImage(EntryRepository &repository, Entry &entry)
+{
+	if (entry.preview_picture_url == "") {
+		return;
+	}
+	const char *url = entry.preview_picture_url.c_str();
+
+	// In case the storage directory didn't already exist
+	iv_mkdir(PLOP_ENTRIES_IMAGES_DIRECTORY, 0777);
+
+	char tmp_filepath[1024];
+	snprintf(tmp_filepath, sizeof(tmp_filepath), PLOP_ENTRIES_IMAGES_DIRECTORY "/tmp-preview-image-%d.img", entry.id);
+	FILE *tmpDestinationFile = iv_fopen(tmp_filepath, "wb");
+
+	auto getUrl = [this, &entry] (CURL *curl) -> char * {
+		return (char *)strdup(entry.preview_picture_url.c_str());
+	};
+
+	auto getMethod = [this] (CURL *curl) -> char * {
+		return (char *)strdup("GET");
+	};
+
+	auto getData = [this] (CURL *curl) -> char * {
+		return NULL;
+	};
+
+	auto beforeRequest = [] (void) -> void {};
+
+	auto afterRequest = [] (void) -> void {};
+
+	auto onSuccess = [&] (CURLcode res, char *data) -> void {
+		DEBUG("API: downloadImage(): response fetched from server");
+
+		// The temporary file should be complete => close it, se we can work with it.
+		iv_fclose(tmpDestinationFile);
+
+		// Let's check if the temporary file seems OK, before actually using it ;-)
+		struct stat st;
+		int statResult = iv_stat(tmp_filepath, &st);
+		if (statResult != 0 || st.st_size <= 0) {
+			DEBUG("Temporary IMG file %s for entry %d / %s doesn't seem OK: stat=%d and size=%ld => we cannot use it",
+					tmp_filepath, entry.id, entry.remote_id.c_str(), statResult, st.st_size);
+			iv_unlink(tmp_filepath);
+			return;
+		}
+
+		char filepath[1024];
+
+		int thumbnailWidth = PLOP_THUMBNAIL_MAX_WIDTH;
+		int thumbnailHeight = GuiListItemEntry::getHeight() - 4;
+		ibitmap *img = NULL;
+		if (entry.preview_picture_url.compare(entry.preview_picture_url.size() - 4, 4, ".png") == 0) {
+			DEBUG("Loading PNG from %s", tmp_filepath);
+			int proportional = 1;
+			int dither = 1;
+			img = LoadPNGStretch(tmp_filepath, thumbnailWidth, thumbnailHeight, proportional, dither);
+		}
+		else if (
+			entry.preview_picture_url.compare(entry.preview_picture_url.size() - 5, 5, ".jpeg") == 0
+			|| entry.preview_picture_url.compare(entry.preview_picture_url.size() - 4, 4, ".jpg") == 0
+		) {
+			DEBUG("Loading JPG from %s", tmp_filepath);
+			int br = 100; // background color ? 100 seems to be white
+			int co = 100; // compression qualitu ? 100 seems to be high quality, while 1 is low quality
+			int proportional = 1;
+			img = LoadJPEG(tmp_filepath, thumbnailWidth, thumbnailHeight, br, co, proportional);
+		} else {
+			// We can only deal with JPEG/PNG images... so nothing we can do, here
+		}
+
+		if (img != NULL) {
+			snprintf(filepath, sizeof(filepath), PLOP_ENTRIES_IMAGES_DIRECTORY "/preview-image-%d.png", entry.id);
+
+			DEBUG("Saving thumbnail to %s ; width=%d height=%d depth=%d scanline=%d", filepath, img->width, img->height, img->depth, img->scanline);
+			int saveResult = SavePNG(filepath, img);
+			free(img);
+
+			// Update the entry so it references the image file
+			DEBUG("Updating entry %d; setting preview image path to %s from %s", entry.id, filepath, entry.preview_picture_url.c_str());
+			entry.preview_picture_path = filepath;
+			entry.preview_picture_type = 1;
+			repository.persist(entry);
+		}
+
+		// Delete the full-size downloaded image: we only need the thumbnail we just generated
+		iv_unlink(tmp_filepath);
+
+	};
+
+	auto onFailure = [this, &tmpDestinationFile, tmp_filepath] (CURLcode res, long response_code, CURL *curl) -> void {
+		ERROR("API: downloadImage(): failure. HTTP response code = %ld", response_code);
+
+		iv_fclose(tmpDestinationFile);
+
+		// We remove the temporary file, as it's useless and we don't want to pollute the device with temporary files ;-)
+		iv_unlink(tmp_filepath);
+
+		// This doesn't abort sync !
+	};
+
+	doHttpRequest(getUrl, getMethod, getData, beforeRequest, afterRequest, onSuccess, onFailure, tmpDestinationFile);
+
+	DEBUG("API: downloadImage(): Downloading IMG for entry %d / %s: done", entry.id, entry.remote_id.c_str());
 }
 
 

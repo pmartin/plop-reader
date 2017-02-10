@@ -2,6 +2,21 @@
 #include "log.h"
 
 
+#include <string>
+#include <sstream>
+
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
+
+
 void Application::init()
 {
 	DEBUG("Initializing the application")
@@ -20,6 +35,8 @@ void Application::init()
 	gui.init();
 
 	curl_global_init(CURL_GLOBAL_ALL);
+
+	restoreModeAndPage();
 }
 
 
@@ -99,14 +116,17 @@ void Application::loadRecentArticles()
 
 	INFO("End of synchronization process");
 
+	// Syncing changes the number of entries (it can add or remove entries in each mode) => go back to page one
+	pageNum = 1;
+
 	show();
 }
 
 
-void Application::setMode(int m)
+void Application::setMode(int m, int forcePageNum)
 {
 	mode = (entries_mode)m;
-	pageNum = 1;
+	pageNum = forcePageNum > 0 ? forcePageNum : 1;
 
 	DEBUG("Switching to mode %d", mode);
 	gui.setMode(mode);
@@ -125,6 +145,8 @@ void Application::show()
 
 	DEBUG("Showing entries: page:%d/%d (total:%d)", pageNum, numberOfPages, countEntries);
 	gui.show(pageNum, numberOfPages, countEntries, entries);
+
+	saveModeAndPage();
 }
 
 
@@ -456,5 +478,26 @@ void Application::deleteAllLocalData()
 	}
 
 	app.show();
+}
+
+
+void Application::restoreModeAndPage()
+{
+	Internal valPageNum = db.selectInternal("gui.pageNum");
+	Internal valMode = db.selectInternal("gui.mode");
+	if (!valPageNum.isNull && !valMode.isNull) {
+		int _pageNum = strtol(valPageNum.value.c_str(), 0, 10);
+		int _mode = strtol(valMode.value.c_str(), 0, 10);
+		if (_pageNum != 0 && _mode != 0) {
+			setMode(_mode, _pageNum);
+		}
+	}
+}
+
+
+void Application::saveModeAndPage()
+{
+	getDb().saveInternal("gui.pageNum", patch::to_string(pageNum));
+	getDb().saveInternal("gui.mode", patch::to_string(mode));
 }
 

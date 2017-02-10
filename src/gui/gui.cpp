@@ -388,11 +388,11 @@ static void contextEntryOnMenuHandler(int index)
 	CloseContextMenu(contextMenu);
 
 	if (index == 1) {
-		app.getGui().statusBarText("Loading reader app for entry#%d (HTML) - %s...", contextMenuEntry.id, contextMenuEntry.title.c_str());
+		app.getGui().statusBarText(LBL_STATUSBAR_OPENING_READERAPP_FOR_ENTRY_FORMAT, contextMenuEntry.id, contextMenuEntry.title.c_str(), "HTML");
 		app.read(contextMenuEntry, Application::FORMAT_HTML);
 	}
 	else if (index == 2) {
-		app.getGui().statusBarText("Loading reader app for entry#%d (EPUB) - %s...", contextMenuEntry.id, contextMenuEntry.title.c_str());
+		app.getGui().statusBarText(LBL_STATUSBAR_OPENING_READERAPP_FOR_ENTRY_FORMAT, contextMenuEntry.id, contextMenuEntry.title.c_str(), "EPUB");
 		app.read(contextMenuEntry, Application::FORMAT_EPUB);
 	}
 
@@ -412,8 +412,8 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 	contextMenu = CreateContextMenu(id);
 
 	const char *str0 = entry.title.c_str();
-	const char *str1 = "Read HTML content";
-	const char *str2 = "Read EPUB version";
+	const char *str1 = LBL_ENTRY_CONTEXTMENU_READ_HTML;
+	const char *str2 = LBL_ENTRY_CONTEXTMENU_READ_EPUB;
 
 	menu = (imenu *)calloc(4, sizeof(imenu));
 

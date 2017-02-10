@@ -148,4 +148,19 @@
 	: "Opening context menu for entry#%1$d - %2$s..." \
 )
 
+#define LBL_ENTRY_CONTEXTMENU_READ_HTML (IS_LANG_FR \
+	? "Lire le contenu HTML" \
+	: "Read HTML content" \
+)
+
+#define LBL_ENTRY_CONTEXTMENU_READ_EPUB (IS_LANG_FR \
+	? "Lire la version EPUB" \
+	: "Read EPUB version" \
+)
+
+#define LBL_STATUSBAR_OPENING_READERAPP_FOR_ENTRY_FORMAT (IS_LANG_FR \
+	? "Chargement de l'appli de lecture pour #%1$d (%3$s) - %2$s..." \
+	: "Loading reader app for entry#%1$d (%3$s) - %2$s..." \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

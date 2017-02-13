@@ -15,6 +15,7 @@
 
 #include "../log.h"
 #include "../exceptions.h"
+#include "../translate.h"
 #include "../gui/gui.h"
 
 #include "../libs/thpool/thpool.h"

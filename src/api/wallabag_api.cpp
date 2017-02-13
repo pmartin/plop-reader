@@ -39,11 +39,11 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Creating OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+		progressbarUpdater(LBL_SYNC_OAUTH_CREATE_TOKEN, Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Creating OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
+		progressbarUpdater(LBL_SYNC_OAUTH_CREATE_TOKEN, Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
@@ -51,7 +51,7 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		json_object *json_token = json_tokener_parse_verbose(json_string, &error);
 		if (json_token == NULL) {
 			ERROR("Could not create OAuth token: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
-			throw SyncOAuthException(std::string("Could not create OAuth token: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+			throw SyncOAuthException(std::string(LBL_SYNC_OAUTH_ERROR_CREATE_TOKEN_INVALID_JSON) + std::string(json_tokener_error_desc(error)));
 		}
 
 		const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
@@ -67,11 +67,11 @@ void WallabagApi::createOAuthToken(gui_update_progressbar progressbarUpdater)
 		ERROR("API: createOAuthToken(): failure. HTTP response code = %ld", response_code);
 
 		std::ostringstream ss;
-		ss << "Could not create OAuth token: server returned a ";
+		ss << LBL_SYNC_OAUTH_ERROR_CREATE_TOKEN_STATUS_CODE;
 		ss << response_code;
-		ss << " status code.";
 		if (response_code == 401) {
-			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+			ss << "\n\n";
+			ss << LBL_SYNC_ERROR_HINT_SHOULD_SET_HTTP_BASIC;
 		}
 		throw SyncOAuthException(ss.str());
 	};
@@ -125,11 +125,11 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Refreshing OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
+		progressbarUpdater(LBL_SYNC_OUATH_REFRESH_TOKEN, Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Refreshing OAuth token", Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
+		progressbarUpdater(LBL_SYNC_OUATH_REFRESH_TOKEN, Gui::SYNC_PROGRESS_PERCENTAGE_OAUTH_END, NULL);
 	};
 
 	auto onSuccess = [this] (CURLcode res, char *json_string) -> void {
@@ -137,7 +137,7 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 		json_object *json_token = json_tokener_parse_verbose(json_string, &error);
 		if (json_token == NULL) {
 			ERROR("Could not refresh OAuth token: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
-			throw SyncOAuthException(std::string("Could not refresh OAuth token: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+			throw SyncOAuthException(std::string(LBL_SYNC_OAUTH_ERROR_REFRESH_TOKEN_INVALID_JSON) + std::string(json_tokener_error_desc(error)));
 		}
 
 		const char *access_token = json_object_get_string(json_object_object_get(json_token, "access_token"));
@@ -153,11 +153,11 @@ void WallabagApi::refreshOAuthToken(gui_update_progressbar progressbarUpdater)
 		ERROR("API: refreshOAuthToken(): failure. HTTP response code = %ld", response_code);
 
 		std::ostringstream ss;
-		ss << "Could not refresh OAuth token: server returned a ";
+		ss << LBL_SYNC_OAUTH_ERROR_REFRESH_TOKEN_STATUS_CODE;
 		ss << response_code;
-		ss << " status code.";
 		if (response_code == 401) {
-			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+			ss << "\n\n";
+			ss << LBL_SYNC_ERROR_HINT_SHOULD_SET_HTTP_BASIC;
 		}
 		throw SyncOAuthException(ss.str());
 	};
@@ -223,22 +223,22 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Fetching entries: HTTP request", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
+		progressbarUpdater(LBL_SYNC_FETCH_ENTRIES_HTTP_REQUEST, Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Fetching entries: HTTP request", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
+		progressbarUpdater(LBL_SYNC_FETCH_ENTRIES_HTTP_REQUEST, Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_HTTP_END, NULL);
 	};
 
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
 		DEBUG("API: loadRecentArticles(): response fetched from server");
-		progressbarUpdater("Saving entries to local database...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
+		progressbarUpdater(LBL_SYNC_SAVE_ENTRIES_TO_LOCAL_DB, Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_START, NULL);
 
 		json_tokener_error error;
 		json_object *obj = json_tokener_parse_verbose(json_string, &error);
 		if (obj == NULL) {
 			ERROR("Could not decode entries: server returned an invalid JSON string: %s", json_tokener_error_desc(error));
-			throw SyncInvalidJsonException(std::string("Could not decode entries: server returned an invalid JSON string: ") + std::string(json_tokener_error_desc(error)));
+			throw SyncInvalidJsonException(std::string(LBL_SYNC_ERROR_DECODE_ENTRIES_INVALID_JSON) + std::string(json_tokener_error_desc(error)));
 		}
 
 		array_list *items = json_object_get_array(json_object_object_get(json_object_object_get(obj, "_embedded"), "items"));
@@ -298,22 +298,22 @@ void WallabagApi::loadRecentArticles(EntryRepository repository, EpubDownloadQue
 			if (i >= nextIncrement) {
 				nextIncrement += incrementPercentageEvery;
 				percentage += 1;
-				progressbarUpdater("Saving entries to local database...", percentage, NULL);
+				progressbarUpdater(LBL_SYNC_SAVE_ENTRIES_TO_LOCAL_DB, percentage, NULL);
 			}
 		}
 
-		progressbarUpdater("Saving entries to local database...", Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
+		progressbarUpdater(LBL_SYNC_SAVE_ENTRIES_TO_LOCAL_DB, Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_SAVE_END, NULL);
 	};
 
 	auto onFailure = [this] (CURLcode res, long response_code, CURL *curl) -> void {
 		ERROR("API: loadRecentArticles(): failure. HTTP response code = %ld", response_code);
 
 		std::ostringstream ss;
-		ss << "Could not load entries from server: server returned a ";
+		ss << LBL_SYNC_FETCH_ENTRIES_ERROR_STATUS_CODE;
 		ss << response_code;
-		ss << " status code.";
 		if (response_code == 401) {
-			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+			ss << "\n\n";
+			ss << LBL_SYNC_ERROR_HINT_SHOULD_SET_HTTP_BASIC;
 		}
 		throw SyncHttpException(ss.str());
 	};
@@ -378,7 +378,7 @@ static void do_download_epub_from_queue(void *data)
 	float currentIncrement = incrementPerDownload * ((float)count_total_downloads - (float)count_remaining_downloads);
 	float percentage = (float)Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_START + currentIncrement;
 
-	(*_progressbarUpdater)("Downloading EPUB files...", percentage, NULL);
+	(*_progressbarUpdater)(LBL_SYNC_DOWNLOAD_EPUB_FILES, percentage, NULL);
 	pthread_mutex_unlock(&mutex_download_progress);
 
 	DEBUG("[background] <- Done downloading entry %d on thread %u", entry_id, (int)pthread_self());
@@ -390,7 +390,7 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 	DEBUG("-> Starting downloading EPUB files in the background");
 
 	int percent = Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_START;
-	progressbarUpdater("Downloading EPUB files...", percent, NULL);
+	progressbarUpdater(LBL_SYNC_DOWNLOAD_EPUB_FILES, percent, NULL);
 
 	// TODO actually download EPUB files in the background + save them + update the corresponding entries ;-)
 
@@ -441,7 +441,7 @@ void WallabagApi::startBackgroundDownloads(EntryRepository &repository, EpubDown
 	thpool_destroy(thpool);
 
 	percent = Gui::SYNC_PROGRESS_PERCENTAGE_DOWN_FILES_END;
-	progressbarUpdater("Downloading EPUB files: done.", percent, NULL);
+	progressbarUpdater(LBL_SYNC_DOWNLOAD_EPUB_FILES_DONE, percent, NULL);
 
 	pthread_mutex_destroy(&mutex_download_progress);
 
@@ -464,7 +464,7 @@ void WallabagApi::downloadEpub(EntryRepository &repository, Entry &entry, gui_up
 
 	if (percent > -1) {
 		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "Downloading EPUB for %d/%s...", entry.id, entry.remote_id.c_str());
+		snprintf(buffer, sizeof(buffer), LBL_SYNC_DOWNLOAD_EPUB_FILE_FOR_ENTRY, entry.id, entry.remote_id.c_str());
 		progressbarUpdater(buffer, percent, NULL);
 	}
 
@@ -553,7 +553,7 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 	// For each entry that's been updated more recently on the device than on the server,
 	// send updates (archived / starred statuses) to the server
 
-	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_START, NULL);
+	progressbarUpdater(LBL_SYNC_SEND_UPDATES_TO_SERVER, Gui::SYNC_PROGRESS_PERCENTAGE_UP_START, NULL);
 
 
 	std::vector<Entry> changedEntries;
@@ -581,11 +581,11 @@ void WallabagApi::syncEntriesToServer(EntryRepository repository, gui_update_pro
 		if (i >= nextIncrement) {
 			nextIncrement += incrementPercentageEvery;
 			percentage += 1;
-			progressbarUpdater("Sending updated statuses to server", percentage, NULL);
+			progressbarUpdater(LBL_SYNC_SEND_UPDATES_TO_SERVER, percentage, NULL);
 		}
 	}
 
-	progressbarUpdater("Sending updated statuses to server", Gui::SYNC_PROGRESS_PERCENTAGE_UP_END, NULL);
+	progressbarUpdater(LBL_SYNC_SEND_UPDATES_TO_SERVER, Gui::SYNC_PROGRESS_PERCENTAGE_UP_END, NULL);
 
 	DEBUG("API: syncEntriesToServer(): done");
 }
@@ -650,11 +650,11 @@ void WallabagApi::syncOneEntryToServer(EntryRepository repository, Entry &entry)
 		ERROR("API: syncOneEntryToServer(): failure. HTTP response code = %ld", response_code);
 
 		std::ostringstream ss;
-		ss << "Could not sync entry to server: server returned a ";
+		ss << LBL_SYNC_SEND_UPDATES_TO_SERVER_ERROR_STATUS_CODE;
 		ss << response_code;
-		ss << " status code.";
 		if (response_code == 401) {
-			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+			ss << "\n\n";
+			ss << LBL_SYNC_ERROR_HINT_SHOULD_SET_HTTP_BASIC;
 		}
 		throw SyncHttpException(ss.str());
 	};
@@ -690,11 +690,11 @@ void WallabagApi::fetchServerVersion(gui_update_progressbar progressbarUpdater)
 	};
 
 	auto beforeRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_FETCH_SERVER_VERSION_START, NULL);
+		progressbarUpdater(LBL_SYNC_FETCH_SERVER_VERSION, Gui::SYNC_PROGRESS_PERCENTAGE_FETCH_SERVER_VERSION_START, NULL);
 	};
 
 	auto afterRequest = [progressbarUpdater] (void) -> void {
-		progressbarUpdater("Fetching server version", Gui::SYNC_PROGRESS_PERCENTAGE_FETCH_SERVER_VERSION_END, NULL);
+		progressbarUpdater(LBL_SYNC_FETCH_SERVER_VERSION, Gui::SYNC_PROGRESS_PERCENTAGE_FETCH_SERVER_VERSION_END, NULL);
 	};
 
 	auto onSuccess = [&] (CURLcode res, char *json_string) -> void {
@@ -715,11 +715,11 @@ void WallabagApi::fetchServerVersion(gui_update_progressbar progressbarUpdater)
 		ERROR("API: fetchServerVersion(): failure. HTTP response code = %ld", response_code);
 
 		std::ostringstream ss;
-		ss << "Could not load entries from server: server returned a ";
+		ss << LBL_SYNC_FETCH_SERVER_VERSION_ERROR_STATUS_CODE;
 		ss << response_code;
-		ss << " status code.";
 		if (response_code == 401) {
-			ss << "\n\nYou should set 'http_login' and 'http_password', or check their value, in the JSON configuration file.";
+			ss << "\n\n";
+			ss << LBL_SYNC_ERROR_HINT_SHOULD_SET_HTTP_BASIC;
 		}
 		throw SyncHttpException(ss.str());
 	};

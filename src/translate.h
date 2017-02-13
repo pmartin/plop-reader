@@ -228,4 +228,94 @@ extern int global_lang;
 	: "Choose what to do with the entry you've just read..." \
 )
 
+#define LBL_SYNC_OAUTH_CREATE_TOKEN (IS_LANG_FR \
+	? "Création d'un jeton OAuth" \
+	: "Creating OAuth token" \
+)
+
+#define LBL_SYNC_OAUTH_ERROR_CREATE_TOKEN_INVALID_JSON (IS_LANG_FR \
+	? "Échec création jeton OAuth : le serveur a retourné une chaine JSON invalide : " \
+	: "Could not create OAuth token: server returned an invalid JSON string: " \
+)
+
+#define LBL_SYNC_OAUTH_ERROR_CREATE_TOKEN_STATUS_CODE (IS_LANG_FR \
+	? "Échec création jeton OAuth : le serveur a retourné un code statut : " \
+	: "Could not create OAuth token: server returned status code: " \
+)
+
+#define LBL_SYNC_ERROR_HINT_SHOULD_SET_HTTP_BASIC (IS_LANG_FR \
+	? "Vous devriez renseigner 'http_login' et 'http_password', ou vérifier leurs valeurs, dans le fichier ce configuration JSON." \
+	: "You should set 'http_login' and 'http_password', or check their value, in the JSON configuration file." \
+)
+
+#define LBL_SYNC_OUATH_REFRESH_TOKEN (IS_LANG_FR \
+	? "Rafraichissement du jeton OAuth" \
+	: "Refreshing OAuth token" \
+)
+
+#define LBL_SYNC_OAUTH_ERROR_REFRESH_TOKEN_INVALID_JSON (IS_LANG_FR \
+	? "Échec rafraichissement jeton OAuth : le serveur a retourné une chaine JSON invalide : " \
+	: "Could not refresh OAuth token: server returned an invalid JSON string: " \
+)
+
+#define LBL_SYNC_OAUTH_ERROR_REFRESH_TOKEN_STATUS_CODE (IS_LANG_FR \
+	? "Échec rafraichissement jeton OAuth : le serveur a retourné un code statut : " \
+	: "Could not refresh OAuth token: server returned status code: " \
+)
+
+#define LBL_SYNC_FETCH_ENTRIES_HTTP_REQUEST (IS_LANG_FR \
+	? "Téléchargement des entrées : requête HTTP" \
+	: "Fetching entries: HTTP request" \
+)
+
+#define LBL_SYNC_SAVE_ENTRIES_TO_LOCAL_DB (IS_LANG_FR \
+	? "Enregistrement des entrées en base de données locale..." \
+	: "Saving entries to local database..." \
+)
+
+#define LBL_SYNC_ERROR_DECODE_ENTRIES_INVALID_JSON (IS_LANG_FR \
+	? "Échec décodage des entrées : le serveur a retourné une chaine JSON invalide : " \
+	: "Could not decode entries: server returned an invalid JSON string: " \
+)
+
+#define LBL_SYNC_FETCH_ENTRIES_ERROR_STATUS_CODE (IS_LANG_FR \
+	? "Échec du téléchargement des entrées : le serveur a retourné un code statut : " \
+	: "Could not load entries from server: server returned status code: " \
+)
+
+#define LBL_SYNC_DOWNLOAD_EPUB_FILES (IS_LANG_FR \
+	? "Téléchargement des fichiers EPUB..." \
+	: "Downloading EPUB files..." \
+)
+
+#define LBL_SYNC_DOWNLOAD_EPUB_FILES_DONE (IS_LANG_FR \
+	? "Téléchargement des fichiers EPUB : terminé \\o/." \
+	: "Downloading EPUB files: done \\o/." \
+)
+
+#define LBL_SYNC_DOWNLOAD_EPUB_FILE_FOR_ENTRY (IS_LANG_FR \
+	? "Téléchargement de l'EPUB pour %1$d/%2$s..." \
+	: "Downloading EPUB for %1$d/%2$s..." \
+)
+
+#define LBL_SYNC_SEND_UPDATES_TO_SERVER (IS_LANG_FR \
+	? "Envoi des mises à jour au serveur..." \
+	: "Sending updated statuses to server" \
+)
+
+#define LBL_SYNC_SEND_UPDATES_TO_SERVER_ERROR_STATUS_CODE (IS_LANG_FR \
+	? "Échec envoi mises à jour : le serveur a retourné un code statut : " \
+	: "Could not sync entry to server: server returned status code: " \
+)
+
+#define LBL_SYNC_FETCH_SERVER_VERSION (IS_LANG_FR \
+	? "Obtention de la version du serveur..." \
+	: "Fetching server version" \
+)
+
+#define LBL_SYNC_FETCH_SERVER_VERSION_ERROR_STATUS_CODE (IS_LANG_FR \
+	? "Échec obtention version serveur : le serveur a retourné un code statut : " \
+	: "Could not load entries from server: server returned status code: " \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

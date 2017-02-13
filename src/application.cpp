@@ -86,8 +86,8 @@ void Application::loadRecentArticles()
 		return;
 	}
 
-	gui.openProgressBar(ICON_WIFI, "Synchronizing with server", "Starting synchronization", 0, [](int button) {});
-	gui.updateProgressBar("Fetching recent entries from server", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_START);
+	gui.openProgressBar(ICON_WIFI, LBL_SYNC_DIALOG_TITLE, LBL_SYNC_START_SYNC, 0, [](int button) {});
+	gui.updateProgressBar(LBL_SYNC_FETCHING_RECENT_ENTRIES, Gui::SYNC_PROGRESS_PERCENTAGE_ALL_START);
 
 	Internal lastSyncTimestampObj = db.selectInternal("sync.last-sync.timestamp");
 	time_t lastSyncTimestamp = lastSyncTimestampObj.isNull ? 0 : atoi(lastSyncTimestampObj.value.c_str());
@@ -106,11 +106,11 @@ void Application::loadRecentArticles()
 			app.gui.updateProgressBar(text, percent);
 		});
 
-		gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
+		gui.updateProgressBar(LBL_SYNC_SUCCESS_DONE, Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
 	}
 	catch (SyncAbortAllOperations &e) {
 		ERROR("Synchronization Exception: %s => aborting sync!", e.what());
-		DialogSynchro(ICON_ERROR, PLOP_APPLICATION_FULLNAME, e.what(), "Too bad ;-(", NULL, NULL);
+		DialogSynchro(ICON_ERROR, PLOP_APPLICATION_FULLNAME, e.what(), LBL_SYNC_FAILED_TOO_BAD, NULL, NULL);
 	}
 	gui.closeProgressBar();
 

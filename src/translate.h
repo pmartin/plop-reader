@@ -318,4 +318,29 @@ extern int global_lang;
 	: "Could not load entries from server: server returned status code: " \
 )
 
+#define LBL_SYNC_DIALOG_TITLE (IS_LANG_FR \
+	? "Synchronisation avec le serveur" \
+	: "Synchronizing with server" \
+)
+
+#define LBL_SYNC_START_SYNC (IS_LANG_FR \
+	? "Lancement de la synchronisation..." \
+	: "Starting synchronization" \
+)
+
+#define LBL_SYNC_FETCHING_RECENT_ENTRIES (IS_LANG_FR \
+	? "Téléchargement des entrées récentes..." \
+	: "Fetching recent entries from server" \
+)
+
+#define LBL_SYNC_FAILED_TOO_BAD (IS_LANG_FR \
+	? "Dommage ;-(" \
+	: "Too bad ;-(" \
+)
+
+#define LBL_SYNC_SUCCESS_DONE (IS_LANG_FR \
+	? "Synchronisation terminée \\o/" \
+	: "All done \\o/" \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

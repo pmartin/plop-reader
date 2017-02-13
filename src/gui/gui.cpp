@@ -105,13 +105,13 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	SetFont(smallTitleFont, BLACK);
 
 	if (mode == 1) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - unread entries");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_UNREAD_ENTRIES);
 	}
 	else if (mode == 2) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - archived entries");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_ARCHIVED_ENTRIES);
 	}
 	else if (mode == 3) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - starred entries");
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_STARRED_ENTRIES);
 	}
 	else {
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
@@ -119,7 +119,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	DrawString(90, y, buffer);
 	y += 35;
 
-	snprintf(buffer, sizeof(buffer), "Page %d / %d (%d entries)", numPage, numberOfPages, countAllEntries);
+	snprintf(buffer, sizeof(buffer), LBL_HEADER_PAGE_NUM, numPage, numberOfPages, countAllEntries);
 	DrawString(90, y, buffer);
 	y += 35;
 
@@ -170,17 +170,17 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 	if (countAllEntries == 0) {
 		if (mode == 1) {
-			statusBarText("You don't have any unread entries. Use [SYNC] to fetch some from the server.");
+			statusBarText(LBL_STATUSBAR_NO_UNREAD_ENTRIES_USE_SYNC);
 		}
 		else if (mode == 2) {
-			statusBarText("You don't have any archived entries. Use [MENU] to view unread entries.");
+			statusBarText(LBL_STATUSBAR_NO_ARCHIVED_ENTRIES_USE_MENU);
 		}
 		else if (mode == 3) {
-			statusBarText("You don't have any starred entries. Use [MENU] to view unread entries.");
+			statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
 		}
 	}
 	else {
-		statusBarText("Use [<] and [>] keys to navigate. Touch an entry to read it.");
+		statusBarText(LBL_STATUSBAR_USE_KEYS_OR_TOUCH);
 	}
 
 	//FullUpdateHQ();
@@ -217,11 +217,11 @@ void Gui::displayMainMenu()
 	DEBUG("Opening main menu");
 
 	const char *str0 = PLOP_APPLICATION_FULLNAME;
-	const char *str1 = "Display unread entries";
-	const char *str2 = "Display archived entries";
-	const char *str3 = "Display starred entries";
-	const char *str_reset = "Delete all local data";
-	const char *str4 = "About";
+	const char *str1 = LBL_MAINMENU_MODE_UNREAD_ENTRIES;
+	const char *str2 = LBL_MAINMENU_MODE_ARCHIVED_ENTRIES;
+	const char *str3 = LBL_MAINMENU_MODE_STARRED_ENTRIES;
+	const char *str_reset = LBL_MAINMENU_DELETE_ALL_LOCAL_DATA;
+	const char *str4 = LBL_MAINMENU_ABOUT;
 
 	menu = (imenu *)calloc(7, sizeof(imenu));
 
@@ -273,36 +273,44 @@ void Gui::displayMainMenu()
 			const char *text = PLOP_APPLICATION_FULLNAME " " PLOP_VERSION_STR "\n"
 					PLOP_WEBSITE_URL "\n"
 					"\n"
-					"A Wallabag application for Pocketbook Touch Lux ereaders." "\n"
+					"%1$s\n"
 					"\n"
-					"Developed by Pascal MARTIN.\n"
+					"%2$s\n"
 					"@pascal_martin\n"
 					"https://blog.pascal-martin.fr\n"
 					"\n"
-					"Contribute (GPL-3.0):" "\n"
+					"%3$s\n"
 					PLOP_OPENSOURCE_URL;
-			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, text, "OK", NULL, NULL);
 
-			app.getGui().statusBarText("Feel free to contribute on %s ;-)", PLOP_OPENSOURCE_URL);
+			char buffer[2048];
+			snprintf(buffer, sizeof(buffer), text,
+				LBL_ABOUT_MAIN_DESCRIPTION,
+				LBL_ABOUT_DEVELOPED_BY_PM,
+				LBL_ABOUT_CONTRIBUTE
+			);
+
+			DialogSynchro(ICON_INFORMATION, PLOP_APPLICATION_FULLNAME, buffer, "OK", NULL, NULL);
+
+			app.getGui().statusBarText(LBL_STATUSBAR_FEEL_FREE_TO_CONTRIBUTE, PLOP_OPENSOURCE_URL);
 
 			DEBUG("Opening About dialog - closed");
 		}
 		else if (index == 5) {
-			int result = DialogSynchro(ICON_QUESTION, "Delete all local data?", "Do you really want to delete all local data?\nYou will need to sync from server to fetch new data.\nData updated locally and not already synced to server will be lost.", "Delete local data", "Cancel", NULL);
+			int result = DialogSynchro(ICON_QUESTION, LBL_DELETEALL_DIALOG_TITLE, LBL_DELETEALL_DIALOG_CONTENT, LBL_DELETEALL_DIALOG_BTN_OK, LBL_DELETEALL_DIALOG_BTN_CANCEL, NULL);
 			if (result == 1) {
 				DEBUG("Deleting all local data...");
 				app.deleteAllLocalData();
 				DEBUG("Deleting all local data: done");
 
-				app.getGui().statusBarText("Local data deleted. You should now run a sync to fetch data from server ;-)");
+				app.getGui().statusBarText(LBL_STATUSBAR_DELETEALL_DONE);
 			}
 			else if (result == 2) {
-				app.getGui().statusBarText("Local data has been left untouched.");
+				app.getGui().statusBarText(LBL_STATUSBAR_DELETEALL_CANCELED);
 			}
 		}
 	};
 
-	statusBarText("Choose an action in the menu, or close it...");
+	statusBarText(LBL_STATUSBAR_MAINMENU);
 
 	SetMenuFont(entryTitleFont);
 	irect rect = GetMenuRect(menu);
@@ -315,17 +323,17 @@ void Gui::displayMainMenu()
 void Gui::touchEndEvent(int x, int y)
 {
 	if (exitButton.hit(x, y)) {
-		statusBarText("Closing the application. Bye, see you soon ;-)");
+		statusBarText(LBL_STATUSBAR_CLOSING_APPLICATION_BYE);
 
 		CloseApp();
 	}
 	else if (syncButton.hit(x, y)) {
-		statusBarText("Launching synchronization with server...");
+		statusBarText(LBL_STATUSBAR_LAUNCHING_SYNC);
 
 		app.loadRecentArticles();
 	}
 	else if (menuButton.hit(x, y)) {
-		statusBarText("Opening the application's main menu...");
+		statusBarText(LBL_STATUSBAR_OPENING_MAIN_MENU);
 
 		displayMainMenu();
 	}
@@ -336,7 +344,7 @@ void Gui::touchEndEvent(int x, int y)
 				if (item.hasEntry()) {
 					item.draw(false, true, true);
 
-					statusBarText("Loading reader app for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
+					statusBarText(LBL_STATUSBAR_LOADING_READER_FOR_ENTRY, item.getEntry().id, item.getEntry().title.c_str());
 
 					app.read(item.getEntry());
 				}
@@ -362,7 +370,7 @@ void Gui::touchLong(int x, int y)
 			if (item.hasEntry()) {
 				item.draw(false, true, true);
 
-				statusBarText("Opening context menu for entry#%d - %s...", item.getEntry().id, item.getEntry().title.c_str());
+				statusBarText(LBL_STATUSBAR_OPENING_CONTEXTMENU_FOR_ENTRY, item.getEntry().id, item.getEntry().title.c_str());
 
 				displayContextMenuOnEntry(item, x, y);
 			}
@@ -380,11 +388,11 @@ static void contextEntryOnMenuHandler(int index)
 	CloseContextMenu(contextMenu);
 
 	if (index == 1) {
-		app.getGui().statusBarText("Loading reader app for entry#%d (HTML) - %s...", contextMenuEntry.id, contextMenuEntry.title.c_str());
+		app.getGui().statusBarText(LBL_STATUSBAR_OPENING_READERAPP_FOR_ENTRY_FORMAT, contextMenuEntry.id, contextMenuEntry.title.c_str(), "HTML");
 		app.read(contextMenuEntry, Application::FORMAT_HTML);
 	}
 	else if (index == 2) {
-		app.getGui().statusBarText("Loading reader app for entry#%d (EPUB) - %s...", contextMenuEntry.id, contextMenuEntry.title.c_str());
+		app.getGui().statusBarText(LBL_STATUSBAR_OPENING_READERAPP_FOR_ENTRY_FORMAT, contextMenuEntry.id, contextMenuEntry.title.c_str(), "EPUB");
 		app.read(contextMenuEntry, Application::FORMAT_EPUB);
 	}
 
@@ -404,8 +412,8 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 	contextMenu = CreateContextMenu(id);
 
 	const char *str0 = entry.title.c_str();
-	const char *str1 = "Read HTML content";
-	const char *str2 = "Read EPUB version";
+	const char *str1 = LBL_ENTRY_CONTEXTMENU_READ_HTML;
+	const char *str2 = LBL_ENTRY_CONTEXTMENU_READ_EPUB;
 
 	menu = (imenu *)calloc(4, sizeof(imenu));
 

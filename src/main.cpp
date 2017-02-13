@@ -1,7 +1,8 @@
 #include "main.h"
-
+#include "translate.h"
 
 Application app;
+int global_lang = LANG_EN;
 
 
 static int main_handler(int event_type, int param_one, int param_two)

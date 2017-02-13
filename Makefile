@@ -7,7 +7,7 @@ CFLAGS = -g -gdwarf-3 -std=gnu++11 -Wall -Wextra -Wvla -Wmissing-field-initializ
 all: "Plop! reader.app"
 
 
-src/api/wallabag_api.o: src/main.h src/api/wallabag_api.h src/api/wallabag_api.cpp
+src/api/wallabag_api.o: src/main.h src/translate.h src/api/wallabag_api.h src/api/wallabag_api.cpp
 	$(CC) -c src/api/wallabag_api.cpp $(CFLAGS) -o src/api/wallabag_api.o
 
 src/api/wallabag_config_loader.o: src/main.h src/api/wallabag_config_loader.h src/api/wallabag_config_loader.cpp
@@ -37,7 +37,7 @@ src/gui/gui_button.o: src/main.h src/gui/gui_button.h src/gui/gui_button.cpp
 src/gui/gui_list_item_entry.o: src/main.h src/gui/gui_list_item_entry.h src/gui/gui_list_item_entry.cpp
 	$(CC) -c src/gui/gui_list_item_entry.cpp $(CFLAGS) -o src/gui/gui_list_item_entry.o
 
-src/gui/gui.o: src/main.h src/gui/gui.h src/gui/gui.cpp
+src/gui/gui.o: src/main.h src/translate.h src/gui/gui.h src/gui/gui.cpp
 	$(CC) -c src/gui/gui.cpp $(CFLAGS) -o src/gui/gui.o
 
 src/repositories/entry_repository.o: src/main.h src/repositories/entry_repository.h src/repositories/entry_repository.cpp
@@ -46,7 +46,7 @@ src/repositories/entry_repository.o: src/main.h src/repositories/entry_repositor
 src/repositories/epub_download_queue_repository.o: src/main.h src/repositories/epub_download_queue_repository.h src/repositories/epub_download_queue_repository.cpp
 	$(CC) -c src/repositories/epub_download_queue_repository.cpp $(CFLAGS) -o src/repositories/epub_download_queue_repository.o
 
-src/application.o: src/application.h src/application.cpp
+src/application.o: src/application.h src/translate.h src/application.cpp
 	$(CC) -c src/application.cpp $(CFLAGS) -o src/application.o
 
 src/main.o: src/main.h src/main.cpp

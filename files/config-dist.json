@@ -6,5 +6,6 @@
     "secret_key": "",
     "login": "",
     "password": "",
-    "force_download_epub": false
+    "force_download_epub": false,
+    "lang": "fr"
 }

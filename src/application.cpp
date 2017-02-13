@@ -86,8 +86,8 @@ void Application::loadRecentArticles()
 		return;
 	}
 
-	gui.openProgressBar(ICON_WIFI, "Synchronizing with server", "Starting synchronization", 0, [](int button) {});
-	gui.updateProgressBar("Fetching recent entries from server", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_START);
+	gui.openProgressBar(ICON_WIFI, LBL_SYNC_DIALOG_TITLE, LBL_SYNC_START_SYNC, 0, [](int button) {});
+	gui.updateProgressBar(LBL_SYNC_FETCHING_RECENT_ENTRIES, Gui::SYNC_PROGRESS_PERCENTAGE_ALL_START);
 
 	Internal lastSyncTimestampObj = db.selectInternal("sync.last-sync.timestamp");
 	time_t lastSyncTimestamp = lastSyncTimestampObj.isNull ? 0 : atoi(lastSyncTimestampObj.value.c_str());
@@ -106,11 +106,11 @@ void Application::loadRecentArticles()
 			app.gui.updateProgressBar(text, percent);
 		});
 
-		gui.updateProgressBar("All done \\o/", Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
+		gui.updateProgressBar(LBL_SYNC_SUCCESS_DONE, Gui::SYNC_PROGRESS_PERCENTAGE_ALL_DONE);
 	}
 	catch (SyncAbortAllOperations &e) {
 		ERROR("Synchronization Exception: %s => aborting sync!", e.what());
-		DialogSynchro(ICON_ERROR, PLOP_APPLICATION_FULLNAME, e.what(), "Too bad ;-(", NULL, NULL);
+		DialogSynchro(ICON_ERROR, PLOP_APPLICATION_FULLNAME, e.what(), LBL_SYNC_FAILED_TOO_BAD, NULL, NULL);
 	}
 	gui.closeProgressBar();
 
@@ -292,7 +292,7 @@ void Application::handleActionOnReadEntry(int entryId)
 	Entry entry = entryRepository.get(entryId);
 
 	char buffer[2048];
-	snprintf(buffer, sizeof(buffer), "What do you want to do with entry #%d?\n%.128s?", entry.id, entry.title.c_str());
+	snprintf(buffer, sizeof(buffer), LBL_AFTERREAD_ACTIONONENTRY_WHAT_TO_DO_WITH_ENTRY_CONTENT, entry.id, entry.title.c_str());
 
 	bool isArchived = entry.local_is_archived;
 	bool isStarred = entry.local_is_starred;
@@ -300,30 +300,30 @@ void Application::handleActionOnReadEntry(int entryId)
 	const char *strButton1, *strButton2;
 
 	if (isArchived == false) {
-		strButton1 = "Archive";
+		strButton1 = LBL_AFTERREAD_ACTIONONENTRY_BUTTON_ARCHIVE;
 		if (isStarred == false) {
-			strButton2 = "Archive + Star";
+			strButton2 = LBL_AFTERREAD_ACTIONONENTRY_BUTTON_ARCHIVE_STAR;
 		}
 		else {
-			strButton2 = "Archive + Un-star";
+			strButton2 = LBL_AFTERREAD_ACTIONONENTRY_BUTTON_ARCHIVE_UNSTAR;
 		}
 	}
 	else {
-		strButton1 = "Un-archive";
+		strButton1 = LBL_AFTERREAD_ACTIONONENTRY_BUTTON_UNARCHIVE;
 		if (isStarred == false) {
-			strButton2 = "Un-archive + Star";
+			strButton2 = LBL_AFTERREAD_ACTIONONENTRY_BUTTON_UNARCHIVE_STAR;
 		}
 		else {
-			strButton2 = "Un-archive + Un-star";
+			strButton2 = LBL_AFTERREAD_ACTIONONENTRY_BUTTON_UNARCHIVE_UNSTAR;
 		}
 	}
 
-	int result = DialogSynchro(ICON_QUESTION, "What now with this entry?", buffer, strButton1, strButton2, "Do nothing");
+	int result = DialogSynchro(ICON_QUESTION, LBL_AFTERREAD_ACTIONONENTRY_WHAT_TO_DO_WITH_ENTRY_TITLE, buffer, strButton1, strButton2, LBL_AFTERREAD_ACTIONONENTRY_BUTTON_DONOTHING);
 
 	if (result == 3) {
 		// do nothing
 		show();
-		gui.statusBarText("Thanks! You can read another entry, now ;-)");
+		gui.statusBarText(LBL_STATUSBAR_AFTERREAD_THANKS_READ_ANOTHER);
 		return;
 	}
 
@@ -366,14 +366,14 @@ void Application::handleActionOnReadEntry(int entryId)
 	// One entry has changed => we must redraw the list
 	show();
 
-	gui.statusBarText("This change will be sent to the server next time you synchronize.");
+	gui.statusBarText(LBL_STATUSBAR_AFTERREAD_CHANGE_SENT_ON_NEXT_SYNC);
 }
 
 
 void Application::foreground()
 {
 	if (isLastActionRead && lastReadEntryId != 0) {
-		gui.statusBarText("Choose what to do with the entry you've just read...");
+		gui.statusBarText(LBL_STATUSBAR_AFTERREAD_WHAT_TO_DO_WITH_ENTRY);
 		handleActionOnReadEntry(lastReadEntryId);
 	}
 	isLastActionRead = false;

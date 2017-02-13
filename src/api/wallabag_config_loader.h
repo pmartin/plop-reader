@@ -9,6 +9,8 @@
 #include "../log.h"
 #include "../exceptions.h"
 
+#include "../translate.h"
+
 class WallabagConfigLoader
 {
 public:

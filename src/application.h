@@ -12,6 +12,8 @@
 
 #include "gui/gui.h"
 
+#include "translate.h"
+
 #include "repositories/entry_repository.h"
 #include "repositories/epub_download_queue_repository.h"
 

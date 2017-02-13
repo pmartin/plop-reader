@@ -105,16 +105,16 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	SetFont(smallTitleFont, BLACK);
 
 	if (mode == 1) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_UNREAD_ENTRIES);
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME " - %s", LBL_HEADER_UNREAD_ENTRIES);
 	}
 	else if (mode == 2) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_ARCHIVED_ENTRIES);
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME " - %s", LBL_HEADER_ARCHIVED_ENTRIES);
 	}
 	else if (mode == 3) {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME " - %s", LBL_HEADER_STARRED_ENTRIES);
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME " - %s", LBL_HEADER_STARRED_ENTRIES);
 	}
 	else {
-		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_SHORTNAME);
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME);
 	}
 	DrawString(90, y, buffer);
 	y += 35;

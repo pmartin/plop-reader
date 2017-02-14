@@ -468,6 +468,68 @@ void Gui::displayHelpWhenNoLocalData()
 	else if (mode == 3) {
 		statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
 	}
+
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(30, 250, "Exit");
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(30, 300, "Use this button to");
+	DrawString(30, 300 + 30, "exit the application");
+	DrawString(30, 300 + 30 + 30, "application");
+
+	DrawLine(30 + 30, 245, 30, 90, BLACK);
+	DrawCircle(30, 90, 4, BLACK);
+	PartialUpdate(20, 80, 400, 400);
+
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(screenWidth - 520, 140, "Synchronization");
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(screenWidth - 520, 140+50, "Use this button to");
+	DrawString(screenWidth - 520, 140+50 + 30, "get data from your");
+	DrawString(screenWidth - 520, 140+50 + 30 + 30, "wallabag server ;-)");
+
+	DrawLine(screenWidth - 400, 140 - 5, screenWidth-140 + 50/2, 90, BLACK);
+	DrawCircle(screenWidth-140 + 50/2, 90, 4, BLACK);
+	PartialUpdate(screenWidth - 520, 80, screenWidth, 400);
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(screenWidth - 270, 220, "Open Menu");
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(screenWidth - 270, 220+50, "Use this button to");
+	DrawString(screenWidth - 270, 220+50 + 30, "open the main menu");
+	DrawString(screenWidth - 270, 220+50 + 30 + 30, "of the application.");
+
+	DrawLine(screenWidth - 150, 220 - 5, screenWidth-60 + 50/2, 90, BLACK);
+	DrawCircle(screenWidth-60 + 50/2, 90, 4, BLACK);
+	PartialUpdate(screenWidth - 270, 80, screenWidth, 400);
+
+
+	SetFont(entryInfosFont, BLACK);
+	DrawString(40, 500 + 30*0, "You don't have any entries on this ereader.");
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(40, 500 + 30*1, "For more informations about configuration and usage, read:");
+	DrawString(40, 500 + 30*2, "http://plop-reader.pascal-martin.fr/install-and-configure.html");
+	PartialUpdate(40, 500, screenWidth, 500 + 30*3);
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(150, screenHeight - 280, "Status Bar");
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(150, screenHeight - 280 + 50, "You'll often find some help");
+	DrawString(150, screenHeight - 280 + 50 + 30, "or progress indicator");
+	DrawString(150, screenHeight - 280 + 50 + 30 + 30, "in the status bar.");
+
+	DrawLine(250, screenHeight - 280 + 50 + 30 + 30 + 30, 450, screenHeight - 50, BLACK);
+	DrawCircle(450, screenHeight - 50, 4, BLACK);
+	PartialUpdate(0, screenHeight - 300, screenWidth, 400);
 }
 
 

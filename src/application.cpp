@@ -477,7 +477,7 @@ void Application::deleteAllLocalData()
 		iv_rmdir(PLOP_ENTRIES_IMAGES_DIRECTORY);
 	}
 
-	app.show();
+	setMode(MODE_UNREAD, 1);
 }
 
 

@@ -169,15 +169,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 
 	if (countAllEntries == 0) {
-		if (mode == 1) {
-			statusBarText(LBL_STATUSBAR_NO_UNREAD_ENTRIES_USE_SYNC);
-		}
-		else if (mode == 2) {
-			statusBarText(LBL_STATUSBAR_NO_ARCHIVED_ENTRIES_USE_MENU);
-		}
-		else if (mode == 3) {
-			statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
-		}
+		displayHelpWhenNoLocalData();
 	}
 	else {
 		statusBarText(LBL_STATUSBAR_USE_KEYS_OR_TOUCH);
@@ -462,6 +454,20 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 void Gui::keypressEvent(int key)
 {
 
+}
+
+
+void Gui::displayHelpWhenNoLocalData()
+{
+	if (mode == 1) {
+		statusBarText(LBL_STATUSBAR_NO_UNREAD_ENTRIES_USE_SYNC);
+	}
+	else if (mode == 2) {
+		statusBarText(LBL_STATUSBAR_NO_ARCHIVED_ENTRIES_USE_MENU);
+	}
+	else if (mode == 3) {
+		statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
+	}
 }
 
 

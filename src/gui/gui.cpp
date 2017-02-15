@@ -441,7 +441,7 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 	menu[menu_idx].type = 2;
 	menu[menu_idx].index = 1;
 	menu[menu_idx].text = (char *)str1;
-	menu[menu_idx].icon = NULL;
+	menu[menu_idx].icon = LoadPNG(PLOP_ICON_HTML_PATH, 1);
 	menu[menu_idx].font = NULL;
 	menu[menu_idx].submenu = &menu[menu_idx+1];
 
@@ -451,7 +451,7 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 		menu[menu_idx].type = 2;
 		menu[menu_idx].index = 2;
 		menu[menu_idx].text = (char *)str2;
-		menu[menu_idx].icon = NULL;
+		menu[menu_idx].icon = LoadPNG(PLOP_ICON_EPUB_PATH, 1);
 		menu[menu_idx].font = NULL;
 		menu[menu_idx].submenu = &menu[menu_idx+1];
 	}

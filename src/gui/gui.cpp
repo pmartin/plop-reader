@@ -69,13 +69,13 @@ void Gui::init()
 	ibitmap *bmpClose = LoadPNG(PLOP_ICON_CLOSE_PATH, 1);
 	exitButton.setIcon(bmpClose);
 
-	syncButton.setCoordinates(screenWidth-135 - 6, 5+2, 55 + 7, 60+2);
+	syncButton.setCoordinates(screenWidth-135 - 8, 5+2, 55 + 7, 60+2);
 	ibitmap *bmp = LoadPNG(PLOP_ICON_SYNC_PATH, 1);
 	syncButton.setIcon(bmp);
 
-	menuButton.setCoordinates(screenWidth-60, 5+2, 55, 60+2);
-	menuButton.setFont(titleFont);
-	menuButton.setSymbol(SYMBOL_MENU);
+	menuButton.setCoordinates(screenWidth-62-4, 5+2, 55+7, 60+2);
+	ibitmap *bmpMenu = LoadPNG(PLOP_ICON_MENU_PATH, 1);
+	menuButton.setIcon(bmpMenu);
 }
 
 

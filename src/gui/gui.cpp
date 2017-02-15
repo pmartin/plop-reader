@@ -235,28 +235,28 @@ void Gui::displayMainMenu()
 	menu[1].type = 2;
 	menu[1].index = 1;
 	menu[1].text = (char *)str1;
-	menu[1].icon = NULL;
+	menu[1].icon = LoadPNG(PLOP_ICON_UNREAD_PATH, 1);
 	menu[1].font = NULL;
 	menu[1].submenu = &menu[2];
 
 	menu[2].type = 2;
 	menu[2].index = 2;
 	menu[2].text = (char *)str2;
-	menu[2].icon = NULL;
+	menu[2].icon = LoadPNG(PLOP_ICON_ARCHIVED_PATH, 1);
 	menu[2].font = NULL;
 	menu[2].submenu = &menu[3];
 
 	menu[3].type = 2;
 	menu[3].index = 3;
 	menu[3].text = (char *)str3;
-	menu[3].icon = NULL;
+	menu[3].icon = LoadPNG(PLOP_ICON_STARRED_PATH, 1);
 	menu[3].font = NULL;
 	menu[3].submenu = &menu[4];
 
 	menu[4].type = 2;
 	menu[4].index = 5;
 	menu[4].text = (char *)str_reset;
-	menu[4].icon = NULL;
+	menu[4].icon = LoadPNG(PLOP_ICON_WARNING_PATH, 1);
 	menu[4].font = NULL;
 	menu[4].submenu = NULL;
 

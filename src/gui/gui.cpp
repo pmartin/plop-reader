@@ -263,7 +263,7 @@ void Gui::displayMainMenu()
 	menu[5].type = 2;
 	menu[5].index = 4;
 	menu[5].text = (char *)str4;
-	menu[5].icon = NULL;
+	menu[5].icon = LoadPNG(PLOP_ICON_HELP_PATH, 1);
 	menu[5].font = NULL;
 	menu[5].submenu = NULL;
 

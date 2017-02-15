@@ -75,6 +75,7 @@ public:
 	}
 
 	void deleteAllLocalData();
+	void initAssets();
 
 private:
 	Database db;

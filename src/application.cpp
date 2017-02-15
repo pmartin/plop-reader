@@ -516,6 +516,23 @@ static void writeIconToFile(const char *filepath, const unsigned char bytes[], c
 
 void Application::initAssets()
 {
+	bool mustDeployAssets = false;
+	const std::string currentAssetsVersion = PLOP_ASSETS_VERSION;
+	Internal assetsVersion = getDb().selectInternal("gui.assets.version");
+	if (assetsVersion.isNull) {
+		assetsVersion.value = "0";
+		mustDeployAssets = true;
+	}
+	else if (assetsVersion.value < currentAssetsVersion) {
+		mustDeployAssets = true;
+	}
+	getDb().saveInternal("gui.assets.version", currentAssetsVersion);
+
+	if (mustDeployAssets == false) {
+		return;
+	}
+	INFO("Deploying assets.");
+
 	const static unsigned char sync_png[] = {
 		0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
 		0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x30,

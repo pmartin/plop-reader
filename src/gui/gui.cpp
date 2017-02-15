@@ -69,9 +69,9 @@ void Gui::init()
 	exitButton.setFont(titleFont);
 	exitButton.setSymbol(ARROW_LEFT);
 
-	syncButton.setCoordinates(screenWidth-135, 5+2, 55, 60+2);
-	syncButton.setFont(titleFont);
-	syncButton.setSymbol(ARROW_UPDOWN);
+	syncButton.setCoordinates(screenWidth-135 - 6, 5+2, 55 + 7, 60+2);
+	ibitmap *bmp = LoadPNG(PLOP_ICON_SYNC_PATH, 1);
+	syncButton.setIcon(bmp);
 
 	menuButton.setCoordinates(screenWidth-60, 5+2, 55, 60+2);
 	menuButton.setFont(titleFont);

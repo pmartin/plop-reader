@@ -65,17 +65,17 @@ void Gui::init()
 	screenWidth = ScreenWidth();
 	screenHeight = ScreenHeight();
 
-	exitButton.setCoordinates(5, 5+2, 55, 60+2);
-	exitButton.setFont(titleFont);
-	exitButton.setSymbol(ARROW_LEFT);
+	exitButton.setCoordinates(5, 5+2, 55+7, 60+2);
+	ibitmap *bmpClose = LoadPNG(PLOP_ICON_CLOSE_PATH, 1);
+	exitButton.setIcon(bmpClose);
 
-	syncButton.setCoordinates(screenWidth-135, 5+2, 55, 60+2);
-	syncButton.setFont(titleFont);
-	syncButton.setSymbol(ARROW_UPDOWN);
+	syncButton.setCoordinates(screenWidth-135 - 8, 5+2, 55 + 7, 60+2);
+	ibitmap *bmp = LoadPNG(PLOP_ICON_SYNC_PATH, 1);
+	syncButton.setIcon(bmp);
 
-	menuButton.setCoordinates(screenWidth-60, 5+2, 55, 60+2);
-	menuButton.setFont(titleFont);
-	menuButton.setSymbol(SYMBOL_MENU);
+	menuButton.setCoordinates(screenWidth-62-4, 5+2, 55+7, 60+2);
+	ibitmap *bmpMenu = LoadPNG(PLOP_ICON_MENU_PATH, 1);
+	menuButton.setIcon(bmpMenu);
 }
 
 
@@ -210,7 +210,7 @@ void Gui::touchStartEvent(int x, int y)
 
 
 // This needs to be global, so it can be accessed by the callback function of the menu ;-(
-static imenu *menu;
+static imenuex *menu;
 
 void Gui::displayMainMenu()
 {
@@ -223,36 +223,48 @@ void Gui::displayMainMenu()
 	const char *str_reset = LBL_MAINMENU_DELETE_ALL_LOCAL_DATA;
 	const char *str4 = LBL_MAINMENU_ABOUT;
 
-	menu = (imenu *)calloc(7, sizeof(imenu));
+	menu = (imenuex *)calloc(7, sizeof(imenuex));
 
 	menu[0].type = 1;
 	menu[0].index = 0;
 	menu[0].text = (char *)str0;
+	menu[0].icon = NULL;
+	menu[0].font = NULL;
 	menu[0].submenu = &menu[1];
 
 	menu[1].type = 2;
 	menu[1].index = 1;
 	menu[1].text = (char *)str1;
+	menu[1].icon = LoadPNG(PLOP_ICON_UNREAD_PATH, 1);
+	menu[1].font = NULL;
 	menu[1].submenu = &menu[2];
 
 	menu[2].type = 2;
 	menu[2].index = 2;
 	menu[2].text = (char *)str2;
+	menu[2].icon = LoadPNG(PLOP_ICON_ARCHIVED_PATH, 1);
+	menu[2].font = NULL;
 	menu[2].submenu = &menu[3];
 
 	menu[3].type = 2;
 	menu[3].index = 3;
 	menu[3].text = (char *)str3;
+	menu[3].icon = LoadPNG(PLOP_ICON_STARRED_PATH, 1);
+	menu[3].font = NULL;
 	menu[3].submenu = &menu[4];
 
 	menu[4].type = 2;
 	menu[4].index = 5;
 	menu[4].text = (char *)str_reset;
+	menu[4].icon = LoadPNG(PLOP_ICON_WARNING_PATH, 1);
+	menu[4].font = NULL;
 	menu[4].submenu = NULL;
 
 	menu[5].type = 2;
 	menu[5].index = 4;
 	menu[5].text = (char *)str4;
+	menu[5].icon = LoadPNG(PLOP_ICON_HELP_PATH, 1);
+	menu[5].font = NULL;
 	menu[5].submenu = NULL;
 
 	auto callback = [](int index) {
@@ -313,8 +325,8 @@ void Gui::displayMainMenu()
 	statusBarText(LBL_STATUSBAR_MAINMENU);
 
 	SetMenuFont(entryTitleFont);
-	irect rect = GetMenuRect(menu);
-	OpenMenu(menu, 0, (screenWidth-rect.w)/2, (screenHeight-rect.h)/3, callback);
+	irect rect = GetMenuRectEx(menu);
+	OpenMenuEx(menu, 0, (screenWidth-rect.w)/2, (screenHeight-rect.h)/3, callback);
 
 	DEBUG("Opening main menu: done");
 }
@@ -415,18 +427,22 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 	const char *str1 = LBL_ENTRY_CONTEXTMENU_READ_HTML;
 	const char *str2 = LBL_ENTRY_CONTEXTMENU_READ_EPUB;
 
-	menu = (imenu *)calloc(4, sizeof(imenu));
+	menu = (imenuex *)calloc(4, sizeof(imenuex));
 
 	int menu_idx = 0;
 	menu[menu_idx].type = 1;
 	menu[menu_idx].index = 0;
 	menu[menu_idx].text = (char *)str0;
+	menu[menu_idx].icon = NULL;
+	menu[menu_idx].font = NULL;
 	menu[menu_idx].submenu = &menu[menu_idx+1];
 
 	menu_idx++;
 	menu[menu_idx].type = 2;
 	menu[menu_idx].index = 1;
 	menu[menu_idx].text = (char *)str1;
+	menu[menu_idx].icon = LoadPNG(PLOP_ICON_HTML_PATH, 1);
+	menu[menu_idx].font = NULL;
 	menu[menu_idx].submenu = &menu[menu_idx+1];
 
 	if (!entry.local_content_file_epub.empty()) {
@@ -435,11 +451,14 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 		menu[menu_idx].type = 2;
 		menu[menu_idx].index = 2;
 		menu[menu_idx].text = (char *)str2;
+		menu[menu_idx].icon = LoadPNG(PLOP_ICON_EPUB_PATH, 1);
+		menu[menu_idx].font = NULL;
 		menu[menu_idx].submenu = &menu[menu_idx+1];
 	}
 
 	menu[menu_idx].submenu = NULL;
-	contextMenu->menu = menu;
+	contextMenu->menu = NULL;
+	contextMenu->menuex = menu;
 
 	contextMenu->hproc = contextEntryOnMenuHandler;
 

@@ -28,6 +28,9 @@ This project uses the following libraries:
  * Lib Inkview, bundled with Pocketbook SDK
  * [Pithikos/C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool), MIT
 
+The icons come from:
+
+ * [material.io](https://material.io/icons/), Apache Licence 2.0
 
 # Disclaimer
 

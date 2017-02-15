@@ -8,6 +8,11 @@
 class GuiButton
 {
 public:
+	~GuiButton() {
+		if (icon) {
+			free(icon);
+		}
+	}
 
 	void setCoordinates(int xx, int yy, int ww, int hh) {
 		mustRedraw = true;
@@ -32,6 +37,10 @@ public:
 		mustRedraw = true;
 		str = s;
 		symbol = -1;
+	}
+
+	void setIcon(ibitmap *bmp) {
+		icon = bmp;
 	}
 
 	bool hit(int xx, int yy) {
@@ -66,6 +75,8 @@ private:
 	const char *str = NULL;
 
 	bool pressed = false;
+
+	ibitmap *icon = NULL;
 };
 
 

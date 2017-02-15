@@ -65,9 +65,9 @@ void Gui::init()
 	screenWidth = ScreenWidth();
 	screenHeight = ScreenHeight();
 
-	exitButton.setCoordinates(5, 5+2, 55, 60+2);
-	exitButton.setFont(titleFont);
-	exitButton.setSymbol(ARROW_LEFT);
+	exitButton.setCoordinates(5, 5+2, 55+7, 60+2);
+	ibitmap *bmpClose = LoadPNG(PLOP_ICON_CLOSE_PATH, 1);
+	exitButton.setIcon(bmpClose);
 
 	syncButton.setCoordinates(screenWidth-135 - 6, 5+2, 55 + 7, 60+2);
 	ibitmap *bmp = LoadPNG(PLOP_ICON_SYNC_PATH, 1);

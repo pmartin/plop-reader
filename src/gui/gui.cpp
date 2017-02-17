@@ -491,12 +491,12 @@ void Gui::displayHelpWhenNoLocalData()
 
 
 	SetFont(entryTitleFont, BLACK);
-	DrawString(30, 250, "Exit");
+	DrawString(30, 250, LBL_ONBOARDING_EXIT);
 
 	SetFont(entryInfosFont, DGRAY);
-	DrawString(30, 300, "Use this button to");
-	DrawString(30, 300 + 30, "exit the application");
-	DrawString(30, 300 + 30 + 30, "application");
+	DrawString(30, 300, LBL_ONBOARDING_EXIT_01);
+	DrawString(30, 300 + 30, LBL_ONBOARDING_EXIT_02);
+	DrawString(30, 300 + 30 + 30, LBL_ONBOARDING_EXIT_03);
 
 	DrawLine(30 + 30, 245, 30, 90, BLACK);
 	DrawCircle(30, 90, 4, BLACK);
@@ -505,25 +505,25 @@ void Gui::displayHelpWhenNoLocalData()
 
 
 	SetFont(entryTitleFont, BLACK);
-	DrawString(screenWidth - 520, 140, "Synchronization");
+	DrawString(175, 140, LBL_ONBOARDING_SYNC);
 
 	SetFont(entryInfosFont, DGRAY);
-	DrawString(screenWidth - 520, 140+50, "Use this button to");
-	DrawString(screenWidth - 520, 140+50 + 30, "get data from your");
-	DrawString(screenWidth - 520, 140+50 + 30 + 30, "wallabag server ;-)");
+	DrawString(175, 140+50, LBL_ONBOARDING_SYNC_01);
+	DrawString(175, 140+50 + 30, LBL_ONBOARDING_SYNC_02);
+	DrawString(175, 140+50 + 30 + 30, LBL_ONBOARDING_SYNC_03);
 
 	DrawLine(screenWidth - 400, 140 - 5, screenWidth-140 + 50/2, 90, BLACK);
 	DrawCircle(screenWidth-140 + 50/2, 90, 4, BLACK);
-	PartialUpdate(screenWidth - 520, 80, screenWidth, 400);
+	PartialUpdate(175, 80, screenWidth, 400);
 
 
 	SetFont(entryTitleFont, BLACK);
-	DrawString(screenWidth - 270, 220, "Open Menu");
+	DrawString(screenWidth - 270, 220, LBL_ONBOARDING_MENU);
 
 	SetFont(entryInfosFont, DGRAY);
-	DrawString(screenWidth - 270, 220+50, "Use this button to");
-	DrawString(screenWidth - 270, 220+50 + 30, "open the main menu");
-	DrawString(screenWidth - 270, 220+50 + 30 + 30, "of the application.");
+	DrawString(screenWidth - 270, 220+50, LBL_ONBOARDING_MENU_01);
+	DrawString(screenWidth - 270, 220+50 + 30, LBL_ONBOARDING_MENU_02);
+	DrawString(screenWidth - 270, 220+50 + 30 + 30, LBL_ONBOARDING_MENU_03);
 
 	DrawLine(screenWidth - 150, 220 - 5, screenWidth-60 + 50/2, 90, BLACK);
 	DrawCircle(screenWidth-60 + 50/2, 90, 4, BLACK);
@@ -531,20 +531,20 @@ void Gui::displayHelpWhenNoLocalData()
 
 
 	SetFont(entryInfosFont, BLACK);
-	DrawString(40, 500 + 30*0, "You don't have any entries on this ereader.");
+	DrawString(40, 500 + 30*0, LBL_ONBOARDING_INFO_NO_ENTRIES_01);
 	SetFont(entryInfosFont, DGRAY);
-	DrawString(40, 500 + 30*1, "For more informations about configuration and usage, read:");
-	DrawString(40, 500 + 30*2, "http://plop-reader.pascal-martin.fr/install-and-configure.html");
+	DrawString(40, 500 + 30*1, LBL_ONBOARDING_INFO_NO_ENTRIES_02);
+	DrawString(40, 500 + 30*2, LBL_ONBOARDING_INFO_NO_ENTRIES_03);
 	PartialUpdate(40, 500, screenWidth, 500 + 30*3);
 
 
 	SetFont(entryTitleFont, BLACK);
-	DrawString(150, screenHeight - 280, "Status Bar");
+	DrawString(150, screenHeight - 280, LBL_ONBOARDING_STATUSBAR);
 
 	SetFont(entryInfosFont, DGRAY);
-	DrawString(150, screenHeight - 280 + 50, "You'll often find some help");
-	DrawString(150, screenHeight - 280 + 50 + 30, "or progress indicator");
-	DrawString(150, screenHeight - 280 + 50 + 30 + 30, "in the status bar.");
+	DrawString(150, screenHeight - 280 + 50, LBL_ONBOARDING_STATUSBAR_01);
+	DrawString(150, screenHeight - 280 + 50 + 30, LBL_ONBOARDING_STATUSBAR_02);
+	DrawString(150, screenHeight - 280 + 50 + 30 + 30, LBL_ONBOARDING_STATUSBAR_03);
 
 	DrawLine(250, screenHeight - 280 + 50 + 30 + 30 + 30, 450, screenHeight - 50, BLACK);
 	DrawCircle(450, screenHeight - 50, 4, BLACK);

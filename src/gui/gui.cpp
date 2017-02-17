@@ -16,6 +16,12 @@ Gui::~Gui()
 	CloseFont(entryTitleFont);
 	CloseFont(entryInfosFont);
 	CloseFont(statusBarFont);
+
+	free(smallClock);
+	free(smallEvent);
+	free(smallEpub);
+	free(smallHtml);
+	free(smallStarred);
 }
 
 
@@ -76,6 +82,12 @@ void Gui::init()
 	menuButton.setCoordinates(screenWidth-62-4, 5+2, 55+7, 60+2);
 	ibitmap *bmpMenu = LoadPNG(PLOP_ICON_MENU_PATH, 1);
 	menuButton.setIcon(bmpMenu);
+
+	smallClock = LoadPNG(PLOP_ICON_SMALL_CLOCK_PATH, 1);
+	smallEvent = LoadPNG(PLOP_ICON_SMALL_EVENT_PATH, 1);
+	smallEpub = LoadPNG(PLOP_ICON_SMALL_EPUB_PATH, 1);
+	smallHtml = LoadPNG(PLOP_ICON_SMALL_HTML_PATH, 1);
+	smallStarred = LoadPNG(PLOP_ICON_SMALL_STARRED_PATH, 1);
 }
 
 
@@ -146,6 +158,11 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 		GuiListItemEntry item(entryTitleFont, entryInfosFont);
 
 		item.setCoordinates(0, y + i*114);
+		item.setSmallClock(smallClock);
+		item.setSmallEvent(smallEvent);
+		item.setSmallEpub(smallEpub);
+		item.setSmallHtml(smallHtml);
+		item.setSmallStarred(smallStarred);
 
 		if (i < entries.size()) {
 			Entry entry = entries.at(i);

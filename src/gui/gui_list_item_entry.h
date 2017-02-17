@@ -62,6 +62,26 @@ public:
 		;
 	}
 
+	void setSmallClock(ibitmap *bmp) {
+		smallClock = bmp;
+	}
+
+	void setSmallEvent(ibitmap *bmp) {
+		smallEvent = bmp;
+	}
+
+	void setSmallEpub(ibitmap *bmp) {
+		smallEpub = bmp;
+	}
+
+	void setSmallHtml(ibitmap *bmp) {
+		smallHtml = bmp;
+	}
+
+	void setSmallStarred(ibitmap *bmp) {
+		smallStarred = bmp;
+	}
+
 	int x, y;
 
 private:
@@ -72,6 +92,10 @@ private:
 
 	ifont *titleFont;
 	ifont *infosFont;
+
+	ibitmap *smallClock, *smallEvent;
+	ibitmap *smallEpub, *smallHtml;
+	ibitmap *smallStarred;
 };
 
 

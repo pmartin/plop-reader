@@ -107,6 +107,9 @@ private:
 
 	int mode;
 
+	ibitmap *smallClock, *smallEvent;
+	ibitmap *smallEpub, *smallHtml;
+	ibitmap *smallStarred;
 };
 
 

@@ -169,15 +169,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 
 	if (countAllEntries == 0) {
-		if (mode == 1) {
-			statusBarText(LBL_STATUSBAR_NO_UNREAD_ENTRIES_USE_SYNC);
-		}
-		else if (mode == 2) {
-			statusBarText(LBL_STATUSBAR_NO_ARCHIVED_ENTRIES_USE_MENU);
-		}
-		else if (mode == 3) {
-			statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
-		}
+		displayHelpWhenNoLocalData();
 	}
 	else {
 		statusBarText(LBL_STATUSBAR_USE_KEYS_OR_TOUCH);
@@ -481,6 +473,82 @@ void Gui::displayContextMenuOnEntry(GuiListItemEntry &item, int xTouch, int yTou
 void Gui::keypressEvent(int key)
 {
 
+}
+
+
+void Gui::displayHelpWhenNoLocalData()
+{
+	if (mode == 1) {
+		statusBarText(LBL_STATUSBAR_NO_UNREAD_ENTRIES_USE_SYNC);
+	}
+	else if (mode == 2) {
+		statusBarText(LBL_STATUSBAR_NO_ARCHIVED_ENTRIES_USE_MENU);
+	}
+	else if (mode == 3) {
+		statusBarText(LBL_STATUSBAR_NO_STARRED_ENTRIES_USE_MENU);
+	}
+
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(30, 250, LBL_ONBOARDING_EXIT);
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(30, 300, LBL_ONBOARDING_EXIT_01);
+	DrawString(30, 300 + 30, LBL_ONBOARDING_EXIT_02);
+	DrawString(30, 300 + 30 + 30, LBL_ONBOARDING_EXIT_03);
+
+	DrawLine(30 + 30, 245, 30, 90, BLACK);
+	DrawCircle(30, 90, 4, BLACK);
+	PartialUpdate(20, 80, 400, 400);
+
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(175, 140, LBL_ONBOARDING_SYNC);
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(175, 140+50, LBL_ONBOARDING_SYNC_01);
+	DrawString(175, 140+50 + 30, LBL_ONBOARDING_SYNC_02);
+	DrawString(175, 140+50 + 30 + 30, LBL_ONBOARDING_SYNC_03);
+
+	DrawLine(screenWidth - 400, 140 - 5, screenWidth-140 + 50/2, 90, BLACK);
+	DrawCircle(screenWidth-140 + 50/2, 90, 4, BLACK);
+	PartialUpdate(175, 80, screenWidth, 400);
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(screenWidth - 270, 220, LBL_ONBOARDING_MENU);
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(screenWidth - 270, 220+50, LBL_ONBOARDING_MENU_01);
+	DrawString(screenWidth - 270, 220+50 + 30, LBL_ONBOARDING_MENU_02);
+	DrawString(screenWidth - 270, 220+50 + 30 + 30, LBL_ONBOARDING_MENU_03);
+
+	DrawLine(screenWidth - 150, 220 - 5, screenWidth-60 + 50/2, 90, BLACK);
+	DrawCircle(screenWidth-60 + 50/2, 90, 4, BLACK);
+	PartialUpdate(screenWidth - 270, 80, screenWidth, 400);
+
+
+	SetFont(entryInfosFont, BLACK);
+	DrawString(40, 500 + 30*0, LBL_ONBOARDING_INFO_NO_ENTRIES_01);
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(40, 500 + 30*1, LBL_ONBOARDING_INFO_NO_ENTRIES_02);
+	DrawString(40, 500 + 30*2, LBL_ONBOARDING_INFO_NO_ENTRIES_03);
+	PartialUpdate(40, 500, screenWidth, 500 + 30*3);
+
+
+	SetFont(entryTitleFont, BLACK);
+	DrawString(150, screenHeight - 280, LBL_ONBOARDING_STATUSBAR);
+
+	SetFont(entryInfosFont, DGRAY);
+	DrawString(150, screenHeight - 280 + 50, LBL_ONBOARDING_STATUSBAR_01);
+	DrawString(150, screenHeight - 280 + 50 + 30, LBL_ONBOARDING_STATUSBAR_02);
+	DrawString(150, screenHeight - 280 + 50 + 30 + 30, LBL_ONBOARDING_STATUSBAR_03);
+
+	DrawLine(250, screenHeight - 280 + 50 + 30 + 30 + 30, 450, screenHeight - 50, BLACK);
+	DrawCircle(450, screenHeight - 50, 4, BLACK);
+	PartialUpdate(0, screenHeight - 300, screenWidth, 400);
 }
 
 

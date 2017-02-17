@@ -54,6 +54,8 @@ public:
 	int updateProgressBar(const char *text, int percent);
 	void closeProgressBar();
 
+	void displayHelpWhenNoLocalData();
+
 	static const int SYNC_PROGRESS_PERCENTAGE_ALL_START = 0;
 
 	static const int SYNC_PROGRESS_PERCENTAGE_OAUTH_START = 4;

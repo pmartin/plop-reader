@@ -343,4 +343,99 @@ extern int global_lang;
 	: "All done \\o/" \
 )
 
+#define LBL_ONBOARDING_EXIT (IS_LANG_FR \
+	? "Quitter" \
+	: "Exit" \
+)
+
+#define LBL_ONBOARDING_EXIT_01 (IS_LANG_FR \
+	? "Utilisez ce bouton" \
+	: "Use this button" \
+)
+
+#define LBL_ONBOARDING_EXIT_02 (IS_LANG_FR \
+	? "pour fermer" \
+	: "to exit the" \
+)
+
+#define LBL_ONBOARDING_EXIT_03 (IS_LANG_FR \
+	? "l'application." \
+	: "application." \
+)
+
+#define LBL_ONBOARDING_SYNC (IS_LANG_FR \
+	? "Synchronisation" \
+	: "Synchronization" \
+)
+
+#define LBL_ONBOARDING_SYNC_01 (IS_LANG_FR \
+	? "Utilisez ce bouton pour" \
+	: "Use this button to" \
+)
+
+#define LBL_ONBOARDING_SYNC_02 (IS_LANG_FR \
+	? "obtenir les données depuis" \
+	: "get data from your" \
+)
+
+#define LBL_ONBOARDING_SYNC_03 (IS_LANG_FR \
+	? "votre serveur wallabag ;-)" \
+	: "wallabag server ;-)" \
+)
+
+#define LBL_ONBOARDING_MENU (IS_LANG_FR \
+	? "Menu" \
+	: "Open Menu" \
+)
+
+#define LBL_ONBOARDING_MENU_01 (IS_LANG_FR \
+	? "Utilisez ce bouton pour" \
+	: "Use this button to" \
+)
+
+#define LBL_ONBOARDING_MENU_02 (IS_LANG_FR \
+	? "ouvrir le menu principal" \
+	: "open the main menu" \
+)
+
+#define LBL_ONBOARDING_MENU_03 (IS_LANG_FR \
+	? "de l'application." \
+	: "of the application." \
+)
+
+#define LBL_ONBOARDING_STATUSBAR (IS_LANG_FR \
+	? "Barre d'état" \
+	: "Status Bar" \
+)
+
+#define LBL_ONBOARDING_STATUSBAR_01 (IS_LANG_FR \
+	? "Vous trouverez souvent de l'aide" \
+	: "You'll often find some help" \
+)
+
+#define LBL_ONBOARDING_STATUSBAR_02 (IS_LANG_FR \
+	? "ou un indicateur d'avancement" \
+	: "or progress indicator" \
+)
+
+#define LBL_ONBOARDING_STATUSBAR_03 (IS_LANG_FR \
+	? "dans la barre de statut." \
+	: "in the status bar." \
+)
+
+#define LBL_ONBOARDING_INFO_NO_ENTRIES_01 (IS_LANG_FR \
+	? "Vous n'avez aucune entrée sur cette liseuse." \
+	: "You don't have any entries on this ereader." \
+)
+
+#define LBL_ONBOARDING_INFO_NO_ENTRIES_02 (IS_LANG_FR \
+	? "Pour plus d'informations (configuration, utilisation), lisez :" \
+	: "For more informations about configuration and usage, read:" \
+)
+
+#define LBL_ONBOARDING_INFO_NO_ENTRIES_03 (IS_LANG_FR \
+	? "http://plop-reader.pascal-martin.fr/install-and-configure.html" \
+	: "http://plop-reader.pascal-martin.fr/install-and-configure.html" \
+)
+
 #endif /* SRC_TRANSLATE_H_ */

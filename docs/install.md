@@ -76,6 +76,8 @@ Note: the `database.sqlite3` file seen on this screenshot will be created automa
 
 ## Using the application
 
+**Note the screenshots below are from an older version of the application. Things look much better now ;-)**
+
 When first running the application, its screen is quite empty, as you haven't fetched any entry from the server yet:
 
 ![Empty screen at first launch](/images/v0.1.0/screenshot-11-empty-screen-at-first-launch.png)

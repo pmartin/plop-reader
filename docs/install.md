@@ -6,7 +6,7 @@ permalink: /install-and-configure.html
 
 This application allows you to read entries from your [Wallabag v2](https://www.wallabag.org/) instance, on your [Pocketbook Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3).
 
-**Download the current version of the application: [Plop! reader v0.3.1](/releases/v0.3.1/Plop! reader.app)**
+**Download the current version of the application: [Plop! reader v0.4.0](/releases/v0.4.0/Plop! reader.app)**
 
 To use the application, you must follow **two steps** :
 
@@ -57,6 +57,16 @@ If your Wallabag instance is protected by HTTP-Basic, you can use the following 
 }
 ```
 
+If you want the application to be in French (default is English), you can add a `lang` entry to the configuration file:
+
+```json
+{
+    ... some other options here
+    "password": "YOUR PASSWORD",
+    "lang": "fr"
+}
+```
+
 After connecting your ereader to your computer with an USB cable, you must send this `config.json` file to the ereader, in `/system/share/plop-reader` (you might have to create that last directory):
 
 ![The '/system/share/plop-reader' directory](/images/v0.1.0/directory-system-share.png)
@@ -65,6 +75,8 @@ Note: the `database.sqlite3` file seen on this screenshot will be created automa
 
 
 ## Using the application
+
+**Note the screenshots below are from an older version of the application. Things look much better now ;-)**
 
 When first running the application, its screen is quite empty, as you haven't fetched any entry from the server yet:
 

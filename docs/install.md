@@ -57,6 +57,16 @@ If your Wallabag instance is protected by HTTP-Basic, you can use the following 
 }
 ```
 
+If you want the application to be in French (default is English), you can add a `lang` entry to the configuration file:
+
+```json
+{
+    ... some other options here
+    "password": "YOUR PASSWORD",
+    "lang": "fr"
+}
+```
+
 After connecting your ereader to your computer with an USB cable, you must send this `config.json` file to the ereader, in `/system/share/plop-reader` (you might have to create that last directory):
 
 ![The '/system/share/plop-reader' directory](/images/v0.1.0/directory-system-share.png)

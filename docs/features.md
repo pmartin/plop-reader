@@ -6,7 +6,7 @@ permalink: /features.html
 
 This application allows you to read entries from your [Wallabag v2](https://www.wallabag.org/) instance, on your [Pocketbook Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3).
 
-Current version of the app is **v0.3.1**.
+Current version of the app is **v0.4.0**.
 
 
 ## Implemented features
@@ -30,9 +30,8 @@ Known limitations of the current version of the application:
  * Only tested on Pocketbook Touch Lux 3 "TEA" with a 5.14 firmware and Pocketbook Touch Lux 2 "TEA" with a 5.9 firmware. I have had reports indicating it also works on Pockerbook Inkpad 2.
  * It will not work on a 4.x firmware
  * It only supports Wallabag 2.x (which means it doesn't work with *Framabag*) and has only been tested with Wallabag 2.0.6, 2.0.8 and 2.2.1. Some features require Wallabag >= 2.2.1.
- * At first launch, when no sync has been ever done, the screen is *a bit empty*.
  * Not much help included.
- * Far from perfect UI.
+ * The UI is not *perfect*, but should be *good enough*.
  * Much code-rework is needed.
 
 This is to be considered a **beta version**, to collect useful feedback from implicated power-users.

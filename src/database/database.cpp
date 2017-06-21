@@ -23,12 +23,14 @@ void Database::open(void)
 
 void Database::runMigrations(void)
 {
-	const std::string currentVersion = "5";
+	const std::string currentVersion = "6";
 
 	Internal migrationVersion = this->selectInternal("db.migration_version");
 	if (migrationVersion.isNull) {
 		migrationVersion.value = "0";
 	}
+
+	DEBUG("Current migrationVersion of DB = %s ; targetVersion = %s", migrationVersion.value.c_str(), currentVersion.c_str());
 
 	if (migrationVersion.value < "1") {
 		this->migration_001_createInternalsTable();
@@ -44,6 +46,9 @@ void Database::runMigrations(void)
 	}
 	if (migrationVersion.value < "5") {
 		this->migration_005_addIsEmptyFieldOnEntries();
+	}
+	if (migrationVersion.value < "6") {
+		this->migration_006_createIndexSortForDisplayingListOnEntries();
 	}
 
 	this->saveInternal("db.migration_version", currentVersion);
@@ -158,6 +163,21 @@ void Database::migration_005_addIsEmptyFieldOnEntries()
 	const char *sql = R"sql(
 alter table entries
     add column is_empty integer not null default 0;
+)sql";
+	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
+		ERROR("Failed creating indexes on entries: %s", err_msg);
+
+		// TODO error-handling
+	}
+}
+
+void Database::migration_006_createIndexSortForDisplayingListOnEntries()
+{
+	INFO("Running migration 006: create indexes on entries");
+
+	char *err_msg;
+	const char *sql = R"sql(
+create index idx_entries_display_list_01 on entries (local_is_archived, remote_created_at desc);
 )sql";
 	if (sqlite3_exec(this->db, sql, NULL, 0, &err_msg) != SQLITE_OK) {
 		ERROR("Failed creating indexes on entries: %s", err_msg);

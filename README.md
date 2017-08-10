@@ -1,6 +1,7 @@
 
-This application allows you to read entries from your [Wallabag v2](https://www.wallabag.org/) instance, on your [Pocketbook Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3).
+This application allows you to read entries from your [Wallabag v2](https://www.wallabag.org/) instance, on your [Pocketbook / TEA Touch Lux](http://www.pocketbook-int.com/fr/products/pocketbook-touch-lux-3).
 
+It's known to work at least on Pocketbook/TEA Touch Lux 2 and 3, with Firmware 5.x.
 
 # Usage
 

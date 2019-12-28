@@ -148,11 +148,12 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 
 
 	// TODO déplacer tout ça vers une méthode de changement / chargement de page
+	int nb_items = app_ref.getNumItemPerPage();
 	entriesItems.clear();
-	entriesItems.resize(8);
+	entriesItems.resize(nb_items);
 
 	// Empty the whole area for all items at once
-	FillArea(0, y, screenWidth, GuiListItemEntry::getHeight()*8 - 1, WHITE);
+	FillArea(0, y, screenWidth, GuiListItemEntry::getHeight()*nb_items - 1, WHITE);
 
 	for (unsigned int i=0 ; i<entriesItems.size() ; i++) {
 		GuiListItemEntry item(entryTitleFont, entryInfosFont);
@@ -182,7 +183,7 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	}
 
 	// Update screen area for all items at once
-	PartialUpdate(0, y, screenWidth, GuiListItemEntry::getHeight()*8 - 1);
+	PartialUpdate(0, y, screenWidth, GuiListItemEntry::getHeight()*nb_items - 1);
 
 
 	if (countAllEntries == 0) {

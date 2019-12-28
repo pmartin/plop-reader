@@ -39,6 +39,12 @@ void Application::init()
 	curl_global_init(CURL_GLOBAL_ALL);
 
 	restoreModeAndPage();
+	// we calaculate the number of items to show (we remove the header (35+35+5+2) and
+	// the footer (35)
+	// we divide it by the height of an item (114)
+	// TODO: centralize the item Height and size of header / footer
+	numPerPage = (int)floor((float)(ScreenHeight()-35-35-5-2-35)/(float(114)));
+	DEBUG("Nb items per page: %d", numPerPage);
 }
 
 
@@ -1064,5 +1070,10 @@ void Application::initAssets()
 	writeIconToFile(PLOP_ICON_SMALL_EPUB_PATH, small_epub_png, small_epub_png_len);
 	writeIconToFile(PLOP_ICON_SMALL_HTML_PATH, small_html_png, small_html_png_len);
 	writeIconToFile(PLOP_ICON_SMALL_STARRED_PATH, small_grade_png, small_grade_png_len);
+}
+
+int Application::getNumItemPerPage()
+{
+	return numPerPage;
 }
 

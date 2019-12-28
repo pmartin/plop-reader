@@ -77,6 +77,8 @@ public:
 	void deleteAllLocalData();
 	void initAssets();
 
+	int getNumItemPerPage();
+
 private:
 	Database db;
 	WallabagApi wallabag_api;

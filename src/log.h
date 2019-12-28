@@ -25,12 +25,16 @@ public:
 		return instance;
 	}
 
+	void init();
+
 	Log(Log const&) = delete;
 	void operator=(Log const&) = delete;
 
 private:
 	const char *DIR = FLASHDIR;
 	const char *FILEPATH = FLASHDIR "/plop-reader-logs.html";
+	const char *FILEACTIVE = FLASHDIR "/plop-reader-activate-log.txt";
+	int _logActive = 1;
 
 	Log() {};
 	~Log() {};

@@ -36,7 +36,9 @@ private:
 	const char *FILEACTIVE = FLASHDIR "/plop-reader-activate-log.txt";
 	int _logActive = 1;
 
-	Log() {};
+	Log() {
+		init();
+	};
 	~Log() {};
 };
 

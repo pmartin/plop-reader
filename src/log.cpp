@@ -1,6 +1,6 @@
 #include "log.h"
 
-#include <fstream>
+#include <sys/stat.h>
 
 #include "main.h"
 
@@ -17,8 +17,8 @@ static std::string replaceAll(std::string subject, const std::string& search, co
 
 void Log::init()
 {
-	std::ifstream infile(FILEACTIVE);
-	if( infile.good() ) {
+	struct stat buffer;
+	if( stat(FILEACTIVE, &buffer) == 0) {
 		_logActive = 1;
 	} else {
 		_logActive = 0;

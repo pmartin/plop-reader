@@ -1,20 +1,6 @@
 #include "application.h"
 #include "log.h"
-
-
-#include <string>
-#include <sstream>
-
-namespace patch
-{
-    template < typename T > std::string to_string( const T& n )
-    {
-        std::ostringstream stm ;
-        stm << n ;
-        return stm.str() ;
-    }
-}
-
+#include "utils.cpp"
 
 
 void Application::init()
@@ -499,8 +485,8 @@ void Application::restoreModeAndPage()
 
 void Application::saveModeAndPage()
 {
-	getDb().saveInternal("gui.pageNum", patch::to_string(pageNum));
-	getDb().saveInternal("gui.mode", patch::to_string(mode));
+	getDb().saveInternal("gui.pageNum", utils::to_string(pageNum));
+	getDb().saveInternal("gui.mode", utils::to_string(mode));
 }
 
 

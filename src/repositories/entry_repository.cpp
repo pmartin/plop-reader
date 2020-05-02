@@ -1,5 +1,6 @@
 #include "entry_repository.h"
 
+#include "../utils.cpp"
 
 // TODO a lot of error-handling around database manipulations
 
@@ -208,24 +209,29 @@ void EntryRepository::deleteAll()
 
 void EntryRepository::listUnread(std::vector<Entry> &entries, int limit, int offset)
 {
-	return list(entries, limit, offset, 0, 1);
+	return list(entries, limit, offset, 0, 1, -1);
 }
 
 
 void EntryRepository::listArchived(std::vector<Entry> &entries, int limit, int offset)
 {
-	return list(entries, limit, offset, 2, 1);
+	return list(entries, limit, offset, 2, 1, -1);
 }
 
 
 void EntryRepository::listStarred(std::vector<Entry> &entries, int limit, int offset)
 {
-	return list(entries, limit, offset, 1, 2);
+	return list(entries, limit, offset, 1, 2, -1);
+}
+
+void EntryRepository::listLong(std::vector<Entry> &entries, int limit, int offset)
+{
+	return list(entries, limit, offset, 0, 1, 600);
 }
 
 
 void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset,
-		int archived, int starred
+		int archived, int starred, int reading_time = -1
 )
 {
 	entries.clear();
@@ -252,6 +258,10 @@ void EntryRepository::list(std::vector<Entry> &entries, int limit, int offset,
 	else if (starred == 2) {
 		conditions.push_back("local_is_starred = 1");
 	}
+
+        if (reading_time != -1) {
+                conditions.push_back("reading_time >= " + utils::to_string(reading_time));
+        }
 
 	//conditions.push_back("is_empty = 0");
 
@@ -351,21 +361,26 @@ offset :offset
 
 int EntryRepository::countUnread()
 {
-	return count(0, 1);
+	return count(0, 1, -1);
 }
 
 int EntryRepository::countArchived()
 {
-	return count(2, 1);
+	return count(2, 1, -1);
 }
 
 int EntryRepository::countStarred()
 {
-	return count(1, 2);
+	return count(1, 2, -1);
+}
+
+int EntryRepository::countLong()
+{
+	return count(0, 1, 600);
 }
 
 
-int EntryRepository::count(int archived, int starred)
+int EntryRepository::count(int archived, int starred, int reading_time = -1)
 {
 	std::vector<std::string> conditions;
 
@@ -388,6 +403,10 @@ int EntryRepository::count(int archived, int starred)
 	else if (starred == 2) {
 		conditions.push_back("local_is_starred = 1");
 	}
+
+        if (reading_time != -1) {
+                conditions.push_back("reading_time >= " + utils::to_string(reading_time));
+        }
 
 	const char *sqlTemplate = "select count(*) from entries %s";
 

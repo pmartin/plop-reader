@@ -18,18 +18,20 @@ public:
 	void deleteAll();
 
 	void list(std::vector<Entry> &entries, int limit, int offset,
-			int archived, int starred);
+			int archived, int starred, int reading_time);
 
 	int countAllEntries();
 
 	int countUnread();
 	int countArchived();
 	int countStarred();
-	int count(int archived, int starred);
+	int countLong();
+	int count(int archived, int starred, int reading_time);
 
 	void listUnread(std::vector<Entry> &entries, int limit, int offset);
 	void listArchived(std::vector<Entry> &entries, int limit, int offset);
 	void listStarred(std::vector<Entry> &entries, int limit, int offset);
+	void listLong(std::vector<Entry> &entries, int limit, int offset);
 
 	Entry get(int entryId);
 	Entry findByRemoteId(int remoteId);

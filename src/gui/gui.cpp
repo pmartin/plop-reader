@@ -125,6 +125,9 @@ void Gui::show(int numPage, int numberOfPages, int countAllEntries, std::vector<
 	else if (mode == 3) {
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME " - %s", LBL_HEADER_STARRED_ENTRIES);
 	}
+	else if (mode == 4) {
+		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME " - %s", LBL_HEADER_LONG_ENTRIES);
+	}
 	else {
 		snprintf(buffer, sizeof(buffer), PLOP_APPLICATION_FULLNAME);
 	}
@@ -231,6 +234,7 @@ void Gui::displayMainMenu()
 	const char *str3 = LBL_MAINMENU_MODE_STARRED_ENTRIES;
 	const char *str_reset = LBL_MAINMENU_DELETE_ALL_LOCAL_DATA;
 	const char *str4 = LBL_MAINMENU_ABOUT;
+	const char *str5 = LBL_MAINMENU_MODE_LONG_ENTRIES;
 
 	menu = (imenuex *)calloc(7, sizeof(imenuex));
 
@@ -275,6 +279,13 @@ void Gui::displayMainMenu()
 	menu[5].icon = LoadPNG(PLOP_ICON_HELP_PATH, 1);
 	menu[5].font = NULL;
 	menu[5].submenu = NULL;
+
+	menu[6].type = 2;
+	menu[6].index = 6;
+	menu[6].text = (char *)str5;
+	menu[6].icon = NULL;
+	menu[6].font = NULL;
+	menu[6].submenu = &menu[5];
 
 	auto callback = [](int index) {
 		free(menu);
@@ -328,6 +339,9 @@ void Gui::displayMainMenu()
 			else if (result == 2) {
 				app.getGui().statusBarText(LBL_STATUSBAR_DELETEALL_CANCELED);
 			}
+		}
+		else if (index == 6) {
+			app.setMode(Application::MODE_LONG);
 		}
 	};
 

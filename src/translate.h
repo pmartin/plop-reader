@@ -23,6 +23,11 @@ extern int global_lang;
 	: "starred entries" \
 )
 
+#define LBL_HEADER_LONG_ENTRIES (IS_LANG_FR \
+	? "Longs articles" \
+	: "Long entries" \
+)
+
 #define LBL_HEADER_PAGE_NUM (IS_LANG_FR \
 	? "Page %1$d / %2$d (%3$d entrées)" \
 	: "Page %1$d / %2$d (%3$d entries)" \
@@ -61,6 +66,11 @@ extern int global_lang;
 #define LBL_MAINMENU_MODE_STARRED_ENTRIES (IS_LANG_FR \
 	? "Afficher les entrées étoilées" \
 	: "Display starred entries" \
+)
+
+#define LBL_MAINMENU_MODE_LONG_ENTRIES (IS_LANG_FR \
+	? "Lecture > 10 min" \
+	: "Reading > 10mn" \
 )
 
 #define LBL_MAINMENU_DELETE_ALL_LOCAL_DATA (IS_LANG_FR \

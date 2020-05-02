@@ -27,7 +27,7 @@
 class Application
 {
 public:
-	enum entries_mode {MODE_UNREAD=1, MODE_ARCHIVED, MODE_STARRED};
+	enum entries_mode {MODE_UNREAD=1, MODE_ARCHIVED, MODE_STARRED, MODE_LONG};
 	enum reading_format {FORMAT_HTML=1, FORMAT_EPUB};
 
 	Application() : entryRepository(db), epubDownloadQueueRepository(db), gui(*this) {

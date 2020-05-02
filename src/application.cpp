@@ -386,6 +386,9 @@ int Application::countEntriesForCurrentMode()
 	if (mode == MODE_STARRED) {
 		return entryRepository.countStarred();
 	}
+	if (mode == MODE_LONG) {
+		return entryRepository.countLong();
+	}
 	return 0;
 }
 
@@ -400,6 +403,9 @@ void Application::listEntriesForCurrentMode(std::vector<Entry> &entries)
 	}
 	else if (mode == MODE_STARRED) {
 		entryRepository.listStarred(entries, numPerPage, (pageNum-1) * numPerPage);
+	}
+	else if (mode == MODE_LONG) {
+		entryRepository.listLong(entries, numPerPage, (pageNum-1) * numPerPage);
 	}
 }
 
